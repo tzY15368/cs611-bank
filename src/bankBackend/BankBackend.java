@@ -18,15 +18,14 @@ public class BankBackend {
         this.name = "helo";
         try {
             ConnectionSource conn = new JdbcConnectionSource("jdbc:sqlite:bank.db");
-            Dao<Account, String> accountDao = DaoManager.createDao(conn, Account.class);
+            Dao<User, String> userDao = DaoManager.createDao(conn, User.class);
+            TableUtils.createTableIfNotExists(conn, User.class);
+            User usr = new User();
+            usr.setName("npm");
+            userDao.createIfNotExists(usr);
 
-            TableUtils.createTable(conn, Account.class);
-            Account acc = new Account();
-            acc.setName("npm");
-            accountDao.create(acc);
-
-            Account acc2 = accountDao.queryForId("npm");
-            Logger.info("ACC:"+acc2.getName());
+            User usr2 = userDao.queryForId("npm");
+            Logger.info("usr:"+usr2.getName());
             conn.close();
 
         } catch (Exception e){
