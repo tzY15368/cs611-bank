@@ -1,8 +1,11 @@
 package bankUI;
 
+import Utils.Logger;
+
 import javax.swing.*;
 
 public class BankGUI extends JFrame {
+    private static Logger logHandle;
     private JPanel mainPanel;
     private JTextField textField1;
     private JButton button234Button;
@@ -22,8 +25,9 @@ public class BankGUI extends JFrame {
         });
     }
     //https://github.com/chennaione/sugar
-    public static void main(String[] args){
+    public static void initGUI(String[] args){
         JFrame frame = new BankGUI("bank");
+
         frame.setVisible(true);
     }
 }
