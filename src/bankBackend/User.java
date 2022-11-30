@@ -1,6 +1,7 @@
 package bankBackend;
 
 import Utils.DBManager;
+import Utils.Result;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
@@ -32,15 +33,17 @@ public class User {
         return name;
     }
 
-    public void setName(String name) {
+    public Result<Void> setName(String name) {
         this.name = name;
+        return null;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public Result<Void> setPassword(String password) {
         this.password = password;
+        return null;
     }
 }

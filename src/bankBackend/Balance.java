@@ -1,5 +1,6 @@
 package bankBackend;
 
+import Utils.Result;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -23,12 +24,13 @@ public class Balance {
         this.type = kind;
     }
 
-    public void addBalance(double value, String kind) {
+    public Result<Void> addBalance(double value, String kind) {
         //if exist, add money, if not exist, create new balance
+        return null;
     }
 
-    public void minusBalance(double value, String kind) {
-
+    public Result<Void> minusBalance(double value, String kind) {
+        return null;
     }
 
     public double findBalance(String kind) {
