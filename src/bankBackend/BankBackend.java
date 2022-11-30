@@ -1,6 +1,7 @@
 package bankBackend;
 
 
+import Utils.Logger;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -25,11 +26,11 @@ public class BankBackend {
             accountDao.create(acc);
 
             Account acc2 = accountDao.queryForId("npm");
-            System.out.println("ACC:"+acc2.getName());
+            Logger.info("ACC:"+acc2.getName());
             conn.close();
 
         } catch (Exception e){
-            System.out.println("Exception in init:"+ Arrays.toString(e.getStackTrace()));
+            Logger.error("Exception in init:"+ e +": "+ e.getMessage()+"\n"+Arrays.toString(e.getStackTrace()));
         }
     }
 }
