@@ -19,12 +19,12 @@ public class Balance {
     @DatabaseField
     private CurrencyType type;
 
-    public Balance(double value, CurrencyType kind) {
+    public Balance(double value, CurrencyType currencyType) {
         this.value = value;
-        this.type = kind;
+        this.type = currencyType;
     }
 
-    public Result<Void> addBalance(double value, String kind) {
+    public Result<Void> addBalance(double value, CurrencyType currencyType) {
         //if exist, add money, if not exist, create new balance
         return null;
     }
