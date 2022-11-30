@@ -1,12 +1,8 @@
 package bankBackend;
 
 
+import Utils.DBManager;
 import Utils.Logger;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 import java.util.Arrays;
 
@@ -14,22 +10,20 @@ import java.util.Arrays;
 public class BankBackend {
     public String name;
 
-    public BankBackend(){
+    public BankBackend() {
         this.name = "helo";
         try {
-            ConnectionSource conn = new JdbcConnectionSource("jdbc:sqlite:bank.db");
-            Dao<User, String> userDao = DaoManager.createDao(conn, User.class);
-            TableUtils.createTableIfNotExists(conn, User.class);
+            DBManager.init();
             User usr = new User();
             usr.setName("npm");
-            userDao.createIfNotExists(usr);
+            User.dao.createIfNotExists(usr);
 
-            User usr2 = userDao.queryForId("npm");
-            Logger.info("usr:"+usr2.getName());
-            conn.close();
+            User usr2 = User.dao.queryForEq("name", "npm").get(0);
+            Logger.info("usr:" + usr2.getName());
+            DBManager.close();
 
-        } catch (Exception e){
-            Logger.error("Exception in init:"+ e +": "+ e.getMessage()+"\n"+Arrays.toString(e.getStackTrace()));
+        } catch (Exception e) {
+            Logger.error("Exception in init:" + e + ": " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 }
