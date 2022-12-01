@@ -17,18 +17,24 @@ public class DBManager {
     private static boolean didInit = false;
     private static Map<Class, Dao> daoMap;
 
-    public static void init() throws SQLException {
-        conn = new JdbcConnectionSource("jdbc:sqlite:bank.db");
-        didInit = true;
-        daoMap = new HashMap<>();
+    public static Result<Void> init() {
+        try {
 
-        // The type params are not actually required,
-        // as long as the caller of getDao knows the type of the second argument,
-        // see User.java
-        Class[] classes = {User.class, Account.class};
-        for (Class c : classes) {
-            daoMap.put(c, DaoManager.createDao(conn, c));
+            conn = new JdbcConnectionSource("jdbc:sqlite:bank.db");
+            didInit = true;
+            daoMap = new HashMap<>();
+
+            // The type params are not actually required,
+            // as long as the caller of getDao knows the type of the second argument,
+            // see User.java
+            Class[] classes = {User.class, Account.class};
+            for (Class c : classes) {
+                daoMap.put(c, DaoManager.createDao(conn, c));
+            }
+        } catch (SQLException e) {
+            return new Result<Void>(false, "SQL Exception in init:" + e + ": " + e.getMessage(), null);
         }
+        return new Result<Void>(true, null, null);
     }
 
     public static ConnectionSource getConn() {
