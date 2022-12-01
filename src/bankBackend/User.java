@@ -7,6 +7,8 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.SQLException;
+
 
 @DatabaseTable(tableName = "Users")
 public class User {
@@ -46,4 +48,14 @@ public class User {
         this.password = password;
         return null;
     }
+
+    public static Result<Void> userLogin(String username, String password){
+        return new Result<>();
+    };
+
+    public static Result<Void> userRegister(String username, String password){
+        User u = new User();
+        u.setName(username);
+        return new Result<>(true,null,null);
+    };
 }
