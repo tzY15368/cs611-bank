@@ -49,13 +49,37 @@ public class User {
         return null;
     }
 
-    public static Result<Void> userLogin(String username, String password){
-        return new Result<>();
-    };
+    public static Result<Void> userLogin(String username, String password) {
+        try {
+            User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
+            if (user == null) {
+                return new Result<Void>(false, "User not found", null);
+            }
+            if (user.getPassword().equals(password)) {
+                return new Result<Void>(true, null, null);
+            } else {
+                return new Result<Void>(false, "Wrong password", null);
+            }
+        } catch (SQLException e) {
+            return new Result<Void>(false, "SQL Exception in userLogin:" + e + ": " + e.getMessage(), null);
+        }
+    }
 
-    public static Result<Void> userRegister(String username, String password){
-        User u = new User();
-        u.setName(username);
-        return new Result<>(true,null,null);
-    };
+    ;
+
+    public static Result<Void> userRegister(String username, String password) {
+        try {
+            User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
+            if (user != null) {
+                return new Result<Void>(false, "User already exists", null);
+            }
+            User newUser = new User(username, password);
+            dao.create(newUser);
+            return new Result<Void>(true, null, null);
+        } catch (SQLException e) {
+            return new Result<Void>(false, "SQL Exception in userRegister:" + e + ": " + e.getMessage(), null);
+        }
+    }
+
+    ;
 }
