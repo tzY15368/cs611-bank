@@ -29,6 +29,7 @@ public class DBManager {
             // see User.java
             Class[] classes = {User.class, Account.class};
             for (Class c : classes) {
+                TableUtils.createTableIfNotExists(conn, c);
                 daoMap.put(c, DaoManager.createDao(conn, c));
             }
         } catch (SQLException e) {
