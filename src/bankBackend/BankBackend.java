@@ -1,10 +1,6 @@
 package bankBackend;
 
-
 import Utils.*;
-
-import java.util.Arrays;
-
 
 public class BankBackend {
     public String name;

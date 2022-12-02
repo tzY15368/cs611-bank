@@ -6,8 +6,8 @@ import Utils.Result;
 import Utils.SessionMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +54,30 @@ public abstract class Account {
         return null;
     }
 
+    public Result<Void> handleTransaction(Transaction tx) {
+        if (tx.toAccountId == this.id) {
+            // ...
+            // TODO: HANDLE TRANSACTION
+        }
+        Balance balance = null;
+        try {
+            balance = Balance.dao.queryForId(tx.fromBalanceId);
+        } catch (SQLException e) {
+            Logger.error("handleTransaction:" + e.getMessage());
+        }
+        if (balance == null) {
+            return new Result<>(false, "Balance not found", null);
+        }
+        // ...
+        // TODO: HANDLE TRANSACTION
+        return balance.deltaValue(tx.value);
+    }
+
     // adding and withdrawing money is not an atomic operation
     // but they share the same deltaBalance method
     // also if a balance is not found, it will be created
     // interest rates are calculated in the INHERITED CLASSES
-    public Result<Void> deltaBalance(int value, CurrencyType kind) {
+    private Result<Void> deltaBalance(int value, CurrencyType kind) {
         if (value < 0) {
             return new Result<>(false, "Cannot add negative balance", null);
         }

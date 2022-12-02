@@ -31,4 +31,5 @@ public class Transaction {
         this.type = type;
         this.value = value;
     }
+
 }

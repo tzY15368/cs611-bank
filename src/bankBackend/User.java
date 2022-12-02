@@ -43,7 +43,7 @@ public class User {
     }
 
     public Result<Void> setName(String name) {
-        this.name = name;
+        // TODO: IMPLEMENT THIS
         return null;
     }
 

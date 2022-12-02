@@ -44,6 +44,10 @@ public class Balance {
         this.type = kind;
     }
 
+    public int getAccountId() {
+        return accountId;
+    }
+
     public int getValue() {
         return value;
     }
