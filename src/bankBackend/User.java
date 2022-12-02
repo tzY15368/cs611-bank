@@ -1,13 +1,16 @@
 package bankBackend;
 
+import Utils.BasicSession;
 import Utils.DBManager;
 import Utils.Result;
+import Utils.SessionMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
+import java.util.List;
 
 
 @DatabaseTable(tableName = "Users")
@@ -35,6 +38,10 @@ public class User {
         return name;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public Result<Void> setName(String name) {
         this.name = name;
         return null;
@@ -56,6 +63,9 @@ public class User {
                 return new Result<Void>(false, "User not found", null);
             }
             if (user.getPassword().equals(password)) {
+                // set session
+                SessionMgr.setSession(new BasicSession(user));
+
                 return new Result<Void>(true, null, null);
             } else {
                 return new Result<Void>(false, "Wrong password", null);
