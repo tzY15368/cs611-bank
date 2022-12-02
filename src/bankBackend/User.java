@@ -60,36 +60,36 @@ public class User {
         try {
             User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
             if (user == null) {
-                return new Result<Void>(false, "User not found", null);
+                return new Result<>(false, "User not found", null);
             }
             if (user.getPassword().equals(password)) {
                 // set session
                 SessionMgr.setSession(new BasicSession(user));
 
-                return new Result<Void>(true, null, null);
+                return new Result<>(true, null, null);
             } else {
-                return new Result<Void>(false, "Wrong password", null);
+                return new Result<>(false, "Wrong password", null);
             }
         } catch (SQLException e) {
-            return new Result<Void>(false, "SQL Exception in userLogin:" + e + ": " + e.getMessage(), null);
+            return new Result<>(false, "SQL Exception in userLogin:" + e + ": " + e.getMessage(), null);
         }
     }
-
-    ;
 
     public static Result<Void> userRegister(String username, String password) {
         try {
             User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
             if (user != null) {
-                return new Result<Void>(false, "User already exists", null);
+                return new Result<>(false, "User already exists", null);
             }
             User newUser = new User(username, password);
             dao.create(newUser);
-            return new Result<Void>(true, null, null);
+            return new Result<>(true, null, null);
         } catch (SQLException e) {
-            return new Result<Void>(false, "SQL Exception in userRegister:" + e + ": " + e.getMessage(), null);
+            return new Result<>(false, "SQL Exception in userRegister:" + e + ": " + e.getMessage(), null);
         }
     }
 
-    ;
+    public static Result<Report> getResult(int userId) {
+        return new Result<>(true, null, null);
+    }
 }

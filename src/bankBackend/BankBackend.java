@@ -17,11 +17,13 @@ public class BankBackend {
             Logger.fatal(r.getMsg());
         }
 
+        Timer.init();
+
         // get a default user for the session
         User usr2 = null;
 
         try {
-            User.dao.createIfNotExists(new User("npm","password123"));
+            User.dao.createIfNotExists(new User("npm", "password123"));
             usr2 = User.dao.queryForEq("name", "npm").get(0);
             Logger.info("usr-session:" + usr2.getName());
         } catch (Exception e) {
