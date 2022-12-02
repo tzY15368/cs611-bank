@@ -3,7 +3,6 @@ package bankBackend;
 import Utils.Logger;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Manager extends User {

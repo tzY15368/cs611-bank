@@ -1,7 +1,13 @@
 package bankBackend;
 
-import com.j256.ormlite.table.DatabaseTable;
-
-@DatabaseTable(tableName = "LoanAccount")
 public class LoanAccount extends Account {
+    public LoanAccount() {
+        // ORMLite needs a no-arg constructor
+        super(-1, AccountType.Loan);
+    }
+
+    public LoanAccount(int userId) {
+        super(userId, AccountType.Loan);
+    }
+
 }

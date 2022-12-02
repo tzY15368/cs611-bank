@@ -34,11 +34,23 @@ public class StockCtl {
         }
     }
 
-    public static Result<Void> buyStock(Stock stock, User user, int amount) {
+    public static Result<Void> updateStock(String name) {
         return null;
     }
 
-    public static Result<Void> sellStock(Stock stock, User user, int amount) {
+    public static Result<Void> buyStock(String name, User user, int amount) {
+        return null;
+    }
+
+    public static Result<Void> sellStock(String name, User user, int amount) {
+        return null;
+    }
+
+    public static Result<Integer> getRealizedProfit(String name, User user) {
+        return null;
+    }
+
+    public static Result<Integer> getUnrealizedProfit(String name, User user) {
         return null;
     }
 }

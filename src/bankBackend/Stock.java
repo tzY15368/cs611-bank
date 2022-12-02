@@ -8,15 +8,22 @@ import com.j256.ormlite.table.DatabaseTable;
 
 
 @DatabaseTable(tableName = "Stock")
+public
 class Stock {
-    public static Dao<Stock, Integer> dao = DBManager.getDao(Stock.class);
+    static Dao<Stock, Integer> dao = DBManager.getDao(Stock.class);
 
     @DatabaseField(generatedId = true)
     private int id;
+
+    @DatabaseField(unique = true)
+    private String name;
 
     @DatabaseField
     private int userId;
 
     @DatabaseField
-    private int price;
+    private int buyInPrice;
+
+    @DatabaseField
+    private int currentPrice;
 }

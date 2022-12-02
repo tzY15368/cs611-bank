@@ -20,7 +20,7 @@ enum CurrencyType {
 @DatabaseTable(tableName = "Balances")
 public class Balance {
 
-    public static Dao<Balance, Integer> dao = DBManager.getDao(Balance.class);
+    static Dao<Balance, Integer> dao = DBManager.getDao(Balance.class);
 
     @DatabaseField
     private int accountId;
@@ -55,19 +55,6 @@ public class Balance {
     public CurrencyType getType() {
         return type;
     }
-
-    // ACID no more
-    public static List<Balance> listBalance(Account account) {
-        try {
-            List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
-                    .where().eq("accountId", account.getId()).query();
-            return balances;
-        } catch (Exception e) {
-            Logger.error("listBalances:" + e.getMessage());
-        }
-        return new ArrayList<>();
-    }
-
 
     public Result<Void> deltaValue(int value) {
         if (this.value + value < 0) {

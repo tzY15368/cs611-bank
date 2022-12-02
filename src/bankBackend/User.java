@@ -1,21 +1,18 @@
 package bankBackend;
 
-import Utils.BasicSession;
-import Utils.DBManager;
-import Utils.Result;
-import Utils.SessionMgr;
+import Utils.*;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @DatabaseTable(tableName = "Users")
 public class User {
-    public static Dao<User, Integer> dao = DBManager.getDao(User.class);
+    static Dao<User, Integer> dao = DBManager.getDao(User.class);
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -56,6 +53,56 @@ public class User {
         return null;
     }
 
+    public Result<SecurityAccount> getSecurityAccount() {
+        if (!isSecurityAccountEnabled()) {
+            return new Result(false, "Security account is not enabled", null);
+        }
+        return new Result(true, null, SecurityAccount.getAccount(id, AccountType.Security));
+    }
+
+    public Result<LoanAccount> getLoanAccount() {
+        return new Result(true, null, LoanAccount.getAccount(id, AccountType.Loan));
+    }
+
+    public Result<SavingAccount> getSavingAccount() {
+        return new Result(true, null, SavingAccount.getAccount(id, AccountType.SAVINGS));
+    }
+
+    public Result<CheckingAccount> getCheckingAccount() {
+        return new Result(true, null, CheckingAccount.getAccount(id, AccountType.CHECKING));
+    }
+
+    public boolean isSecurityAccountEnabled() {
+        Result<SavingAccount> res = getSavingAccount();
+        if (!res.isSuccess()) {
+            return false;
+        }
+        SavingAccount saving = res.getData();
+        for (Balance b : saving.listBalance()) {
+            if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isLoanAccountEnabled() {
+        return false;
+    }
+
+    public List<Account> listAccount() {
+        List<Account> accs = new ArrayList<>();
+        Result r = getCheckingAccount();
+        if (r.isSuccess()) accs.add((Account) r.getData());
+        r = getSavingAccount();
+        if (r.isSuccess()) accs.add((Account) r.getData());
+        r = getLoanAccount();
+        if (r.isSuccess()) accs.add((Account) r.getData());
+        r = getSecurityAccount();
+        if (r.isSuccess()) accs.add((Account) r.getData());
+        return accs;
+    }
+
     public static Result<Void> userLogin(String username, String password) {
         try {
             User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
@@ -83,7 +130,21 @@ public class User {
             }
             User newUser = new User(username, password);
             dao.create(newUser);
-            return new Result<>(true, null, null);
+            Account[] accs = new Account[]{
+                    new CheckingAccount(newUser.getId()),
+                    new SavingAccount(newUser.getId()),
+                    new LoanAccount(newUser.getId()),
+                    new SecurityAccount(newUser.getId())
+            };
+            List.of(accs).forEach(acc -> {
+                try {
+                    Account.dao.create(acc);
+                } catch (SQLException e) {
+                    Logger.fatal("SQL Exception in userRegister:" + e + ": " + e.getMessage());
+                }
+            });
+
+            return new Result<>();
         } catch (SQLException e) {
             return new Result<>(false, "SQL Exception in userRegister:" + e + ": " + e.getMessage(), null);
         }

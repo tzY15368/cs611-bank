@@ -6,54 +6,60 @@ import Utils.Result;
 import Utils.SessionMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-// not a table as this is inherited
+enum AccountType {
+    CHECKING,
+    SAVINGS,
+    Loan,
+    Security
+}
+
+@DatabaseTable(tableName = "Accounts")
 public abstract class Account {
 
-    public static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
+    static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
 
     @DatabaseField
     protected int id;
     @DatabaseField
     protected int userId;
 
-    public Account() {
-        // ORMLite needs a no-arg constructor
-    }
+    @DatabaseField
+    protected AccountType type;
 
-    public Account(int userId) {
+    public Account(int userId, AccountType type) {
         this.userId = userId;
+        this.type = type;
     }
 
     public int getId() {
         return id;
     }
 
-    // if there's no userId, use the one in the session
-    public static List<Account> listAccount() {
-        int currentUserId = SessionMgr.getSession().getData().getUser().getId();
-        return listAccount(currentUserId);
-    }
-
-    public static List<Account> listAccount(int userId) {
+    public static Account getAccount(int userId, AccountType type) {
         try {
-            List<Account> accounts = Account.dao.queryBuilder().selectColumns("id")
-                    .where().eq("userId", userId).query();
-            return accounts;
-        } catch (Exception e) {
-            Logger.error("listAccount:" + e.getMessage());
+            List<Account> accounts = dao.queryBuilder().where().eq("userId", userId).and().eq("type", type).query();
+            if (accounts.size() == 0) {
+                Logger.fatal("Account not found, this should not happen");
+                return null;
+            }
+            return accounts.get(0);
+        } catch (SQLException e) {
+            Logger.error(e.getMessage());
+            return null;
         }
-        return new ArrayList<>();
     }
 
     public String getReport() {
         return null;
     }
 
+    // TODO: IMPLEMENT THIS
     public Result<Void> handleTransaction(Transaction tx) {
         if (tx.toAccountId == this.id) {
             // ...
@@ -71,6 +77,17 @@ public abstract class Account {
         // ...
         // TODO: HANDLE TRANSACTION
         return balance.deltaValue(tx.value);
+    }
+
+    public List<Balance> listBalance() {
+        try {
+            List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
+                    .where().eq("accountId", this.id).query();
+            return balances;
+        } catch (Exception e) {
+            Logger.error("listBalances:" + e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
     // adding and withdrawing money is not an atomic operation
