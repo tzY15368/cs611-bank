@@ -17,9 +17,9 @@ public abstract class Account {
     public static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
 
     @DatabaseField
-    private int id;
+    protected int id;
     @DatabaseField
-    private int userId;
+    protected int userId;
 
     public Account() {
         // ORMLite needs a no-arg constructor
@@ -50,9 +50,14 @@ public abstract class Account {
         return new ArrayList<>();
     }
 
+    public String getReport() {
+        return null;
+    }
+
     // adding and withdrawing money is not an atomic operation
     // but they share the same deltaBalance method
     // also if a balance is not found, it will be created
+    // interest rates are calculated in the INHERITED CLASSES
     public Result<Void> deltaBalance(int value, CurrencyType kind) {
         if (value < 0) {
             return new Result<>(false, "Cannot add negative balance", null);
