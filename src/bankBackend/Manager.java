@@ -1,11 +1,17 @@
 package bankBackend;
 
-import java.util.Date;
+import Utils.Logger;
 
-public class Manager extends User{
-    public Report getReport(){
-        // date is generated upon request
-        Report report=new Report();
-        return report;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Manager extends User {
+    public static List<User> listUsers() {
+        try {
+            return User.dao.queryForAll();
+        } catch (Exception e) {
+            Logger.error("listUsers:" + e.getMessage());
+        }
+        return new ArrayList<>();
     }
 }

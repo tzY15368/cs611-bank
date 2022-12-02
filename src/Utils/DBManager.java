@@ -1,7 +1,6 @@
 package Utils;
 
-import bankBackend.Account;
-import bankBackend.User;
+import bankBackend.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -27,7 +26,7 @@ public class DBManager {
             // The type params are not actually required,
             // as long as the caller of getDao knows the type of the second argument,
             // see User.java
-            Class[] classes = {User.class, Account.class};
+            Class[] classes = {User.class, Account.class, Balance.class, Stock.class, Transaction.class};
             for (Class c : classes) {
                 TableUtils.createTableIfNotExists(conn, c);
                 daoMap.put(c, DaoManager.createDao(conn, c));

@@ -6,6 +6,17 @@ public class Result<T> {
     private T data;
 
     public Result() {
+        // equivalent to returns void
+        this.success = true;
+        this.msg = "";
+        this.data = null;
+    }
+
+    public Result(T data) {
+        // equivalent to return T data
+        this.success = true;
+        this.msg = null;
+        this.data = data;
     }
 
     public Result(boolean success, String msg, T data) {
