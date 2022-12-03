@@ -13,7 +13,7 @@ import java.util.List;
 @DatabaseTable(tableName = "Users")
 public class User {
     static Dao<User, Integer> dao = DBManager.getDao(User.class);
-
+    static AbstractUserFactory userFactory = new DefaultUserFactory();
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField
@@ -123,34 +123,10 @@ public class User {
     }
 
     public static Result<Void> userRegister(String username, String password) {
-        try {
-            User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
-            if (user != null) {
-                return new Result<>(false, "User already exists", null);
-            }
-            User newUser = new User(username, password);
-            dao.create(newUser);
-            Account[] accs = new Account[]{
-                    new CheckingAccount(newUser.getId()),
-                    new SavingAccount(newUser.getId()),
-                    new LoanAccount(newUser.getId()),
-                    new SecurityAccount(newUser.getId())
-            };
-            List.of(accs).forEach(acc -> {
-                try {
-                    Account.dao.create(acc);
-                } catch (SQLException e) {
-                    Logger.fatal("SQL Exception in userRegister:" + e + ": " + e.getMessage());
-                }
-            });
-
-            return new Result<>();
-        } catch (SQLException e) {
-            return new Result<>(false, "SQL Exception in userRegister:" + e + ": " + e.getMessage(), null);
-        }
+        return userFactory.createUser(username, password);
     }
 
-    public static Result<Report> getResult(int userId) {
+    public static Result<Report> getReport(int userId) {
         return new Result<>(true, null, null);
     }
 }
