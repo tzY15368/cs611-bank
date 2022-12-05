@@ -20,7 +20,7 @@ enum AccountType {
 }
 
 @DatabaseTable(tableName = "Accounts")
-public abstract class Account {
+public class Account {
 
     static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
 
@@ -31,6 +31,10 @@ public abstract class Account {
 
     @DatabaseField
     protected AccountType type;
+
+    public Account() {
+        // ORMLite needs a no-arg constructor
+    }
 
     public Account(int userId, AccountType type) {
         this.userId = userId;
