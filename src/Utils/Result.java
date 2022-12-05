@@ -1,9 +1,9 @@
 package Utils;
 
 public class Result<T> {
-    private boolean success;
-    private String msg;
-    private T data;
+    public boolean success;
+    public String msg;
+    public T data;
 
     public Result() {
         // equivalent to returns void
@@ -25,28 +25,12 @@ public class Result<T> {
         this.data = data;
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public T getData() {
+    // USE WITH CAUTION, UNWRAP MAY FAIL CATASTROPHICALLY AND CALL SYSTEM.EXIT(-1)
+    public T unwrap() {
+        if (this.data == null) {
+            Logger.fatal("Result unwrap failed, data is null");
+        }
         return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
     }
 
     @Override

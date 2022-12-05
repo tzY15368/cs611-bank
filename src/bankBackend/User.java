@@ -74,10 +74,10 @@ public class User {
 
     public boolean isSecurityAccountEnabled() {
         Result<SavingAccount> res = getSavingAccount();
-        if (!res.isSuccess()) {
+        if (!res.success) {
             return false;
         }
-        SavingAccount saving = res.getData();
+        SavingAccount saving = res.data;
         for (Balance b : saving.listBalance()) {
             if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
                 return true;
@@ -93,13 +93,13 @@ public class User {
     public List<Account> listAccount() {
         List<Account> accs = new ArrayList<>();
         Result r = getCheckingAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getSavingAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getLoanAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getSecurityAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         return accs;
     }
 

@@ -2,6 +2,7 @@ package bankUI;
 
 import Utils.Logger;
 import bankBackend.User;
+import bankBackend.UserManager;
 
 import javax.swing.*;
 
@@ -24,8 +25,7 @@ public class BankGUI extends JFrame {
         button234Button.addActionListener(e -> {
             textField1.setText("" + cnt++);
             label2.setText("bbb");
-            // example to talk to the backend for a simulated login event
-            // User.userLogin(this.textField1.getText(), this.textField2.getText());
+            UserManager.getInstance().userLogin(this.textField1.getText(), this.textField2.getText());
         });
     }
 
