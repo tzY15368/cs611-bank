@@ -9,9 +9,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserManager implements IUserManager {
+public class UserManager {
 
-    private static AbstractUserFactory userFactory = new DefaultUserFactory();
+    private AbstractUserFactory userFactory;
+    private static UserManager instance = null;
+
+    private UserManager() {
+        userFactory = new DefaultUserFactory();
+    }
+
+    public static UserManager getInstance() {
+        if (instance == null) {
+            instance = new UserManager();
+        }
+        return instance;
+    }
 
     public Result<Void> userLogin(String username, String password) {
         try {
@@ -40,7 +52,6 @@ public class UserManager implements IUserManager {
         return new Result<>(true, null, null);
     }
 
-    @Override
     public List<User> listUsers() {
         try {
             return User.dao.queryForAll();
