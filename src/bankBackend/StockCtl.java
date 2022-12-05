@@ -88,36 +88,33 @@ public class StockCtl{
             stock.setAmount(stock.getAmount()-amount);
             Stock.dao.update(stock);
 
-            // reset the amount of stock of user
-            stock.setAmount(amount);
-            stock.setUserId(user.getId());
-            stock.setBuyInPrice(stock.getCurrentPrice());
-
-            Stock s = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).queryForFirst();
-            if (s == null) {
-                // TODO:not sure if generate new id
-                Stock.dao.create(stock);
-                return new Result<>(true, "buyStock: success: " , null);
-            }
+            // give the stock to user
+            Stock s=new Stock();
+            s.setAmount(amount);
+            s.setUserId(user.getId());
+            s.setName(name);
             s.setBuyInPrice(stock.getCurrentPrice());
-            s.setAmount(amount+ s.getAmount());
-            Stock.dao.update(s);
+            Stock.dao.create(s);
+            return new Result<>(true, "buyStock: success: " , null);
         }catch (SQLException e){
             Logger.error("SQL Exception in buyStock:"+e+e.getMessage());
             return new Result<>(false, "buyStock: "+e+e.getMessage(), null);
         }
-        return new Result<>(true, "buyStock: success ", null);
-
     }
 
     public static Result<Void> sellStock(String name, User user, int amount) {
         try {
-            Stock stock=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).queryForFirst();
+            List<Stock> stockList=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).query();
             //check if user can sell stock
-            if(stock==null){
+            if(stockList==null){
                 return new Result<>(false, "Stock doesn't exist", null);
             }
-            if(stock.getAmount()<amount){
+            //check if user have enough amount stock
+            int totalAmount=0;
+            for (int i=0;i<stockList.size();i++){
+                totalAmount+=stockList.get(i).getAmount();
+            }
+            if(totalAmount<amount){
                 return new Result<>(false, "Doesn't have enough amount to sell", null);
             }
 
@@ -128,15 +125,23 @@ public class StockCtl{
             balance.deltaValue(sellMoney);
             Balance.dao.update(balance);
 
-            // add money to realized profit
             int currentPrice=s.getCurrentPrice();
-            int buyPrice=stock.getBuyInPrice();
-            stock.addRealizedProfit(amount*(currentPrice-buyPrice));
-
-            // reduce the amount of stock user have
-            stock.setAmount(stock.getAmount()-amount);
-            Stock.dao.update(stock);
-
+            //reduce user's stock amount, and add realized profit
+            for (int i=0;i<stockList.size();i++){
+                Stock one=stockList.get(i);
+                int buyPrice=one.getBuyInPrice();
+                if(one.getAmount()<=amount){
+                    one.addRealizedProfit(one.getAmount()*(currentPrice-buyPrice));
+                    amount-=one.getAmount();
+                    one.setAmount(0);
+                    Stock.dao.update(one);
+                }
+                else {
+                    one.addRealizedProfit(amount*(currentPrice-buyPrice));
+                    one.setAmount(one.getAmount()-amount);
+                    Stock.dao.update(one);
+                }
+            }
         } catch (SQLException e){
             Logger.error("SQL Exception in sellStock:"+e+e.getMessage());
             return new Result<>(false, "sellStock: "+e+e.getMessage(), null);
@@ -146,7 +151,12 @@ public class StockCtl{
 
     public static Result<Integer> getRealizedProfit(String name, User user) {
         try {
-            int realizedProfit = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).queryForFirst().getRealizedProfit();
+            List<Stock> stockList=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).query();
+            int realizedProfit = 0;
+            for (Stock stock: stockList)
+            {
+                realizedProfit+=stock.getRealizedProfit();
+            }
             return new Result<>(true, "getRealizedProfit: success ", realizedProfit);
         }catch (SQLException e){
             Logger.error("SQL Exception in getRealizedProfit:"+e+e.getMessage());
@@ -156,11 +166,15 @@ public class StockCtl{
 
     public static Result<Integer> getUnrealizedProfit(String name, User user) {
         try{
-            Stock stock=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).queryForFirst();
-            int buyPrice= stock.getBuyInPrice();
-            int amount= stock.getAmount();
+            List<Stock> stockList=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).query();
             int currentPrice=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", -1).queryForFirst().getCurrentPrice();
-            int unrealizedProfit = (currentPrice-buyPrice)*amount;
+            int unrealizedProfit=0;
+            for (Stock stock:stockList
+                 ) {
+                int buyPrice= stock.getBuyInPrice();
+                int amount= stock.getAmount();
+                unrealizedProfit += (currentPrice-buyPrice)*amount;
+            }
             return new Result<>(true, "getUnrealizedProfit: success ", unrealizedProfit);
         }catch (SQLException e){
             Logger.error("SQL Exception in getUnrealizedProfit:"+e+e.getMessage());
