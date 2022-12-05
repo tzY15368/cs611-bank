@@ -103,30 +103,5 @@ public class User {
         return accs;
     }
 
-    public static Result<Void> userLogin(String username, String password) {
-        try {
-            User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
-            if (user == null) {
-                return new Result<>(false, "User not found", null);
-            }
-            if (user.getPassword().equals(password)) {
-                // set session
-                SessionMgr.setSession(new BasicSession(user));
 
-                return new Result<>(true, null, null);
-            } else {
-                return new Result<>(false, "Wrong password", null);
-            }
-        } catch (SQLException e) {
-            return new Result<>(false, "SQL Exception in userLogin:" + e + ": " + e.getMessage(), null);
-        }
-    }
-
-    public static Result<Void> userRegister(String username, String password) {
-        return userFactory.createUser(username, password);
-    }
-
-    public static Result<Report> getReport(int userId) {
-        return new Result<>(true, null, null);
-    }
 }
