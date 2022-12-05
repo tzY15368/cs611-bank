@@ -1,14 +1,14 @@
 package bankBackend;
 
-import Utils.Result;
+public class SavingAccount extends Account {
 
-import java.util.ArrayList;
+    public SavingAccount() {
+        // ORMLite needs a no-arg constructor
+        super(-1, AccountType.SAVINGS);
+    }
 
-public class SavingAccount extends Account{
-    public SavingAccount(int id, int userId){
-        super(id,userId);
+    public SavingAccount(int userId) {
+        super(userId, AccountType.SAVINGS);
     }
-    public Result<Boolean> validForStock(){
-        return new Result(true,"",true);
-    }
+
 }

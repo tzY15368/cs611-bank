@@ -1,29 +1,35 @@
 package bankBackend;
 
-
-import Utils.DBManager;
-import Utils.Logger;
-
-import java.util.Arrays;
-
+import Utils.*;
 
 public class BankBackend {
     public String name;
 
     public BankBackend() {
         this.name = "helo";
-        try {
-            DBManager.init();
-            User usr = new User();
-            usr.setName("npm");
-            User.dao.createIfNotExists(usr);
 
-            User usr2 = User.dao.queryForEq("name", "npm").get(0);
-            Logger.info("usr:" + usr2.getName());
-            DBManager.close();
-
-        } catch (Exception e) {
-            Logger.error("Exception in init:" + e + ": " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+        Result r = DBManager.init();
+        if (!r.isSuccess()) {
+            Logger.fatal(r.getMsg());
         }
+
+        Timer.init();
+
+        // get a default user for the session
+        User usr2 = null;
+
+        try {
+            User.dao.createIfNotExists(new User("npm", "password123"));
+            usr2 = User.dao.queryForEq("name", "npm").get(0);
+            Logger.info("usr-session:" + usr2.getName());
+        } catch (Exception e) {
+            Logger.fatal(e.getMessage());
+        }
+        SessionMgr.setSession(new BasicSession(usr2));
+
+        // test the session
+
+        User usr = SessionMgr.getSession().getData().getUser();
+        Logger.info("usr-got:" + usr.getName());
     }
 }

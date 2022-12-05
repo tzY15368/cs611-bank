@@ -1,56 +1,126 @@
 package bankBackend;
 
+import Utils.DBManager;
+import Utils.Logger;
 import Utils.Result;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+enum AccountType {
+    CHECKING,
+    SAVINGS,
+    Loan,
+    Security
+}
+
+@DatabaseTable(tableName = "Accounts")
 public abstract class Account {
-    @DatabaseField
-    private int id;
-    @DatabaseField
-    private int userId;
 
-    public Account(){}
+    static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
 
-    public Account(int id, int userId){
-        this.id=id;
-        this.userId=userId;
+    @DatabaseField
+    protected int id;
+    @DatabaseField
+    protected int userId;
+
+    @DatabaseField
+    protected AccountType type;
+
+    public Account(int userId, AccountType type) {
+        this.userId = userId;
+        this.type = type;
     }
-
-    private ArrayList<Balance> balanceArrayList;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public static Account getAccount(int userId, AccountType type) {
+        try {
+            List<Account> accounts = dao.queryBuilder().where().eq("userId", userId).and().eq("type", type).query();
+            if (accounts.size() == 0) {
+                Logger.fatal("Account not found, this should not happen");
+                return null;
+            }
+            return accounts.get(0);
+        } catch (SQLException e) {
+            Logger.error(e.getMessage());
+            return null;
+        }
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public Result<Void> addBalance(Balance balance) {
-        this.balanceArrayList.add(balance);
+    public String getReport() {
         return null;
     }
 
-    public Result<Void> deleteBalance(Balance balance){
-        this.balanceArrayList.remove(balance);
-        return null;
+    // TODO: IMPLEMENT THIS
+    public Result<Void> handleTransaction(Transaction tx) {
+        if (tx.toAccountId == this.id) {
+            // ...
+            // TODO: HANDLE TRANSACTION
+        }
+        Balance balance = null;
+        try {
+            balance = Balance.dao.queryForId(tx.fromBalanceId);
+        } catch (SQLException e) {
+            Logger.error("handleTransaction:" + e.getMessage());
+        }
+        if (balance == null) {
+            return new Result<>(false, "Balance not found", null);
+        }
+        // ...
+        // TODO: HANDLE TRANSACTION
+        return balance.deltaValue(tx.value);
     }
 
-    public Result<Void> openAccount(){
-        return null;
+    public List<Balance> listBalance() {
+        try {
+            List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
+                    .where().eq("accountId", this.id).query();
+            return balances;
+        } catch (Exception e) {
+            Logger.error("listBalances:" + e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
-    public Result<Void> closeAccount(){
-        return null;
+    // adding and withdrawing money is not an atomic operation
+    // but they share the same deltaBalance method
+    // also if a balance is not found, it will be created
+    // interest rates are calculated in the INHERITED CLASSES
+    private Result<Void> deltaBalance(int value, CurrencyType kind) {
+        if (value < 0) {
+            return new Result<>(false, "Cannot add negative balance", null);
+        }
+        //if exist, add money, if not exist, create new balance
+        Result<Balance> res = Balance.getBalanceWithCurrency(this, kind);
+        if (!res.isSuccess()) {
+            return new Result<>(false, "addBalance: " + res.getMsg(), null);
+        }
+        Balance balance = res.getData();
+        if (balance == null) {
+            Result<Balance> newRes = Balance.createBalance(this, kind);
+            if (!newRes.isSuccess()) {
+                return new Result<>(false, "addBalance: " + newRes.getMsg(), null);
+            }
+            balance = newRes.getData();
+        }
+        assert balance != null;
+        Result addResult = balance.deltaValue(value);
+        if (!addResult.isSuccess()) {
+            return new Result<>(false, "addBalance: " + addResult.getMsg(), null);
+        }
+        try {
+            Balance.dao.update(balance);
+            return new Result<>(true, "addBalance: success", null);
+        } catch (Exception e) {
+            Logger.error("addBalance: " + e.getMessage());
+            return new Result<>(false, "addBalance: " + e.getMessage(), null);
+        }
     }
 }

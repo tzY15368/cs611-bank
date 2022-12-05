@@ -1,41 +1,17 @@
 package bankBackend;
 
-import Utils.Result;
+import Utils.Logger;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
-public class Manager extends User{
-    private ArrayList<Stock> stockArrayList;
-
-    public Report getReport(Date date){
-        // date is generated upon request
-        Report report=new Report();
-        return report;
+public class Manager extends User {
+    public static List<User> listUsers() {
+        try {
+            return User.dao.queryForAll();
+        } catch (Exception e) {
+            Logger.error("listUsers:" + e.getMessage());
+        }
+        return new ArrayList<>();
     }
-
-    public Result<Void> chargeInterest(){
-        return null;
-    }
-
-    public Result<Void> payInterest(){
-        return null;
-    }
-
-    public ArrayList<Stock> addStock(String name, double price){
-        Stock stock=new Stock(name,price);
-        stockArrayList.add(stock);
-        return stockArrayList;
-    }
-
-    public ArrayList<Stock> deleteStock(String name){
-        return stockArrayList;
-    }
-
-    public Result<Void> changeStockPrice(String name){
-        return null;
-    }
-
-
-
 }

@@ -1,5 +1,7 @@
 package bankBackend;
 
+import Utils.DBManager;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -12,6 +14,8 @@ enum TransactionType {
 
 @DatabaseTable(tableName = "Transactions")
 public class Transaction {
+    static Dao<Transaction, Integer> dao = DBManager.getDao(Transaction.class);
+
     @DatabaseField
     public int fromBalanceId;
     @DatabaseField
@@ -20,6 +24,8 @@ public class Transaction {
     public TransactionType type;
     @DatabaseField
     public int value;
+    @DatabaseField
+    public long timestamp;
 
 
     public Transaction() {
@@ -31,4 +37,5 @@ public class Transaction {
         this.type = type;
         this.value = value;
     }
+
 }

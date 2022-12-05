@@ -2,26 +2,19 @@ package bankBackend;
 
 import Utils.Result;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class SecurityAccount extends Account{
-    private HashMap<Stock, Integer> stockArrayList;
-
-    public HashMap<Stock, Integer> getStockArrayList() {
-        return stockArrayList;
+public class SecurityAccount extends Account {
+    private List<Stock> stockList;
+    private List<Balance> balanceList;
+    public SecurityAccount() {
+        // ORMLite needs a no-arg constructor
+        super(-1, AccountType.Security);
     }
 
-    public SecurityAccount(int id, int userId){
-        super(id,userId);
+    public SecurityAccount(int userId) {
+        super(userId, AccountType.Security);
     }
 
-    public Result<Void> buyStock(Stock stock){
-        return null;
-    }
-
-    public Result<Void> sellStock(Stock stock){
-        //get money and put into balanceArraylist in securityAccount
-        return null;
-    }
 }
