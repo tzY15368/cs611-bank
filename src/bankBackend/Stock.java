@@ -8,8 +8,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 
 @DatabaseTable(tableName = "Stock")
-public
-class Stock {
+public class Stock {
     static Dao<Stock, Integer> dao = DBManager.getDao(Stock.class);
 
     @DatabaseField(generatedId = true)

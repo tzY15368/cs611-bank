@@ -9,6 +9,8 @@ import java.util.List;
 
 public class StockCtl {
 
+    // either this or singleton pattern
+
     public static List<Stock> listStocks() {
         try {
             Stock.dao.queryForAll();
@@ -34,7 +36,7 @@ public class StockCtl {
         }
     }
 
-    public static Result<Void> updateStock(String name) {
+    public static Result<Void> updateStock(Stock stock) {
         return null;
     }
 

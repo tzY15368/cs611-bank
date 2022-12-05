@@ -26,7 +26,7 @@ public class DBManager {
             // The type params are not actually required,
             // as long as the caller of getDao knows the type of the second argument,
             // see User.java
-            Class[] classes = {User.class, Account.class, Balance.class, Stock.class, Transaction.class};
+            Class[] classes = {User.class, Account.class, Balance.class, Stock.class, Transaction.class, InterestRate.class};
             for (Class c : classes) {
                 TableUtils.createTableIfNotExists(conn, c);
                 daoMap.put(c, DaoManager.createDao(conn, c));

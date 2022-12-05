@@ -53,31 +53,54 @@ public class User {
         return null;
     }
 
+    private Result<Account> getAccount(AccountType type) {
+        try {
+            List<Account> accounts = Account.dao.queryBuilder().where().eq("userId", this.id).and().eq("type", type).query();
+            if (accounts.size() == 0) {
+                Logger.warn("Account not found, this should not happen");
+                return new Result<>(false, "Account not found", null);
+            }
+            return new Result<>(true, "Account found", accounts.get(0));
+        } catch (SQLException e) {
+            Logger.error("getAccount:" + e.getMessage());
+        }
+        return new Result<>(false, "Account not found", null);
+    }
+
     public Result<SecurityAccount> getSecurityAccount() {
         if (!isSecurityAccountEnabled()) {
             return new Result(false, "Security account is not enabled", null);
         }
-        return new Result(true, null, SecurityAccount.getAccount(id, AccountType.Security));
+        Result r = getAccount(AccountType.Security);
+        r.data = (SecurityAccount) r.data;
+        return r;
     }
 
     public Result<LoanAccount> getLoanAccount() {
-        return new Result(true, null, LoanAccount.getAccount(id, AccountType.Loan));
+        // ugly hack
+        Result r = getAccount(AccountType.Loan);
+        r.data = (LoanAccount) r.data;
+        return r;
     }
 
     public Result<SavingAccount> getSavingAccount() {
-        return new Result(true, null, SavingAccount.getAccount(id, AccountType.SAVINGS));
+        Result r = this.getAccount(AccountType.SAVINGS);
+        r.data = (SavingAccount) r.data;
+        return r;
     }
 
     public Result<CheckingAccount> getCheckingAccount() {
-        return new Result(true, null, CheckingAccount.getAccount(id, AccountType.CHECKING));
+        Result r = this.getAccount(AccountType.CHECKING);
+        r.data = (CheckingAccount) r.data;
+        return r;
     }
 
     public boolean isSecurityAccountEnabled() {
         Result<SavingAccount> res = getSavingAccount();
-        if (!res.isSuccess()) {
+        if (!res.success) {
             return false;
         }
-        SavingAccount saving = res.getData();
+        SavingAccount saving = res.data;
         for (Balance b : saving.listBalance()) {
             if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
                 return true;
@@ -93,13 +116,13 @@ public class User {
     public List<Account> listAccount() {
         List<Account> accs = new ArrayList<>();
         Result r = getCheckingAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getSavingAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getLoanAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getSecurityAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         return accs;
     }
 

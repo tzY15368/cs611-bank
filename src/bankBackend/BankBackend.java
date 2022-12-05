@@ -9,8 +9,8 @@ public class BankBackend {
         this.name = "helo";
 
         Result r = DBManager.init();
-        if (!r.isSuccess()) {
-            Logger.fatal(r.getMsg());
+        if (!r.success) {
+            Logger.fatal(r.msg);
         }
 
         Timer.init();
@@ -29,7 +29,7 @@ public class BankBackend {
 
         // test the session
 
-        User usr = SessionMgr.getSession().getData().getUser();
+        User usr = SessionMgr.getSession().data.getUser();
         Logger.info("usr-got:" + usr.getName());
     }
 }
