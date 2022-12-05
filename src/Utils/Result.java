@@ -25,7 +25,9 @@ public class Result<T> {
         this.data = data;
     }
 
+    // data MUST NOT be null
     // USE WITH CAUTION, UNWRAP MAY FAIL CATASTROPHICALLY AND CALL SYSTEM.EXIT(-1)
+    // SEE IMPL OF LOGGER.FATAL
     public T unwrap() {
         if (this.data == null) {
             Logger.fatal("Result unwrap failed, data is null");

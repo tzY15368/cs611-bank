@@ -45,21 +45,7 @@ public class Account {
         return id;
     }
 
-    public static Account getAccount(int userId, AccountType type) {
-        try {
-            List<Account> accounts = dao.queryBuilder().where().eq("userId", userId).and().eq("type", type).query();
-            if (accounts.size() == 0) {
-                Logger.fatal("Account not found, this should not happen");
-                return null;
-            }
-            return accounts.get(0);
-        } catch (SQLException e) {
-            Logger.error(e.getMessage());
-            return null;
-        }
-    }
-
-    public String getReport() {
+    String getReport() {
         return null;
     }
 
