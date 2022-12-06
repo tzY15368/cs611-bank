@@ -28,6 +28,9 @@ public class Balance {
     @DatabaseField(generatedId = true)
     private int id;
 
+    @DatabaseField
+    private int userId;
+
     // note that Money has a 100x ratio: 1$ is 100 in int value
     @DatabaseField
     private int value;
@@ -63,7 +66,6 @@ public class Balance {
         this.value += value;
         return new Result<>(true, "", null);
     }
-
 
     public static Result<Balance> getBalanceWithCurrency(Account account, CurrencyType kind) {
         try {

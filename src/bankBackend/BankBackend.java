@@ -9,6 +9,7 @@ public class BankBackend {
         this.name = "helo";
 
         Result r = DBManager.init();
+
         if (!r.success) {
             Logger.fatal(r.msg);
         }

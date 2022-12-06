@@ -45,6 +45,7 @@ public class Account {
         return id;
     }
 
+
     String getReport() {
         return null;
     }
@@ -90,6 +91,7 @@ public class Account {
         }
         //if exist, add money, if not exist, create new balance
         Result<Balance> res = Balance.getBalanceWithCurrency(this, kind);
+
         if (!res.success) {
             return new Result<>(false, "addBalance: " + res.msg, null);
         }
