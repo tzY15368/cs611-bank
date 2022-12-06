@@ -20,7 +20,7 @@ enum AccountType {
 }
 
 @DatabaseTable(tableName = "Accounts")
-public class Account {
+public abstract class Account {
 
     static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
 
@@ -32,10 +32,6 @@ public class Account {
     @DatabaseField
     protected AccountType type;
 
-    public Account() {
-        // ORMLite needs a no-arg constructor
-    }
-
     public Account(int userId, AccountType type) {
         this.userId = userId;
         this.type = type;
@@ -45,8 +41,7 @@ public class Account {
         return id;
     }
 
-
-    String getReport() {
+    public String getReport() {
         return null;
     }
 
@@ -92,21 +87,21 @@ public class Account {
         //if exist, add money, if not exist, create new balance
         Result<Balance> res = Balance.getBalanceWithCurrency(this, kind);
 
-        if (!res.success) {
-            return new Result<>(false, "addBalance: " + res.msg, null);
+        if (!res.isSuccess()) {
+            return new Result<>(false, "addBalance: " + res.getMsg(), null);
         }
-        Balance balance = res.data;
+        Balance balance = res.getData();
         if (balance == null) {
             Result<Balance> newRes = Balance.createBalance(this, kind);
-            if (!newRes.success) {
-                return new Result<>(false, "addBalance: " + newRes.msg, null);
+            if (!newRes.isSuccess()) {
+                return new Result<>(false, "addBalance: " + newRes.getMsg(), null);
             }
-            balance = newRes.data;
+            balance = newRes.getData();
         }
         assert balance != null;
         Result addResult = balance.deltaValue(value);
-        if (!addResult.success) {
-            return new Result<>(false, "addBalance: " + addResult.msg, null);
+        if (!addResult.isSuccess()) {
+            return new Result<>(false, "addBalance: " + addResult.getMsg(), null);
         }
         try {
             Balance.dao.update(balance);

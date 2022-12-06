@@ -55,7 +55,7 @@ public class User {
         return null;
     }
 
-    private Result<Account> getAccount(AccountType type) {
+    public Result<Account> getAccount(AccountType type) {
         try {
             List<Account> accounts = Account.dao.queryBuilder().where().eq("userId", this.id).and().eq("type", type).query();
             if (accounts.size() == 0) {

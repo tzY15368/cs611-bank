@@ -1,6 +1,7 @@
 package bankBackend;
 
 import Utils.DBManager;
+import Utils.Timer;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -25,10 +26,14 @@ public class Transaction {
     @DatabaseField
     public int value;
     @DatabaseField
-    public long timestamp;
+    public int date;
 
 
     public Transaction() {
+    }
+
+    public int getDate(){
+        return date;
     }
 
     public Transaction(int fromBalanceId, int toAccountId, TransactionType type, int value) {
@@ -36,6 +41,7 @@ public class Transaction {
         this.toAccountId = toAccountId;
         this.type = type;
         this.value = value;
+        this.date=Timer.getInstance().getCurrentDate();
     }
 
 }

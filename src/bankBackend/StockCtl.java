@@ -75,7 +75,7 @@ public class StockCtl{
 
             // assume we can only use USD to buy stock, reset user's money
             int needMoney= amount*stock.getCurrentPrice();
-            Balance balance=Balance.getBalanceWithCurrency(Account.getAccount(user.getId(), AccountType.Security),CurrencyType.USD).getData();
+            Balance balance=Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).getData(),CurrencyType.USD).getData();
             if(balance.getValue()<needMoney){
                 return new Result<>(false, "Don't have enough money to buy stock", null);
             }
@@ -121,7 +121,7 @@ public class StockCtl{
             //give user sell stock money
             Stock s=Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", -1).queryForFirst();
             int sellMoney=s.getCurrentPrice()*amount;
-            Balance balance=Balance.getBalanceWithCurrency(Account.getAccount(user.getId(), AccountType.Security),CurrencyType.USD).getData();
+            Balance balance=Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).getData(),CurrencyType.USD).getData();
             balance.deltaValue(sellMoney);
             Balance.dao.update(balance);
 
