@@ -17,6 +17,15 @@ public class Timer implements Runnable{
 
     public static void init() {
         instance = new Timer();
+        // run on a new thread
+        try{
+            Thread t = new Thread(instance);
+            t.start();
+            Logger.info("Timer started at time "+System.currentTimeMillis());
+        } catch (Exception e) {
+            Logger.fatal(e.getMessage());
+        }
+
     }
 
     public static Timer getInstance() {
