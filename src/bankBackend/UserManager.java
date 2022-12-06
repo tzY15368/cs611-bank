@@ -1,9 +1,6 @@
 package bankBackend;
 
-import Utils.BasicSession;
-import Utils.Logger;
-import Utils.Result;
-import Utils.SessionMgr;
+import Utils.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,7 +46,7 @@ public class UserManager {
     }
 
     public Result<Report> getReport(int userId) {
-        return new Result<>(true, null, null);
+        return Report.getReport(Timer.getInstance().getCurrentDate());
     }
 
     public List<User> listUsers() {
