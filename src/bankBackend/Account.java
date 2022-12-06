@@ -37,6 +37,10 @@ public abstract class Account {
         this.type = type;
     }
 
+    public Account() {
+        // ORMLite needs a no-arg constructor
+    }
+
     public int getId() {
         return id;
     }
