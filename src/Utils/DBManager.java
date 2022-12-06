@@ -19,7 +19,7 @@ public class DBManager {
     public static Result<Void> init() {
         try {
 
-            conn = new JdbcConnectionSource("jdbc:sqlite:bank.db");
+            conn = new JdbcConnectionSource(Constants.DB_URL);
             didInit = true;
             daoMap = new HashMap<>();
 
