@@ -3,6 +3,7 @@ package bankBackend;
 import Utils.DBManager;
 import Utils.Logger;
 import Utils.Result;
+import Utils.SessionMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -19,7 +20,7 @@ enum AccountType {
 }
 
 @DatabaseTable(tableName = "Accounts")
-public abstract class Account {
+public class Account {
 
     static Dao<Account, Integer> dao = DBManager.getDao(Account.class);
 
@@ -31,6 +32,10 @@ public abstract class Account {
     @DatabaseField
     protected AccountType type;
 
+    public Account() {
+        // ORMLite needs a no-arg constructor
+    }
+
     public Account(int userId, AccountType type) {
         this.userId = userId;
         this.type = type;
@@ -40,21 +45,8 @@ public abstract class Account {
         return id;
     }
 
-    public static Account getAccount(int userId, AccountType type) {
-        try {
-            List<Account> accounts = dao.queryBuilder().where().eq("userId", userId).and().eq("type", type).query();
-            if (accounts.size() == 0) {
-                Logger.fatal("Account not found, this should not happen");
-                return null;
-            }
-            return accounts.get(0);
-        } catch (SQLException e) {
-            Logger.error(e.getMessage());
-            return null;
-        }
-    }
 
-    public String getReport() {
+    String getReport() {
         return null;
     }
 
@@ -99,21 +91,22 @@ public abstract class Account {
         }
         //if exist, add money, if not exist, create new balance
         Result<Balance> res = Balance.getBalanceWithCurrency(this, kind);
-        if (!res.isSuccess()) {
-            return new Result<>(false, "addBalance: " + res.getMsg(), null);
+
+        if (!res.success) {
+            return new Result<>(false, "addBalance: " + res.msg, null);
         }
-        Balance balance = res.getData();
+        Balance balance = res.data;
         if (balance == null) {
             Result<Balance> newRes = Balance.createBalance(this, kind);
-            if (!newRes.isSuccess()) {
-                return new Result<>(false, "addBalance: " + newRes.getMsg(), null);
+            if (!newRes.success) {
+                return new Result<>(false, "addBalance: " + newRes.msg, null);
             }
-            balance = newRes.getData();
+            balance = newRes.data;
         }
         assert balance != null;
         Result addResult = balance.deltaValue(value);
-        if (!addResult.isSuccess()) {
-            return new Result<>(false, "addBalance: " + addResult.getMsg(), null);
+        if (!addResult.success) {
+            return new Result<>(false, "addBalance: " + addResult.msg, null);
         }
         try {
             Balance.dao.update(balance);

@@ -3,10 +3,12 @@ package bankBackend;
 import Utils.DBManager;
 import Utils.Logger;
 import Utils.Result;
+import Utils.SessionMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 enum CurrencyType {
@@ -45,10 +47,6 @@ public class Balance {
         this.type = kind;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
     public int getAccountId() {
         return accountId;
     }
@@ -68,7 +66,6 @@ public class Balance {
         this.value += value;
         return new Result<>(true, "", null);
     }
-
 
     public static Result<Balance> getBalanceWithCurrency(Account account, CurrencyType kind) {
         try {

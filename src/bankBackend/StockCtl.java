@@ -180,5 +180,6 @@ public class StockCtl{
             Logger.error("SQL Exception in getUnrealizedProfit:"+e+e.getMessage());
             return new Result<>(false, "getUnrealizedProfit: "+e+e.getMessage(), null);
         }
+
     }
 }

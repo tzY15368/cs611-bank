@@ -14,6 +14,8 @@ import java.util.List;
 public class User {
     static Dao<User, Integer> dao = DBManager.getDao(User.class);
 
+    static AbstractUserFactory userFactory = new DefaultUserFactory();
+
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField
@@ -53,31 +55,57 @@ public class User {
         return null;
     }
 
+    private Result<Account> getAccount(AccountType type) {
+        try {
+            List<Account> accounts = Account.dao.queryBuilder().where().eq("userId", this.id).and().eq("type", type).query();
+            if (accounts.size() == 0) {
+                Logger.warn("Account not found, this should not happen");
+                return new Result<>(false, "Account not found", null);
+            }
+            return new Result<>(true, "Account found", accounts.get(0));
+        } catch (SQLException e) {
+            Logger.error("getAccount:" + e.getMessage());
+        }
+        return new Result<>(false, "Account not found", null);
+    }
+
     public Result<SecurityAccount> getSecurityAccount() {
         if (!isSecurityAccountEnabled()) {
             return new Result(false, "Security account is not enabled", null);
         }
-        return new Result(true, null, SecurityAccount.getAccount(id, AccountType.Security));
+
+        Result r = getAccount(AccountType.Security);
+        r.data = (SecurityAccount) r.data;
+        return r;
     }
 
     public Result<LoanAccount> getLoanAccount() {
-        return new Result(true, null, LoanAccount.getAccount(id, AccountType.Loan));
+        // ugly hack
+        Result r = getAccount(AccountType.Loan);
+        r.data = (LoanAccount) r.data;
+        return r;
     }
 
     public Result<SavingAccount> getSavingAccount() {
-        return new Result(true, null, SavingAccount.getAccount(id, AccountType.SAVINGS));
+        Result r = this.getAccount(AccountType.SAVINGS);
+        r.data = (SavingAccount) r.data;
+        return r;
     }
 
     public Result<CheckingAccount> getCheckingAccount() {
-        return new Result(true, null, CheckingAccount.getAccount(id, AccountType.CHECKING));
+        Result r = this.getAccount(AccountType.CHECKING);
+        r.data = (CheckingAccount) r.data;
+        return r;
     }
 
     public boolean isSecurityAccountEnabled() {
         Result<SavingAccount> res = getSavingAccount();
-        if (!res.isSuccess()) {
+
+        if (!res.success) {
             return false;
         }
-        SavingAccount saving = res.getData();
+        SavingAccount saving = res.data;
+
         for (Balance b : saving.listBalance()) {
             if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
                 return true;
@@ -93,63 +121,15 @@ public class User {
     public List<Account> listAccount() {
         List<Account> accs = new ArrayList<>();
         Result r = getCheckingAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+
+        if (r.success) accs.add((Account) r.data);
         r = getSavingAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getLoanAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         r = getSecurityAccount();
-        if (r.isSuccess()) accs.add((Account) r.getData());
+        if (r.success) accs.add((Account) r.data);
         return accs;
     }
 
-    public static Result<Void> userLogin(String username, String password) {
-        try {
-            User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
-            if (user == null) {
-                return new Result<>(false, "User not found", null);
-            }
-            if (user.getPassword().equals(password)) {
-                // set session
-                SessionMgr.setSession(new BasicSession(user));
-
-                return new Result<>(true, null, null);
-            } else {
-                return new Result<>(false, "Wrong password", null);
-            }
-        } catch (SQLException e) {
-            return new Result<>(false, "SQL Exception in userLogin:" + e + ": " + e.getMessage(), null);
-        }
-    }
-
-    public static Result<Void> userRegister(String username, String password) {
-        try {
-            User user = dao.queryBuilder().where().eq("name", username).queryForFirst();
-            if (user != null) {
-                return new Result<>(false, "User already exists", null);
-            }
-            User newUser = new User(username, password);
-            dao.create(newUser);
-            Account[] accs = new Account[]{
-                    new CheckingAccount(newUser.getId()),
-                    new SavingAccount(newUser.getId()),
-                    new LoanAccount(newUser.getId()),
-                    new SecurityAccount(newUser.getId())
-            };
-            List.of(accs).forEach(acc -> {
-                try {
-                    Account.dao.create(acc);
-                } catch (SQLException e) {
-                    Logger.fatal("SQL Exception in userRegister:" + e + ": " + e.getMessage());
-                }
-            });
-
-            return new Result<>();
-        } catch (SQLException e) {
-            return new Result<>(false, "SQL Exception in userRegister:" + e + ": " + e.getMessage(), null);
-        }
-    }
-    public static Result<Report> getResult(int userId) {
-        return new Result<>(true, null, null);
-    }
 }
