@@ -19,14 +19,22 @@ public class DBManager {
     public static Result<Void> init() {
         try {
 
-            conn = new JdbcConnectionSource("jdbc:sqlite:bank.db");
+            conn = new JdbcConnectionSource(Constants.DB_URL);
             didInit = true;
             daoMap = new HashMap<>();
 
             // The type params are not actually required,
             // as long as the caller of getDao knows the type of the second argument,
             // see User.java
-            Class[] classes = {User.class, Account.class, Balance.class, Stock.class, Transaction.class, InterestRate.class};
+            Class[] classes = {
+                    User.class,
+                    Account.class,
+                    Balance.class,
+                    Stock.class,
+                    Transaction.class,
+                    InterestRate.class,
+                    DateCtl.class,
+            };
             for (Class c : classes) {
                 TableUtils.createTableIfNotExists(conn, c);
                 daoMap.put(c, DaoManager.createDao(conn, c));
