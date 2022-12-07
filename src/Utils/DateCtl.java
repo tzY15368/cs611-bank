@@ -19,6 +19,9 @@ public class DateCtl {
     @DatabaseField
     private float timeRatio;
 
+    @DatabaseField
+    private int elapsedHours;
+
     public DateCtl() {
         // ORMLite needs a no-arg constructor
     }
@@ -57,6 +60,19 @@ public class DateCtl {
         }
         Logger.info("New date created: " + dateCtl.date);
         return dateCtl.date;
+    }
+
+    public int getCurrentHour() {
+        return this.elapsedHours;
+    }
+
+    public void setCurrentHour(int hour) {
+        this.elapsedHours = hour;
+        try {
+            dao.update(this);
+        } catch (Exception e) {
+            Logger.fatal(e.getMessage());
+        }
     }
 
     public static DateCtl getCurrentDate() {
