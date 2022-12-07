@@ -1,5 +1,8 @@
 package bankBackend;
 
+import Utils.Logger;
+import Utils.Timer;
+
 public class SavingAccount extends Account {
 
     public SavingAccount() {
@@ -11,4 +14,8 @@ public class SavingAccount extends Account {
         super(userId, AccountType.SAVINGS);
     }
 
+    public static void generateInterestCallback(int date, int hour) {
+        // TODO
+        Logger.info("Generating interest...");
+    }
 }

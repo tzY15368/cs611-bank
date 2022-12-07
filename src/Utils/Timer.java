@@ -1,10 +1,12 @@
 package Utils;
 
+import bankBackend.SavingAccount;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-//Simple Timer, only have date.Because we can find report by date, and after some day we can earn interest or pay fee.
+// general task scheduler with dynamic time ratios to real world time
 public class Timer implements Runnable {
 
     class ConsumerInfo {
@@ -21,6 +23,7 @@ public class Timer implements Runnable {
 
     private static Timer instance = null;
 
+    // register observers here
     public static void init() {
         instance = new Timer();
         // run on a new thread
@@ -31,7 +34,7 @@ public class Timer implements Runnable {
         } catch (Exception e) {
             Logger.fatal(e.getMessage());
         }
-
+        instance.addTimerObserver("generateInterest", SavingAccount::generateInterestCallback, 24);
     }
 
     public static Timer getInstance() {
@@ -48,12 +51,17 @@ public class Timer implements Runnable {
     }
 
     // interval: virtual hours
-    public void addTimerObserver(String name, BiConsumer<Integer, Integer> timerObserver, int scheduleInterval) {
+    public boolean addTimerObserver(String name, BiConsumer<Integer, Integer> timerObserver, int scheduleInterval) {
         if (scheduleInterval < 1) {
             Logger.warn("Interval too short, set to 1");
             scheduleInterval = 1;
+        } else if (scheduleInterval > 24) {
+            Logger.warn("Interval too long, set to 24");
+            scheduleInterval = 24;
         }
         observers.put(name, new ConsumerInfo(timerObserver, scheduleInterval));
+        Logger.info("Timer observer added: " + name);
+        return true;
     }
 
     public int getCurrentDate() {
@@ -71,29 +79,34 @@ public class Timer implements Runnable {
             float virtualHourInRealMs = 3600000 / timerRatio;
             Logger.info("Timer ratio is " + timerRatio +
                     ", virtual hour in real seconds is " + virtualHourInRealMs / 1000);
-            // create current date
-            int currentDate = DateCtl.createNewDate();
+            // get current date
+            DateCtl currentDate = DateCtl.getCurrentDate();
             try {
                 float secPerHour = virtualHourInRealMs / 1000;
-                for (int i = 0; i < 24; i++) {
-                    Thread.sleep((long) virtualHourInRealMs);
+                Logger.info("Timer: starting from hour " + currentDate.getCurrentHour());
+                for (int i = currentDate.getCurrentHour() + 1; i < 24; i++) {
                     if (secPerHour <= 1) {
                         Logger.info("Hour = " + i);
                     }
                     // SCHEDULE TIMED JOBS
                     for (String name : observers.keySet()) {
-                        Logger.info(String.format("Running task %s", name));
                         ConsumerInfo consumerInfo = observers.get(name);
                         if (i % consumerInfo.interval == 0) {
-                            consumerInfo.consumer.accept(currentDate, i);
+                            Logger.info(String.format("Running task %s", name));
+                            consumerInfo.consumer.accept(currentDate.getDate(), i);
                         }
                     }
+                    // update hour
+                    currentDate.setCurrentHour(i);
+                    Thread.sleep((long) virtualHourInRealMs);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 Logger.warn("Timer thread interrupted" + e);
                 System.exit(1);
             }
+            // the day has passed, start with a new date...
+            DateCtl.createNewDate();
         }
     }
 }

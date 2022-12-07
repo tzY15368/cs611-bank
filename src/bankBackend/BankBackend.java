@@ -1,19 +1,21 @@
 package bankBackend;
 
 import Utils.*;
+import com.j256.ormlite.logger.LocalLogBackend;
 
 public class BankBackend {
     public String name;
 
     public BankBackend() {
         this.name = "helo";
-
+        // turn off logging in ormlite
+        System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
         Result r = DBManager.init();
 
         if (!r.success) {
             Logger.fatal(r.msg);
         }
-
+        // note that this would start a new thread.
         Timer.init();
 
         // get a default user for the session
