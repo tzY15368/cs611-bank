@@ -1,27 +1,33 @@
 package Utils;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 //Simple Timer, only have date.Because we can find report by date, and after some day we can earn interest or pay fee.
-public class Timer implements Runnable{
-    private static long startTime;
-    // 10s = 1h
-    private static float timeRatio=360;
-    private Calendar calendar;
+public class Timer implements Runnable {
 
-    private List<TimerObserver> observerList;
+    class ConsumerInfo {
+        BiConsumer<Integer, Integer> consumer;
+        int interval;
+
+        public ConsumerInfo(BiConsumer<Integer, Integer> consumer, int interval) {
+            this.consumer = consumer;
+            this.interval = interval;
+        }
+    }
+
+    private Map<String, ConsumerInfo> observers;
 
     private static Timer instance = null;
 
     public static void init() {
         instance = new Timer();
         // run on a new thread
-        try{
+        try {
             Thread t = new Thread(instance);
             t.start();
-            Logger.info("Timer started at time "+System.currentTimeMillis());
+            Logger.info("Timer started at time " + System.currentTimeMillis());
         } catch (Exception e) {
             Logger.fatal(e.getMessage());
         }
@@ -37,49 +43,56 @@ public class Timer implements Runnable{
     }
 
     private Timer() {
-        this.timeRatio = timeRatio;
-        this.startTime = System.currentTimeMillis();
-        calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE,0);
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
+        observers = new HashMap<>();
+        DateCtl.init();
     }
 
-    public void addTimerObserver(TimerObserver timerObserver){
-        observerList.add(timerObserver);
-    }
-    /*
-    public synchronized void addIntervalObserver(Supplier<Integer> callback) {
-        observerList.add(callback);
-    }
-
-    public static long getStartTime(){
-        return startTime;
-    }
-     */
-
-
-    public static double getTimeRatio(){
-        return timeRatio;
+    // interval: virtual hours
+    public void addTimerObserver(String name, BiConsumer<Integer, Integer> timerObserver, int scheduleInterval) {
+        if (scheduleInterval < 1) {
+            Logger.warn("Interval too short, set to 1");
+            scheduleInterval = 1;
+        }
+        observers.put(name, new ConsumerInfo(timerObserver, scheduleInterval));
     }
 
-    public int getCurrentDate(){
-        return calendar.get(Calendar.DATE);
+    public int getCurrentDate() {
+        return DateCtl.getCurrentDate().getDate();
     }
 
+    // WARNING: SCHEDULE PERIOD lower bound is 1 hour
     @Override
     public void run() {
-        while(true){
-            //10 s = 1 hr
+
+        while (true) {
+            // time ratio can be changed on a virtual day-to-day basis
+            int timerRatio = Constants.TIMER_RATIO;
+            // sleep for one hour virtual time
+            float virtualHourInRealMs = 3600000 / timerRatio;
+            Logger.info("Timer ratio is " + timerRatio +
+                    ", virtual hour in real seconds is " + virtualHourInRealMs / 1000);
+            // create current date
+            int currentDate = DateCtl.createNewDate();
             try {
-                Thread.sleep(240 * 1000);
-            } catch (InterruptedException e) {
+                float secPerHour = virtualHourInRealMs / 1000;
+                for (int i = 0; i < 24; i++) {
+                    Thread.sleep((long) virtualHourInRealMs);
+                    if (secPerHour <= 1) {
+                        Logger.info("Hour = " + i);
+                    }
+                    // SCHEDULE TIMED JOBS
+                    for (String name : observers.keySet()) {
+                        Logger.info(String.format("Running task %s", name));
+                        ConsumerInfo consumerInfo = observers.get(name);
+                        if (i % consumerInfo.interval == 0) {
+                            consumerInfo.consumer.accept(currentDate, i);
+                        }
+                    }
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
-            }
-            instance.calendar.add(Calendar.DATE, 1);
-            for(TimerObserver timerObserver: observerList){
-                timerObserver.timeChange();
+                Logger.warn("Timer thread interrupted" + e);
+                System.exit(1);
             }
         }
     }

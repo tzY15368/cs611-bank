@@ -37,16 +37,31 @@ public class DateCtl {
                 dateCtl.startTimestamp = System.currentTimeMillis();
                 dateCtl.timeRatio = Constants.TIMER_RATIO;
                 dao.create(dateCtl);
+                Logger.info("DateCtl initialized, latest date is " + dateCtl.date);
+            } else {
+                Logger.info("DateCtl initialized with date " + dateCtlList.get(dateCtlList.size() - 1).date);
             }
         } catch (Exception e) {
             Logger.fatal(e.getMessage());
         }
     }
 
+    public static int createNewDate() {
+        DateCtl dateCtl = new DateCtl();
+        dateCtl.startTimestamp = System.currentTimeMillis();
+        dateCtl.timeRatio = Constants.TIMER_RATIO;
+        try {
+            dao.create(dateCtl);
+        } catch (Exception e) {
+            Logger.fatal(e.getMessage());
+        }
+        Logger.info("New date created: " + dateCtl.date);
+        return dateCtl.date;
+    }
+
     public static DateCtl getCurrentDate() {
         // query for the last date
         try {
-
             List<DateCtl> dates = dao.queryForAll();
             assert dates.size() != 0;
             return dates.get(dates.size() - 1);
