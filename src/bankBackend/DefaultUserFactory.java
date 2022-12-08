@@ -22,9 +22,16 @@ public class DefaultUserFactory extends AbstractUserFactory {
                     new LoanAccount(newUser.getId()),
                     new SecurityAccount(newUser.getId())
             };
+
             List.of(accs).forEach(acc -> {
                 try {
                     Account.dao.create(acc);
+                    List.of(CurrencyType.values()).forEach(currencyType -> {
+                        Result r = Balance.createBalance(acc, currencyType);
+                        if(!r.success){
+                            Logger.error("createUser: " + r.msg);
+                        }
+                    });
                 } catch (SQLException e) {
                     Logger.fatal("SQL Exception in userRegister:" + e + ": " + e.getMessage());
                     try {

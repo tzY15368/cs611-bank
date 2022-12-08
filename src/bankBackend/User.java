@@ -118,17 +118,17 @@ public class User {
         return false;
     }
 
-    public List<Account> listAccount() {
+    public List<Account> listAccount(AccountState state) {
         List<Account> accs = new ArrayList<>();
         Result r = getCheckingAccount();
 
-        if (r.success) accs.add((Account) r.data);
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
         r = getSavingAccount();
-        if (r.success) accs.add((Account) r.data);
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
         r = getLoanAccount();
-        if (r.success) accs.add((Account) r.data);
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
         r = getSecurityAccount();
-        if (r.success) accs.add((Account) r.data);
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
         return accs;
     }
 
