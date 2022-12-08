@@ -18,20 +18,26 @@ public class BankBackend {
         // note that this would start a new thread.
         Timer.init();
 
-        // init stockctl
-        StockCtl.init();
-
         // get a default user for the session
-        User usr2 = null;
-
-        try {
-            User.dao.createIfNotExists(new User("npm", "password123"));
-            usr2 = User.dao.queryForEq("name", "npm").get(0);
-            Logger.info("usr-session:" + usr2.getName());
-        } catch (Exception e) {
-            Logger.fatal(e.getMessage());
+//        User usr2 = null;
+//
+//        try {
+//            User.dao.createIfNotExists(new User("npm", "password123"));
+//            usr2 = User.dao.queryForEq("name", "npm").get(0);
+//            Logger.info("usr-session:" + usr2.getName());
+//        } catch (Exception e) {
+//            Logger.fatal(e.getMessage());
+//        }
+//        SessionMgr.setSession(new BasicSession(usr2));
+        Result r2 = UserManager.getInstance().userRegister("hello","123");
+        if(!r2.success){
+            Logger.error(r2.msg);
         }
-        SessionMgr.setSession(new BasicSession(usr2));
+        r2 = UserManager.getInstance().userLogin("hello","123");
+        if(!r2.success){
+            Logger.fatal(r2.msg);
+        }
+
 
         // test the session
 

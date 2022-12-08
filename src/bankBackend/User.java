@@ -18,7 +18,7 @@ public class User {
 
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField
+    @DatabaseField(unique = true)
     private String name;
     @DatabaseField
     private String password;
