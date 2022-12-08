@@ -2,10 +2,9 @@
 package bankUI;
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Account;
-import bankBackend.Balance;
-import bankBackend.CheckingAccount;
-import bankBackend.User;
+import Utils.SessionMgr;
+import bankBackend.*;
+
 import java.awt.BorderLayout;
 
 import javax.swing.*;
@@ -28,35 +27,46 @@ public class HomeGUI extends JPanel{
     private DefaultListModel checkingListModel;
     private DefaultListModel savingListModel;
     private DefaultListModel securityListModel;
+    private JCheckBox checkBox1;
 
     public HomeGUI(int userID){
         // TODO: User user=User.findUserById(int userID);
-        JLabel title=new JLabel("User Name： "+userID);
+        User user = SessionMgr.getSession().data.getUser();
+        JLabel title=new JLabel("User Name： "+user.getName());
         title.setBounds(350,20,300,100);
         title.setFont(new Font("Arial", Font.PLAIN, 30));
 
         // checking account panel
+
+
+        JLabel jLabel2=new JLabel("Checking Account");
+
+        jLabel2.setBounds(110,110,20,20);
+        jLabel2.setFont(new Font("Arial", Font.PLAIN, 40));
+        jLabel2.getPreferredSize();
+
         checkingPanel=new JPanel();
         checkingPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,5));
         checkingPanel.setBounds(100,100,800,100);
-
-        JLabel jLabel2=new JLabel("Checking Account");
         checkingPanel.add(jLabel2);
-        jLabel2.setBounds(110,110,10,20);
-        jLabel2.setFont(new Font("Arial", Font.PLAIN, 40));
-        jLabel2.setVisible(true);
-        jLabel2.setOpaque(false);
-
 
         checkingListModel=new DefaultListModel();
+
         /*
-        TODO:
+        User user= new User();
+        Result res=user.getCheckingAccount();
+        if(!res.success){
+
+        }
         List<Balance> checkingBalanceList=user.getCheckingAccount().getData().listBalance();
         for (Balance balance:checkingBalanceList
              ) {
             checkingListModel.addElement(balance.getType()+":   "+balance.getValue());
         }
+
          */
+
+
         checkingListModel.addElement("Balance Type:   "+"   Value");
         checkingListModel.addElement("Balance Type:   "+"   Value");
         JList balanceJList=new JList<>(checkingListModel);
@@ -68,6 +78,7 @@ public class HomeGUI extends JPanel{
 
         checkingButton=new JButton("Enter");
         checkingButton.setBounds(400,150,50,20);
+        checkingButton.setVisible(true);
         checkingPanel.add(checkingButton);
 
         /*
@@ -92,14 +103,15 @@ public class HomeGUI extends JPanel{
         savingPanel.add(jLabel3);
 
         savingListModel=new DefaultListModel();
+
         /*
-        TODO:
         List<Balance> savingBalanceList=user.getSavingAccount().getData().listBalance();
         for (Balance balance:savingBalanceList
              ) {
             savingListModel.addElement(balance.getType()+":   "+balance.getValue());
         }
          */
+
         savingListModel.addElement("Balance Type:   "+"   Value");
         savingListModel.addElement("Balance Type:   "+"   Value");
         JList savingBalanceJList=new JList<>(savingListModel);
@@ -112,19 +124,26 @@ public class HomeGUI extends JPanel{
         savingButton=new JButton("Enter");
         savingPanel.add(savingButton);
 
-        /*
-        TODO:
+
+        //TODO:
         savingButton.addActionListener(e -> {
             Logger.info("saving account button clicked");
-            Result<SavingAccount> result=user.getSavingAccount();
-            if (!result.success) {
-                Logger.warn(result.msg);
+            //Result<SavingAccount> result=user.getSavingAccount();
+            if (true) {//!result.success
+                //Logger.warn(result.msg);
+                JDialog jDialog=new JDialog();
+                jDialog.setSize(200,80);
+                jDialog.setLocationRelativeTo(null);
+                jDialog.setTitle("Hint");
+                jDialog.setVisible(true);
+                Container contentPane= jDialog.getContentPane();
+                contentPane.add(new JLabel("You don't have saving account!"));
             }
             else{
                 // TODO:jump to saving account page
             }
         });
-         */
+
 
 
         //security account panel
