@@ -16,7 +16,7 @@ enum AccountType {
     CHECKING,
     SAVINGS,
     Loan,
-    Security
+    Security;
 }
 
 

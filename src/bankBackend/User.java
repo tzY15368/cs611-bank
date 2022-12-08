@@ -27,10 +27,23 @@ public class User {
         // ORMLite needs a no-arg constructor
     }
 
-    public User(String name, String password) {
+    public void setId(int id){
         this.id = id;
+    }
+
+    public User(String name, String password) {
         this.name = name;
         this.password = password;
+    }
+
+    public static Result<User> getUserById(int id){
+        try{
+            User u = dao.queryForId(id);
+            if(u==null)return new Result<>(false, "no such user", null);
+            return new Result<>(u);
+        } catch (SQLException e) {
+            return new Result<>(false, e.getMessage(),null);
+        }
     }
 
     public String getName() {
