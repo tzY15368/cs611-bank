@@ -1,9 +1,6 @@
 package bankBackend;
 
-import Utils.DBManager;
-import Utils.Logger;
-import Utils.Result;
-import Utils.SessionMgr;
+import Utils.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

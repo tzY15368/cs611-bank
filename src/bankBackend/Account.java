@@ -19,6 +19,7 @@ enum AccountType {
     Security
 }
 
+
 @DatabaseTable(tableName = "Accounts")
 public abstract class Account {
 
@@ -32,9 +33,13 @@ public abstract class Account {
     @DatabaseField
     protected AccountType type;
 
+    @DatabaseField
+    protected AccountState state;
+
     public Account(int userId, AccountType type) {
         this.userId = userId;
         this.type = type;
+        this.state = AccountState.INACTIVE;
     }
 
     public Account() {
@@ -47,6 +52,10 @@ public abstract class Account {
 
     public String getReport() {
         return null;
+    }
+
+    public AccountState getState() {
+        return state;
     }
 
     // TODO: IMPLEMENT THIS
