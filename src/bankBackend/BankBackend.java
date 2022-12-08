@@ -18,6 +18,9 @@ public class BankBackend {
         // note that this would start a new thread.
         Timer.init();
 
+        // init stockctl
+        StockCtl.init();
+
         // get a default user for the session
         User usr2 = null;
 
