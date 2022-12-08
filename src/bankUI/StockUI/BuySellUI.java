@@ -35,6 +35,7 @@ public class BuySellUI extends JPanel {
             if(!actualAmount.success){
                 Logger.warn(actualAmount.msg);
                 AlertUI.error(actualAmount.msg);
+                return;
             }
             Result res = StockCtl.buyStock(stockName.getText(),this.user,actualAmount.data);
             if(res.success){
@@ -48,7 +49,9 @@ public class BuySellUI extends JPanel {
             if(!actualAmount.success){
                 Logger.warn(actualAmount.msg);
                 AlertUI.error(actualAmount.msg);
+                return;
             }
+
             Result res = StockCtl.sellStock(stockName.getText(),this.user,actualAmount.data);
             if(res.success){
                 AlertUI.success("buy ok");
