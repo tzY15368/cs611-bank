@@ -19,7 +19,11 @@ public class Logger {
 
     private Logger() {
         this.handlers = new ArrayList<>();
-        handlers.add(System.out::println);
+        this.addHandler(System.out::println);
+    }
+
+    public void addHandler(Consumer<String> handler){
+        this.handlers.add(handler);
     }
 
     public static Logger getInstance() {
