@@ -16,8 +16,9 @@ enum AccountType {
     CHECKING,
     SAVINGS,
     Loan,
-    Security
+    Security;
 }
+
 
 @DatabaseTable(tableName = "Accounts")
 public abstract class Account {

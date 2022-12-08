@@ -29,14 +29,6 @@
           <text value="vvv2"/>
         </properties>
       </component>
-      <component id="184e9" class="javax.swing.JButton" binding="button234Button" default-binding="true">
-        <constraints>
-          <grid row="0" column="2" row-span="3" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Button234"/>
-        </properties>
-      </component>
       <component id="43f27" class="javax.swing.JTextField" binding="textField2" default-binding="true">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -51,6 +43,14 @@
         </constraints>
         <properties>
           <text value="Label"/>
+        </properties>
+      </component>
+      <component id="184e9" class="javax.swing.JButton" binding="button234Button" default-binding="true">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Button234"/>
         </properties>
       </component>
     </children>
