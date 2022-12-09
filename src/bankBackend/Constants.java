@@ -14,6 +14,5 @@ public class Constants {
     public static String BANK_MANAGER_USERNAME = "bankManager";
     public static String STOCK_MARKET_NAME = "StockMarket";
 
-
     public static int TX_CHARGE_FEE_VALUE = 50;
 }

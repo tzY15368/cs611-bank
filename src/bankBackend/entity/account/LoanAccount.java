@@ -15,4 +15,8 @@ public class LoanAccount extends Account {
         super(userId, AccountType.Loan);
     }
 
+
+    public static void generateLoanInterestCallback(int date, int hour) {
+        // TODO
+    }
 }
