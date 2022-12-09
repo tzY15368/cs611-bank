@@ -1,10 +1,10 @@
 package bankUI.StockUI;
 
-import Utils.AlertUI;
+import bankBackend.service.SvcMgr;
+import bankUI.utils.AlertUI;
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.StockCtl;
-import bankBackend.User;
+import bankBackend.entity.User;
 
 import javax.swing.*;
 
@@ -14,10 +14,11 @@ public class BuySellUI extends JPanel {
     private JButton buyButton;
     private JButton sellButton;
     private User user;
-    public BuySellUI(int userId){
+
+    public BuySellUI(int userId) {
         Result<User> userRes = User.getUserById(userId);
-        if(!userRes.success||userRes.data.getId()<0){
-            Logger.error("invalid userid "+userRes.msg);
+        if (!userRes.success || userRes.data.getId() < 0) {
+            Logger.error("invalid userid " + userRes.msg);
             return;
         }
         this.user = userRes.data;
@@ -32,44 +33,44 @@ public class BuySellUI extends JPanel {
 
         buyButton.addActionListener(e -> {
             Result<Integer> actualAmount = this.getAmountInput();
-            if(!actualAmount.success){
+            if (!actualAmount.success) {
                 Logger.warn(actualAmount.msg);
                 AlertUI.error(actualAmount.msg);
                 return;
             }
-            Result res = StockCtl.buyStock(stockName.getText(),this.user,actualAmount.data);
-            if(res.success){
+            Result res = SvcMgr.getStockService().buyStock(stockName.getText(), this.user, actualAmount.data);
+            if (res.success) {
                 AlertUI.success("buy ok");
             } else {
-                AlertUI.error("buy fail:"+res.msg);
+                AlertUI.error("buy fail:" + res.msg);
             }
         });
         sellButton.addActionListener(e -> {
             Result<Integer> actualAmount = this.getAmountInput();
-            if(!actualAmount.success){
+            if (!actualAmount.success) {
                 Logger.warn(actualAmount.msg);
                 AlertUI.error(actualAmount.msg);
                 return;
             }
 
-            Result res = StockCtl.sellStock(stockName.getText(),this.user,actualAmount.data);
-            if(res.success){
+            Result res = SvcMgr.getStockService().sellStock(stockName.getText(), this.user, actualAmount.data);
+            if (res.success) {
                 AlertUI.success("buy ok");
             } else {
-                AlertUI.error("buy fail:"+res.msg);
+                AlertUI.error("buy fail:" + res.msg);
             }
         });
     }
 
-    private Result<Integer> getAmountInput(){
+    private Result<Integer> getAmountInput() {
 
         int actualAmount;
-        try{
+        try {
             actualAmount = Integer.parseInt(amount.getText());
             return new Result(actualAmount);
-        } catch (Exception ee){
-            String msg = "conversion error:"+ee.getMessage();
-            return new Result(false,msg,0);
+        } catch (Exception ee) {
+            String msg = "conversion error:" + ee.getMessage();
+            return new Result(false, msg, 0);
         }
     }
 }

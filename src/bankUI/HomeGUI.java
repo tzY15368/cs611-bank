@@ -1,18 +1,15 @@
 
 package bankUI;
-import Utils.Logger;
-import Utils.Result;
-import Utils.SessionMgr;
-import bankBackend.*;
 
-import java.awt.BorderLayout;
+import Utils.Logger;
+import bankBackend.service.SvcMgr;
+import bankBackend.entity.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 
-public class HomeGUI extends JPanel{
+public class HomeGUI extends JPanel {
     private int userID;
     private JFrame jFrame;
     private JPanel checkingPanel;
@@ -29,28 +26,28 @@ public class HomeGUI extends JPanel{
     private DefaultListModel securityListModel;
     private JCheckBox checkBox1;
 
-    public HomeGUI(int userID){
+    public HomeGUI(int userID) {
         // TODO: User user=User.findUserById(int userID);
-        User user = SessionMgr.getSession().data.getUser();
-        JLabel title=new JLabel("User Name： "+user.getName());
-        title.setBounds(350,20,300,100);
+        User user = SvcMgr.getSessionService().getSession().data.getUser();
+        JLabel title = new JLabel("User Name： " + user.getName());
+        title.setBounds(350, 20, 300, 100);
         title.setFont(new Font("Arial", Font.PLAIN, 30));
 
         // checking account panel
 
 
-        JLabel jLabel2=new JLabel("Checking Account");
+        JLabel jLabel2 = new JLabel("Checking Account");
 
-        jLabel2.setBounds(110,110,20,20);
+        jLabel2.setBounds(110, 110, 20, 20);
         jLabel2.setFont(new Font("Arial", Font.PLAIN, 40));
         jLabel2.getPreferredSize();
 
-        checkingPanel=new JPanel();
-        checkingPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,5));
-        checkingPanel.setBounds(100,100,800,100);
+        checkingPanel = new JPanel();
+        checkingPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+        checkingPanel.setBounds(100, 100, 800, 100);
         checkingPanel.add(jLabel2);
 
-        checkingListModel=new DefaultListModel();
+        checkingListModel = new DefaultListModel();
 
         /*
         User user= new User();
@@ -67,17 +64,17 @@ public class HomeGUI extends JPanel{
          */
 
 
-        checkingListModel.addElement("Balance Type:   "+"   Value");
-        checkingListModel.addElement("Balance Type:   "+"   Value");
-        JList balanceJList=new JList<>(checkingListModel);
-        balanceJList.setBounds(200,150,50,100);
+        checkingListModel.addElement("Balance Type:   " + "   Value");
+        checkingListModel.addElement("Balance Type:   " + "   Value");
+        JList balanceJList = new JList<>(checkingListModel);
+        balanceJList.setBounds(200, 150, 50, 100);
         balanceJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         balanceJList.setSelectedIndex(0);
         balanceJList.setVisibleRowCount(5);
         checkingPanel.add(balanceJList);
 
-        checkingButton=new JButton("Enter");
-        checkingButton.setBounds(400,150,50,20);
+        checkingButton = new JButton("Enter");
+        checkingButton.setBounds(400, 150, 50, 20);
         checkingButton.setVisible(true);
         checkingPanel.add(checkingButton);
 
@@ -96,13 +93,13 @@ public class HomeGUI extends JPanel{
          */
 
         // saving account panel
-        savingPanel=new JPanel();
-        savingPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,5));
-        savingPanel.setBounds(100,210,800,100);
-        JLabel jLabel3=new JLabel("Saving Account");
+        savingPanel = new JPanel();
+        savingPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+        savingPanel.setBounds(100, 210, 800, 100);
+        JLabel jLabel3 = new JLabel("Saving Account");
         savingPanel.add(jLabel3);
 
-        savingListModel=new DefaultListModel();
+        savingListModel = new DefaultListModel();
 
         /*
         List<Balance> savingBalanceList=user.getSavingAccount().getData().listBalance();
@@ -112,16 +109,16 @@ public class HomeGUI extends JPanel{
         }
          */
 
-        savingListModel.addElement("Balance Type:   "+"   Value");
-        savingListModel.addElement("Balance Type:   "+"   Value");
-        JList savingBalanceJList=new JList<>(savingListModel);
-        savingBalanceJList.setBounds(200,150,50,100);
+        savingListModel.addElement("Balance Type:   " + "   Value");
+        savingListModel.addElement("Balance Type:   " + "   Value");
+        JList savingBalanceJList = new JList<>(savingListModel);
+        savingBalanceJList.setBounds(200, 150, 50, 100);
         savingBalanceJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         savingBalanceJList.setSelectedIndex(0);
         savingBalanceJList.setVisibleRowCount(5);
         savingPanel.add(savingBalanceJList);
 
-        savingButton=new JButton("Enter");
+        savingButton = new JButton("Enter");
         savingPanel.add(savingButton);
 
 
@@ -131,29 +128,27 @@ public class HomeGUI extends JPanel{
             //Result<SavingAccount> result=user.getSavingAccount();
             if (true) {//!result.success
                 //Logger.warn(result.msg);
-                JDialog jDialog=new JDialog();
-                jDialog.setSize(200,80);
+                JDialog jDialog = new JDialog();
+                jDialog.setSize(200, 80);
                 jDialog.setLocationRelativeTo(null);
                 jDialog.setTitle("Hint");
                 jDialog.setVisible(true);
-                Container contentPane= jDialog.getContentPane();
+                Container contentPane = jDialog.getContentPane();
                 contentPane.add(new JLabel("You don't have saving account!"));
-            }
-            else{
+            } else {
                 // TODO:jump to saving account page
             }
         });
 
 
-
         //security account panel
-        securityPanel=new JPanel();
-        securityPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,5));
-        securityPanel.setBounds(100,320,800,100);
-        JLabel jLabel4=new JLabel("Security Account");
+        securityPanel = new JPanel();
+        securityPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+        securityPanel.setBounds(100, 320, 800, 100);
+        JLabel jLabel4 = new JLabel("Security Account");
         securityPanel.add(jLabel4);
 
-        securityButton=new JButton("Enter");
+        securityButton = new JButton("Enter");
         securityPanel.add(securityButton);
 
          /*
@@ -171,13 +166,13 @@ public class HomeGUI extends JPanel{
          */
 
         //loan account panel
-        loanPanel=new JPanel();
-        loanPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK,5));
-        loanPanel.setBounds(100,430,800,100);
-        JLabel jLabel5=new JLabel("Loan Account");
+        loanPanel = new JPanel();
+        loanPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
+        loanPanel.setBounds(100, 430, 800, 100);
+        JLabel jLabel5 = new JLabel("Loan Account");
         loanPanel.add(jLabel5);
 
-        loanButton=new JButton("Enter");
+        loanButton = new JButton("Enter");
         loanPanel.add(loanButton);
 
         /*
@@ -195,8 +190,8 @@ public class HomeGUI extends JPanel{
          */
 
         // frame
-        jFrame=new JFrame("Home");
-        jFrame.setSize(1000,700);
+        jFrame = new JFrame("Home");
+        jFrame.setSize(1000, 700);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setLayout(null);
         jFrame.getContentPane().add(title);
@@ -209,7 +204,7 @@ public class HomeGUI extends JPanel{
     }
 
     //test page
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new HomeGUI(1234);
     }
 
