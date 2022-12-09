@@ -1,6 +1,12 @@
 package bankBackend;
 
 import Utils.*;
+import bankBackend.dao.DaoManager;
+import bankBackend.entity.User;
+import bankBackend.service.impl.SessionCtl;
+import bankBackend.service.impl.StockCtl;
+import bankBackend.service.impl.TimeCtl;
+import bankBackend.service.impl.UserCtl;
 import com.j256.ormlite.logger.LocalLogBackend;
 
 public class BankBackend {
@@ -10,14 +16,14 @@ public class BankBackend {
         this.name = "helo";
         // turn off logging in ormlite
         System.setProperty(LocalLogBackend.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
-        Result r = DBManager.init();
+        Result r = DaoManager.init();
 
         if (!r.success) {
             Logger.fatal(r.msg);
         }
         // note that this would start a new thread.
-        Timer.init();
-
+        TimeCtl.init();
+        StockCtl.init();
         // get a default user for the session
 //        User usr2 = null;
 //
@@ -29,19 +35,19 @@ public class BankBackend {
 //            Logger.fatal(e.getMessage());
 //        }
 //        SessionMgr.setSession(new BasicSession(usr2));
-        Result r2 = UserManager.getInstance().userRegister("hello","123");
-        if(!r2.success){
+        Result r2 = UserCtl.getInstance().userRegister("hello", "123");
+        if (!r2.success) {
             Logger.error(r2.msg);
         }
-        r2 = UserManager.getInstance().userLogin("hello","123");
-        if(!r2.success){
+        r2 = UserCtl.getInstance().userLogin("hello", "123");
+        if (!r2.success) {
             Logger.fatal(r2.msg);
         }
 
 
         // test the session
 
-        User usr = SessionMgr.getSession().data.getUser();
+        User usr = SessionCtl.getSession().data.getUser();
         Logger.info("usr-got:" + usr.getName());
     }
 }

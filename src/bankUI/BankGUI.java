@@ -1,9 +1,8 @@
 package bankUI;
 
 import Utils.Logger;
-import Utils.SessionMgr;
-import bankBackend.User;
-import bankBackend.UserManager;
+import bankBackend.service.impl.SessionCtl;
+import bankBackend.entity.User;
 import bankUI.StockUI.StockHomeUI;
 
 import javax.swing.*;
@@ -33,11 +32,11 @@ public class BankGUI extends JFrame {
     public static void initGUI(String[] args) {
 
         JFrame frame = new BankGUI("bank");
-        frame.setSize(1000,700);
+        frame.setSize(1000, 700);
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        User user = SessionMgr.getSession().data.getUser();
+        User user = SessionCtl.getSession().data.getUser();
         frame.setContentPane(new StockHomeUI(user.getId()));
         frame.getContentPane().add(new LoggerUI(5));
         frame.setVisible(true);
