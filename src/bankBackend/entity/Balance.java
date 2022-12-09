@@ -41,6 +41,10 @@ public class Balance {
         this.type = kind;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getAccountId() {
         return accountId;
     }
@@ -85,5 +89,14 @@ public class Balance {
             Logger.error("createBalance:" + e.getMessage());
         }
         return new Result<>(false, "createBalance failed", null);
+    }
+
+    public static Balance getBalanceById(int id) {
+        try {
+            return Balance.dao.queryForId(id);
+        } catch (Exception e) {
+            Logger.fatal("getBalanceById:" + e.getMessage());
+        }
+        return null;
     }
 }
