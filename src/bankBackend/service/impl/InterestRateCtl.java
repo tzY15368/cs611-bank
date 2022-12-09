@@ -28,16 +28,16 @@ public class InterestRateCtl implements InterestRateService {
         }
     }
 
-    public Result<Integer> getInterestRate(int accountId, RateType type) {
+    public Result<InterestRate> getInterestRate(int accountId, RateType type) {
         try {
             InterestRate rate = InterestRate.dao.queryBuilder().where().eq("accountId", accountId)
                     .and().eq("type", type).queryForFirst();
             if (rate == null) {
-                return new Result<Integer>(false, "Interest rate not found", null);
+                return new Result<>(false, "Interest rate not found", null);
             }
-            return new Result<Integer>(true, "", rate.getRate());
+            return new Result<>(true, "", rate);
         } catch (Exception e) {
-            return new Result<Integer>(false, e.getMessage(), null);
+            return new Result<>(false, e.getMessage(), null);
         }
     }
 }

@@ -7,6 +7,6 @@ import bankBackend.entity.enums.RateType;
 public interface InterestRateService {
     Result<Void> setInterestRate(InterestRate rate);
 
-    Result<Integer> getInterestRate(int accountId, RateType type);
+    Result<InterestRate> getInterestRate(int accountId, RateType type);
 
 }

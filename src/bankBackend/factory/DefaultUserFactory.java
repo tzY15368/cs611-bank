@@ -3,9 +3,11 @@ package bankBackend.factory;
 import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Balance;
+import bankBackend.entity.InterestRate;
 import bankBackend.entity.User;
 import bankBackend.entity.account.*;
 import bankBackend.entity.enums.CurrencyType;
+import bankBackend.entity.enums.RateType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -26,26 +28,20 @@ public class DefaultUserFactory extends AbstractUserFactory {
                     new LoanAccount(newUser.getId()),
                     new SecurityAccount(newUser.getId())
             };
-
-            List.of(accs).forEach(acc -> {
-                try {
-                    Account.dao.create(acc);
-                    List.of(CurrencyType.values()).forEach(currencyType -> {
-                        Result r = Balance.createBalance(acc, currencyType);
-                        if (!r.success) {
-                            Logger.error("createUser: " + r.msg);
-                        }
-                    });
-                } catch (SQLException e) {
-                    Logger.fatal("SQL Exception in userRegister:" + e + ": " + e.getMessage());
-                    try {
-                        // FIXME: rollback, should be done in a transaction
-                        User.dao.delete(newUser);
-                    } catch (SQLException e1) {
-                        Logger.fatal("SQL Exception in userRegister:" + e1 + ": " + e1.getMessage());
+            for (Account acc : accs) {
+                Account.dao.create(acc);
+                for (CurrencyType type : CurrencyType.values()) {
+                    Result r = Balance.createBalance(acc, type);
+                    if (!r.success) {
+                        return r;
                     }
                 }
-            });
+            }
+            // set default interest rates
+            InterestRate saveir = new InterestRate(accs[1].getId(), RateType.Save);
+            InterestRate loanir = new InterestRate(accs[2].getId(), RateType.Loan);
+            InterestRate.dao.create(saveir);
+            InterestRate.dao.create(loanir);
 
             return new Result<>();
         } catch (SQLException e) {

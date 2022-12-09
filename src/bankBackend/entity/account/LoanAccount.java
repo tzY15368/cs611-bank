@@ -8,6 +8,9 @@ public class LoanAccount extends Account {
         super(-1, AccountType.Loan);
     }
 
+    // IMPORTANT:
+    // the semantics are different here,
+    // the actual balances are the amount of money you OWE
     public LoanAccount(int userId) {
         super(userId, AccountType.Loan);
     }

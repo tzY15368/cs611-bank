@@ -51,9 +51,9 @@ public class Transaction {
     public static Result<Transaction> makeTransaction(int fromBalanceId, int toAccountId, TransactionType type, int value) {
         Transaction tx = new Transaction(fromBalanceId, toAccountId, type, value);
 
-        int TX_TRANSFER_FEE_VALUE = 50;
-        int DEPOSIT_FEE_VALUE = 50;
-        int WITHDRAW_FEE_VALUE = 50;
+        int TX_TRANSFER_FEE_VALUE = 5;
+        int DEPOSIT_FEE_VALUE = 5;
+        int WITHDRAW_FEE_VALUE = 5;
         Map<TransactionType, Integer> chargeFeeValues = new HashMap<>() {
             {
                 put(TransactionType.TRANSFER, TX_TRANSFER_FEE_VALUE);
@@ -62,7 +62,7 @@ public class Transaction {
             }
         };
 
-        if (type != TransactionType.CHARGE_FEE) {
+        if (type != TransactionType.CHARGE_FEE && type != TransactionType.INTEREST) {
             // make the charge-fee transaction first
             int chargeFee = chargeFeeValues.get(type);
             if (value < chargeFee) {

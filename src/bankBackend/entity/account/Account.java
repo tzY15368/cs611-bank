@@ -65,7 +65,7 @@ public abstract class Account {
                     Constants.TX_CHARGE_FEE_VALUE
             );
             if (!txRes.success) {
-                return new Result(false, "Failed to charge fee:" + txRes.getMsg(), null);
+                return new Result(false, "Failed to charge fee:" + txRes.msg, null);
             }
             Result r = this.handleTransaction(txRes.data);
             return r;
@@ -116,5 +116,25 @@ public abstract class Account {
             Logger.error("getAccountById:" + e.getMessage());
         }
         return null;
+    }
+
+    public static List<?> listAccountByType(AccountType type) {
+        try {
+            return dao.queryBuilder()
+                    .where().eq("type", type).query();
+        } catch (Exception e) {
+            Logger.error("listAccountByType:" + e.getMessage());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Balance> listBalances() {
+        try {
+            return Balance.dao.queryBuilder()
+                    .where().eq("accountId", this.id).query();
+        } catch (Exception e) {
+            Logger.error("listBalances:" + e.getMessage());
+        }
+        return new ArrayList<>();
     }
 }

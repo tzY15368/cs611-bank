@@ -25,9 +25,9 @@ public class InterestRate {
         // ORMLite needs a no-arg constructor
     }
 
-    public InterestRate(int accountId, int rate, RateType type) {
+    public InterestRate(int accountId, RateType type) {
         this.accountId = accountId;
-        this.rate = rate;
+        this.rate = 0;
         this.type = type;
     }
 
