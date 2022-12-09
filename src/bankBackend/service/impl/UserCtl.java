@@ -53,7 +53,7 @@ public class UserCtl implements UserService {
     }
 
     public Result<Report> getReport(int userId) {
-        return Report.getReport(DateTimeCtl.getInstance().getCurrentDate().getDate());
+        return Report.getReport(SvcMgr.getDateTimeService().getCurrentDate().getDate());
     }
 
     public List<User> listUsers() {

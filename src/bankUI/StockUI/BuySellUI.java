@@ -1,9 +1,9 @@
 package bankUI.StockUI;
 
+import bankBackend.service.SvcMgr;
 import bankUI.utils.AlertUI;
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.service.impl.StockCtl;
 import bankBackend.entity.User;
 
 import javax.swing.*;
@@ -38,7 +38,7 @@ public class BuySellUI extends JPanel {
                 AlertUI.error(actualAmount.msg);
                 return;
             }
-            Result res = StockCtl.buyStock(stockName.getText(), this.user, actualAmount.data);
+            Result res = SvcMgr.getStockService().buyStock(stockName.getText(), this.user, actualAmount.data);
             if (res.success) {
                 AlertUI.success("buy ok");
             } else {
@@ -53,7 +53,7 @@ public class BuySellUI extends JPanel {
                 return;
             }
 
-            Result res = StockCtl.sellStock(stockName.getText(), this.user, actualAmount.data);
+            Result res = SvcMgr.getStockService().sellStock(stockName.getText(), this.user, actualAmount.data);
             if (res.success) {
                 AlertUI.success("buy ok");
             } else {

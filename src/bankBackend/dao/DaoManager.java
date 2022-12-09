@@ -20,7 +20,7 @@ public class DaoManager {
     private static boolean didInit = false;
     private static Map<Class, Dao> daoMap;
 
-    public static Result<Void> init() {
+    public static void init() {
         try {
 
             conn = new JdbcConnectionSource(Constants.DB_URL);
@@ -44,9 +44,8 @@ public class DaoManager {
                 daoMap.put(c, com.j256.ormlite.dao.DaoManager.createDao(conn, c));
             }
         } catch (SQLException e) {
-            return new Result<Void>(false, "SQL Exception in init:" + e + ": " + e.getMessage(), null);
+            Logger.fatal("Daomanager::init:" + e.getMessage());
         }
-        return new Result<Void>(true, null, null);
     }
 
     public static ConnectionSource getConn() {

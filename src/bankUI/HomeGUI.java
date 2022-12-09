@@ -3,7 +3,6 @@ package bankUI;
 
 import Utils.Logger;
 import bankBackend.service.SvcMgr;
-import bankBackend.service.impl.SessionCtl;
 import bankBackend.entity.User;
 
 import javax.swing.*;

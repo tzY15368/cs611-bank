@@ -1,8 +1,22 @@
 package bankBackend.service;
 
+import bankBackend.dao.DaoManager;
 import bankBackend.service.impl.*;
 
 public class SvcMgr {
+
+    public static void init() {
+
+        // init dao first
+        DaoManager.init();
+
+        // note that this would start a new thread.
+        DateTimeCtl.init();
+
+        // init services
+        StockCtl.init();
+    }
+
     public static DateTimeService getDateTimeService() {
         return DateTimeCtl.getInstance();
     }

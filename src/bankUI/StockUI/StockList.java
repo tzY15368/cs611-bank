@@ -2,7 +2,7 @@ package bankUI.StockUI;
 
 import Utils.Logger;
 import bankBackend.entity.Stock;
-import bankBackend.service.impl.StockCtl;
+import bankBackend.service.SvcMgr;
 
 import javax.swing.*;
 import java.util.List;
@@ -15,7 +15,7 @@ public class StockList extends JPanel {
 
     public StockList(int userId, String[] fields) {
         showFields = fields;
-        List<Stock> stockList = StockCtl.listStocks(userId);
+        List<Stock> stockList = SvcMgr.getStockService().listStocks(userId);
         listModel = new DefaultListModel();
         stockList.forEach(stock -> {
             listModel.addElement(String.format("%s %d %d", stock.getName(), stock.getCurrentPrice(), stock.getAmount()));
