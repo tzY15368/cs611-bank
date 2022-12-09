@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bankBackend.Constants.STOCK_MANAGER_USER_ID;
+
 public class StockCtl implements StockService {
 
     private static StockCtl instance = null;
@@ -30,14 +32,21 @@ public class StockCtl implements StockService {
 
     public static void init() {
         // if there's no stock manager, create one
-        User mgr = new User("StockMarket", "");
-        mgr.setId(Constants.STOCK_MANGAER_USER_ID);
+        User mgr = new User(Constants.STOCK_MARKET_NAME, "");
         try {
             User.dao.createIfNotExists(mgr);
         } catch (SQLException s) {
-            Logger.fatal("stockctl: init:" + s.getMessage());
+            Logger.warn("stockctl: init1:" + s.getMessage());
         }
-        Logger.info("Stock manager initialized");
+
+        // get the mgr again
+        try {
+            mgr = User.dao.queryBuilder().where().eq("name", Constants.STOCK_MARKET_NAME).queryForFirst();
+        } catch (SQLException s) {
+            Logger.fatal("stockctl: init2:" + s.getMessage());
+        }
+        Constants.STOCK_MANAGER_USER_ID = mgr.getId();
+        Logger.info("Stock manager initialized, mgr id = " + mgr.getId());
     }
 
     public List<Stock> listStocks(int userId) {
@@ -66,7 +75,8 @@ public class StockCtl implements StockService {
 
     public Result<Void> removeStock(String stockName) {
         try {
-            Stock stock = Stock.dao.queryBuilder().where().eq("name", stockName).and().eq("userId", Constants.STOCK_MANGAER_USER_ID).queryForFirst();
+            Stock stock = Stock.dao.queryBuilder().where().eq("name", stockName).and()
+                    .eq("userId", Constants.STOCK_MANAGER_USER_ID).queryForFirst();
             if (stock == null) {
                 return new Result<>(false, "Stock doesn't exist", null);
             }
@@ -80,7 +90,8 @@ public class StockCtl implements StockService {
 
     public Result<Void> updateStock(Stock stock) {
         try {
-            Stock s = Stock.dao.queryBuilder().where().eq("name", stock.getName()).and().eq("userId", Constants.STOCK_MANGAER_USER_ID).queryForFirst();
+            Stock s = Stock.dao.queryBuilder().where().eq("name", stock.getName())
+                    .and().eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
             if (s == null) {
                 return new Result<>(false, "Stock doesn't exist", null);
             }
@@ -95,7 +106,8 @@ public class StockCtl implements StockService {
 
     public Result<Void> buyStock(String name, User user, int amount) {
         try {
-            Stock stock = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", -1).queryForFirst();
+            Stock stock = Stock.dao.queryBuilder().where().eq("name", name)
+                    .and().eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
             //check if user can buy stock
             if (stock == null) {
                 return new Result<>(false, "Stock doesn't exist", null);
@@ -106,7 +118,8 @@ public class StockCtl implements StockService {
 
             // assume we can only use USD to buy stock, reset user's money
             int needMoney = amount * stock.getCurrentPrice();
-            Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).getData(), CurrencyType.USD).getData();
+            Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security)
+                    .getData(), CurrencyType.USD).getData();
             if (balance.getValue() < needMoney) {
                 return new Result<>(false, "Don't have enough money to buy stock", null);
             } else {
@@ -134,7 +147,8 @@ public class StockCtl implements StockService {
 
     public Result<Void> sellStock(String name, User user, int amount) {
         try {
-            List<Stock> stockList = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).query();
+            List<Stock> stockList = Stock.dao.queryBuilder().where().eq("name", name)
+                    .and().eq("userId", user.getId()).query();
             //check if user can sell stock
             if (stockList == null) {
                 return new Result<>(false, "Stock doesn't exist", null);
@@ -149,9 +163,11 @@ public class StockCtl implements StockService {
             }
 
             //give user sell stock money
-            Stock s = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", -1).queryForFirst();
+            Stock s = Stock.dao.queryBuilder().where().eq("name", name).and()
+                    .eq("userId", -1).queryForFirst();
             int sellMoney = s.getCurrentPrice() * amount;
-            Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).getData(), CurrencyType.USD).getData();
+            Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security)
+                    .getData(), CurrencyType.USD).getData();
             balance.deltaValue(sellMoney);
             Balance.dao.update(balance);
 
@@ -180,7 +196,8 @@ public class StockCtl implements StockService {
 
     public Result<Integer> getRealizedProfit(String name, User user) {
         try {
-            List<Stock> stockList = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).query();
+            List<Stock> stockList = Stock.dao.queryBuilder().where().eq("name", name)
+                    .and().eq("userId", user.getId()).query();
             int realizedProfit = 0;
             for (Stock stock : stockList) {
                 realizedProfit += stock.getRealizedProfit();
@@ -194,8 +211,10 @@ public class StockCtl implements StockService {
 
     public Result<Integer> getUnrealizedProfit(String name, User user) {
         try {
-            List<Stock> stockList = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", user.getId()).query();
-            int currentPrice = Stock.dao.queryBuilder().where().eq("name", name).and().eq("userId", -1).queryForFirst().getCurrentPrice();
+            List<Stock> stockList = Stock.dao.queryBuilder().where().eq("name", name)
+                    .and().eq("userId", user.getId()).query();
+            int currentPrice = Stock.dao.queryBuilder().where().eq("name", name)
+                    .and().eq("userId", STOCK_MANAGER_USER_ID).queryForFirst().getCurrentPrice();
             int unrealizedProfit = 0;
             for (Stock stock : stockList
             ) {

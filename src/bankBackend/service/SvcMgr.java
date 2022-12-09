@@ -15,6 +15,7 @@ public class SvcMgr {
 
         // init services
         StockCtl.init();
+        UserCtl.init();
     }
 
     public static DateTimeService getDateTimeService() {
