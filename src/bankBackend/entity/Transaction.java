@@ -1,7 +1,7 @@
 package bankBackend.entity;
 
 import bankBackend.dao.DaoManager;
-import bankBackend.service.impl.TimeCtl;
+import bankBackend.service.SvcMgr;
 import bankBackend.entity.enums.TransactionType;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -36,7 +36,7 @@ public class Transaction {
         this.toAccountId = toAccountId;
         this.type = type;
         this.value = value;
-        this.date = TimeCtl.getInstance().getCurrentDate();
+        this.date = SvcMgr.getDateTimeService().getCurrentDate().getDate();
     }
 
 }

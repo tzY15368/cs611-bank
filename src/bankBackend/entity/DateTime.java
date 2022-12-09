@@ -9,7 +9,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "DateTime")
 public class DateTime {
-    static Dao<DateTime, Integer> dao = DaoManager.getDao(DateTime.class);
+    public static Dao<DateTime, Integer> dao = DaoManager.getDao(DateTime.class);
 
     @DatabaseField(generatedId = true)
     private int date;
@@ -25,6 +25,16 @@ public class DateTime {
 
     public DateTime() {
         // ORMLite needs a no-arg constructor
+    }
+
+    public DateTime(long startTimestamp, float timeRatio) {
+        this();
+        this.startTimestamp = startTimestamp;
+        this.timeRatio = timeRatio;
+    }
+
+    public void setHour(int hour) {
+        this.elapsedHours = hour;
     }
 
     public int getDate() {
@@ -52,26 +62,13 @@ public class DateTime {
     }
 
     // WARNING: NULLABLE
-    private static DateTime getLastDateRecord() {
+    public static DateTime getLastDateRecord() {
         try {
             return dao.queryBuilder().orderBy("date", false).limit(1L).query().get(0);
         } catch (Exception e) {
             Logger.error(e.getMessage());
             return null;
         }
-    }
-
-    public static int createNewDate() {
-        DateTime dateCtl = new DateTime();
-        dateCtl.startTimestamp = System.currentTimeMillis();
-        dateCtl.timeRatio = Constants.TIMER_RATIO;
-        try {
-            dao.create(dateCtl);
-        } catch (Exception e) {
-            Logger.fatal(e.getMessage());
-        }
-        Logger.info("New date created: " + dateCtl.date);
-        return dateCtl.date;
     }
 
     public int getCurrentHour() {
@@ -85,12 +82,5 @@ public class DateTime {
         } catch (Exception e) {
             Logger.fatal(e.getMessage());
         }
-    }
-
-    public static DateTime getCurrentDate() {
-        // query for the last date
-        DateTime currentDate = DateTime.getLastDateRecord();
-        assert currentDate != null;
-        return currentDate;
     }
 }

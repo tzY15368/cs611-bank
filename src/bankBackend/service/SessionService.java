@@ -1,7 +1,9 @@
 package bankBackend.service;
 
-import bankBackend.entity.User;
+import Utils.Result;
 
 public interface SessionService {
-    User getUser();
+    Result<ISession> getSession();
+
+    void setSession(ISession i);
 }

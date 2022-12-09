@@ -1,12 +1,13 @@
 package bankUI;
 
 import Utils.Logger;
-import bankBackend.service.impl.SessionCtl;
+import bankBackend.service.SvcMgr;
 import bankBackend.entity.User;
 import bankUI.StockUI.StockHomeUI;
 
 import javax.swing.*;
 
+// The main entrypoint of frontend
 public class BankGUI extends JFrame {
     private static Logger logHandle;
     private JPanel mainPanel;
@@ -19,14 +20,6 @@ public class BankGUI extends JFrame {
 
     public BankGUI(String title) {
         super(title);
-//
-//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.pack();
-//        button234Button.addActionListener(e -> {
-//            textField1.setText("" + cnt++);
-//            label2.setText("bbb");
-//            UserManager.getInstance().userLogin(this.textField1.getText(), this.textField2.getText());
-//        });
     }
 
     public static void initGUI(String[] args) {
@@ -36,7 +29,7 @@ public class BankGUI extends JFrame {
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        User user = SessionCtl.getSession().data.getUser();
+        User user = SvcMgr.getSessionService().getSession().data.getUser();
         frame.setContentPane(new StockHomeUI(user.getId()));
         frame.getContentPane().add(new LoggerUI(5));
         frame.setVisible(true);

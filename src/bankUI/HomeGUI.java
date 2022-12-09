@@ -2,6 +2,7 @@
 package bankUI;
 
 import Utils.Logger;
+import bankBackend.service.SvcMgr;
 import bankBackend.service.impl.SessionCtl;
 import bankBackend.entity.User;
 
@@ -28,7 +29,7 @@ public class HomeGUI extends JPanel {
 
     public HomeGUI(int userID) {
         // TODO: User user=User.findUserById(int userID);
-        User user = SessionCtl.getSession().data.getUser();
+        User user = SvcMgr.getSessionService().getSession().data.getUser();
         JLabel title = new JLabel("User Name： " + user.getName());
         title.setBounds(350, 20, 300, 100);
         title.setFont(new Font("Arial", Font.PLAIN, 30));

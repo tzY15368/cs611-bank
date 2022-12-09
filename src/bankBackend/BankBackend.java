@@ -3,9 +3,9 @@ package bankBackend;
 import Utils.*;
 import bankBackend.dao.DaoManager;
 import bankBackend.entity.User;
-import bankBackend.service.impl.SessionCtl;
+import bankBackend.service.SvcMgr;
+import bankBackend.service.impl.DateTimeCtl;
 import bankBackend.service.impl.StockCtl;
-import bankBackend.service.impl.TimeCtl;
 import bankBackend.service.impl.UserCtl;
 import com.j256.ormlite.logger.LocalLogBackend;
 
@@ -22,7 +22,8 @@ public class BankBackend {
             Logger.fatal(r.msg);
         }
         // note that this would start a new thread.
-        TimeCtl.init();
+        DateTimeCtl.init();
+
         StockCtl.init();
         // get a default user for the session
 //        User usr2 = null;
@@ -47,7 +48,7 @@ public class BankBackend {
 
         // test the session
 
-        User usr = SessionCtl.getSession().data.getUser();
+        User usr = SvcMgr.getSessionService().getSession().data.getUser();
         Logger.info("usr-got:" + usr.getName());
     }
 }

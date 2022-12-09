@@ -2,16 +2,30 @@ package bankBackend.service.impl;
 
 import Utils.Logger;
 import Utils.Result;
+import bankBackend.service.ISession;
 import bankBackend.service.SessionService;
 
 public class SessionCtl implements SessionService {
-    private static ISession session;
+    private static SessionCtl instance = null;
+    private ISession session;
 
-    public static void setSession(ISession session) {
-        SessionCtl.session = session;
+    private SessionCtl() {
     }
 
-    public static Result<ISession> getSession() {
+    public static SessionCtl getInstance() {
+        if (instance == null) {
+            instance = new SessionCtl();
+        }
+        return instance;
+    }
+
+    @Override
+    public void setSession(ISession session) {
+        this.session = session;
+    }
+
+    @Override
+    public Result<ISession> getSession() {
         if (session == null) {
             Logger.warn("No session found");
             return new Result<ISession>(false, "No session", null);

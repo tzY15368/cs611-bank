@@ -1,11 +1,12 @@
 package bankBackend.service.impl;
 
 import Utils.*;
-import bankBackend.AbstractUserFactory;
+import bankBackend.factory.AbstractUserFactory;
 import bankBackend.factory.MemorySession;
 import bankBackend.factory.DefaultUserFactory;
 import bankBackend.entity.User;
 import bankBackend.entity.Report;
+import bankBackend.service.SvcMgr;
 import bankBackend.service.UserService;
 
 import java.sql.SQLException;
@@ -36,7 +37,7 @@ public class UserCtl implements UserService {
             }
             if (user.getPassword().equals(password)) {
                 // set session
-                SessionCtl.setSession(new MemorySession(user));
+                SvcMgr.getSessionService().setSession(new MemorySession(user));
 
                 return new Result<>(true, null, null);
             } else {
@@ -52,7 +53,7 @@ public class UserCtl implements UserService {
     }
 
     public Result<Report> getReport(int userId) {
-        return Report.getReport(TimeCtl.getInstance().getCurrentDate());
+        return Report.getReport(DateTimeCtl.getInstance().getCurrentDate().getDate());
     }
 
     public List<User> listUsers() {

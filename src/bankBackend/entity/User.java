@@ -1,8 +1,8 @@
 package bankBackend.entity;
 
 import Utils.*;
-import bankBackend.AbstractUserFactory;
 import bankBackend.Constants;
+import bankBackend.factory.AbstractUserFactory;
 import bankBackend.factory.DefaultUserFactory;
 import bankBackend.dao.DaoManager;
 import bankBackend.entity.account.*;

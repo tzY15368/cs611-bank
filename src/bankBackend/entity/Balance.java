@@ -14,7 +14,7 @@ import java.util.List;
 @DatabaseTable(tableName = "Balances")
 public class Balance {
 
-    static Dao<Balance, Integer> dao = DaoManager.getDao(Balance.class);
+    public static Dao<Balance, Integer> dao = DaoManager.getDao(Balance.class);
 
     @DatabaseField
     private int accountId;

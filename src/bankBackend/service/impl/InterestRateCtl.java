@@ -6,13 +6,13 @@ import bankBackend.entity.enums.RateType;
 import bankBackend.service.InterestRateService;
 
 public class InterestRateCtl implements InterestRateService {
-    private InterestRateCtl instance;
+    private static InterestRateCtl instance;
 
     private InterestRateCtl() {
 
     }
 
-    public InterestRateCtl getInstance() {
+    public static InterestRateCtl getInstance() {
         if (instance == null) {
             instance = new InterestRateCtl();
         }

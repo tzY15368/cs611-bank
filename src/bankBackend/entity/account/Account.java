@@ -7,6 +7,7 @@ import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Transaction;
 import bankBackend.entity.enums.AccountType;
+import bankBackend.entity.enums.CurrencyType;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -19,7 +20,7 @@ import java.util.List;
 @DatabaseTable(tableName = "Accounts")
 public abstract class Account {
 
-    static Dao<Account, Integer> dao = DaoManager.getDao(Account.class);
+    public static Dao<Account, Integer> dao = DaoManager.getDao(Account.class);
 
     @DatabaseField
     protected int id;
