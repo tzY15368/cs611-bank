@@ -21,8 +21,6 @@ import java.util.List;
 public class User {
     public static Dao<User, Integer> dao = DaoManager.getDao(User.class);
 
-    static AbstractUserFactory userFactory = new DefaultUserFactory();
-
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField(unique = true)
@@ -152,4 +150,7 @@ public class User {
         return accs;
     }
 
+    public Result<Report> getReport(int date) {
+        return Report.getReport(this, date);
+    }
 }

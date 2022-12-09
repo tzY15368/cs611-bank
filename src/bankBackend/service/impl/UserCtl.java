@@ -52,10 +52,6 @@ public class UserCtl implements UserService {
         return userFactory.createUser(username, password);
     }
 
-    public Result<Report> getReport(int userId) {
-        return Report.getReport(SvcMgr.getDateTimeService().getCurrentDate().getDate());
-    }
-
     public List<User> listUsers() {
         try {
             return User.dao.queryForAll();

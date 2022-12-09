@@ -16,18 +16,19 @@ public class Report {
         this.transactionList = new ArrayList<>();
     }
 
-    public static Result<Report> getReport(int date) {
+    public static Result<Report> getReport(User user, int date) {
         Report r = new Report(date);
-        Result<Void> res = r.setTransactions();
+        Result<Void> res = r.setTransactions(user);
         if (!res.success) {
             return new Result<>(false, res.msg, null);
         }
         return new Result<>(r);
     }
 
-    private Result<Void> setTransactions() {
+    private Result<Void> setTransactions(User user) {
         try {
-            this.transactionList = Transaction.dao.queryBuilder().where().eq("date", date).query();
+            this.transactionList = Transaction.dao.queryBuilder().where()
+                    .eq("user_id", user.getId()).and().eq("date", date).query();
             return new Result<>();
         } catch (SQLException e) {
             Logger.error("SQL Exception in getTransaction:" + e + e.getMessage());
