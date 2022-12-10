@@ -49,7 +49,7 @@ public class DateTime {
                 DateTime dateCtl = new DateTime();
                 dateCtl.date = 0;
                 dateCtl.startTimestamp = System.currentTimeMillis();
-                dateCtl.timeRatio = Constants.TIMER_RATIO;
+                dateCtl.timeRatio = Constants.DEFAULT_TIMER_RATIO;
                 dao.create(dateCtl);
                 Logger.info("DateCtl first-time initialized, latest date is " + dateCtl.date);
             } else {

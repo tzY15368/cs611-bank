@@ -6,7 +6,6 @@ import bankBackend.entity.DateTime;
 import bankBackend.entity.account.LoanAccount;
 import bankBackend.entity.account.SavingAccount;
 import bankBackend.service.DateTimeService;
-import bankBackend.service.SvcMgr;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,7 @@ class ConsumerInfo {
 public class DateTimeCtl implements DateTimeService, Runnable {
 
     private static DateTimeCtl instance = null;
-
+    private int timeRatio = Constants.DEFAULT_TIMER_RATIO;
     private Map<String, ConsumerInfo> observers;
 
     public static void init() {
@@ -42,16 +41,16 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         instance.addTimerObserver("generateLoanInterest", LoanAccount::generateLoanInterestCallback, 24);
     }
 
-    // interval: virtual hours
-    public boolean addTimerObserver(String name, BiConsumer<Integer, Integer> timerObserver, int scheduleInterval) {
-        if (scheduleInterval < 1) {
+    // epochs: task A runs once every [epochs] hours
+    public boolean addTimerObserver(String name, BiConsumer<Integer, Integer> timerObserver, int epochs) {
+        if (epochs < 1) {
             Logger.warn("Interval too short, set to 1");
-            scheduleInterval = 1;
-        } else if (scheduleInterval > 24) {
+            epochs = 1;
+        } else if (epochs > 24) {
             Logger.warn("Interval too long, set to 24");
-            scheduleInterval = 24;
+            epochs = 24;
         }
-        observers.put(name, new ConsumerInfo(timerObserver, scheduleInterval));
+        observers.put(name, new ConsumerInfo(timerObserver, epochs));
         Logger.info("Timer observer added: " + name);
         return true;
     }
@@ -68,9 +67,8 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         return instance;
     }
 
-    @Override
-    public int createNewDate() {
-        DateTime dt = new DateTime(System.currentTimeMillis(), Constants.TIMER_RATIO);
+    private int createNewDate() {
+        DateTime dt = new DateTime(System.currentTimeMillis(), Constants.DEFAULT_TIMER_RATIO);
         try {
             DateTime.dao.create(dt);
         } catch (Exception e) {
@@ -96,46 +94,77 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         return epoch;
     }
 
+    private int incrEpoch() {
+        int currentEpoch = getCurrentEpoch();
+        if (currentEpoch == Constants.HOUR_PER_DAY - 1) {
+            int dt = createNewDate();
+            return Constants.HOUR_PER_DAY * dt;
+        } else {
+            DateTime d = getCurrentDate();
+            d.setCurrentHour(d.getCurrentHour() + 1);
+            return d.getCurrentHour();
+        }
+    }
+
+    @Override
+    public int getTimeRatio() {
+        return timeRatio;
+    }
+
+    @Override
+    public void setTimeRatio(int ratio) {
+        if (ratio > 86400 || ratio < 360) {
+            Logger.warn("invalid op: 360 < ratio < 86400");
+        } else {
+            this.timeRatio = ratio;
+        }
+    }
+
     // WARNING: SCHEDULE PERIOD lower bound is 1 hour
     @Override
     public void run() {
-
-        while (true) {
-            // time ratio can be changed on a virtual day-to-day basis
-            int timerRatio = Constants.TIMER_RATIO;
-            // sleep for one hour virtual time
-            float virtualHourInRealMs = 3600000 / timerRatio;
-            Logger.info("Timer ratio is " + timerRatio +
-                    ", virtual hour in real seconds is " + virtualHourInRealMs / 1000);
-            // get current date
-            DateTime currentDate = SvcMgr.getDateTimeService().getCurrentDate();
-            try {
-                float secPerHour = virtualHourInRealMs / 1000;
-                Logger.info("Timer: starting from hour " + currentDate.getCurrentHour());
-                int h = currentDate.getCurrentHour();
-                for (int i = h == 0 ? 0 : (h + 1); i < Constants.HOUR_PER_DAY; i++) {
-                    if (secPerHour <= 1) {
-                        Logger.info("Hour = " + i);
-                    }
-                    // SCHEDULE TIMED JOBS
-                    for (String name : observers.keySet()) {
-                        ConsumerInfo consumerInfo = observers.get(name);
-                        if ((i + 1) % consumerInfo.interval == 0) {
-                            Logger.info(String.format("Running task %s", name));
-                            consumerInfo.consumer.accept(currentDate.getDate(), i);
-                        }
-                    }
-                    // update hour
-                    currentDate.setCurrentHour(i);
-                    Thread.sleep((long) virtualHourInRealMs);
+        // 做成WAL，首先更新小时，再做相应操作
+        // 假设查到的date=3, hour=2, epoch=74
+        // 则：
+        // 1. 首先回滚所有epoch==74的事务
+        // 2. 从epoch=74开始重新进入事件循环
+        int bootEpoch = getCurrentEpoch();
+        long sleepMsPerHour = (long) ((60 * 60 * 1000) / (float) getTimeRatio());
+        Logger.info("DateTimeService: booting from epoch=" + bootEpoch + " , defaultSleepS=" + sleepMsPerHour / 1000);
+        try {
+            while (true) {
+                // 如果bootepoch == currentepoch,则不用更新小时
+                int currentEpoch = getCurrentEpoch();
+                if (bootEpoch != currentEpoch) {
+                    currentEpoch = incrEpoch();
+                } else {
+                    // TODO: rollback everything at and after currentEpoch
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Logger.warn("Timer thread interrupted" + e);
-                System.exit(1);
+
+                // calculate virtualhourinrealms
+                if (currentEpoch % Constants.HOUR_PER_DAY == 0) {
+                    int currentTimeRatio = getTimeRatio();
+                    float virtualHourInRealMs = (60 * 60 * 1000) / (float) currentTimeRatio;
+                    sleepMsPerHour = (long) virtualHourInRealMs;
+                    Logger.info(String.format("Ticker: epoch=%d, sleepS=%d", currentEpoch, sleepMsPerHour / 1000));
+                }
+
+                // run scheduled jobs
+                for (String name : observers.keySet()) {
+                    ConsumerInfo ci = observers.get(name);
+                    if (currentEpoch % ci.interval == 0) {
+                        Logger.info(String.format("Running task %s", name));
+                        int date = currentEpoch % Constants.HOUR_PER_DAY;
+                        int hour = currentEpoch - (Constants.HOUR_PER_DAY * date);
+                        ci.consumer.accept(date, hour);
+                    }
+                }
+                Thread.sleep(sleepMsPerHour);
             }
-            // the day has passed, start with a new date...
-            SvcMgr.getDateTimeService().createNewDate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.warn("Timer thread interrupted" + e);
+            System.exit(1);
         }
     }
 }

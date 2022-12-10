@@ -5,7 +5,9 @@ import bankBackend.entity.DateTime;
 import java.util.function.BiConsumer;
 
 public interface DateTimeService {
-    int createNewDate();
+    int getTimeRatio();
+
+    void setTimeRatio(int ratio);
 
     DateTime getCurrentDate();
 
