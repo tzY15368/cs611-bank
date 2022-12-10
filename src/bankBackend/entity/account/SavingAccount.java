@@ -46,7 +46,7 @@ public class SavingAccount extends Account {
             if (!irRes.success) continue;
             InterestRate ir = irRes.data;
             for (Balance balance : account.listBalances()) {
-                if (balance.getType() == CurrencyType.USD) {
+                if (balance.getType() == CurrencyType.USD && balance.getValue() > Constants.SAVING_ACC_INTEREST_THRESHOLD) {
                     float rat = ir.getRate() / 100;
                     int deltaValue = (int) (balance.getValue() * rat) - balance.getValue();
                     Result<Transaction> txRes = createTransaction(account.getId(), deltaValue);

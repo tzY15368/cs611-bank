@@ -3,6 +3,7 @@ package bankBackend.service.impl;
 import Utils.Logger;
 import bankBackend.Constants;
 import bankBackend.entity.DateTime;
+import bankBackend.entity.account.LoanAccount;
 import bankBackend.entity.account.SavingAccount;
 import bankBackend.service.DateTimeService;
 import bankBackend.service.SvcMgr;
@@ -38,6 +39,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
             Logger.fatal(e.getMessage());
         }
         instance.addTimerObserver("generateInterest", SavingAccount::generateInterestCallback, 24);
+        instance.addTimerObserver("generateLoanInterest", LoanAccount::generateLoanInterestCallback, 24);
     }
 
     // interval: virtual hours
