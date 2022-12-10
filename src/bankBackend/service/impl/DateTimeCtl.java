@@ -29,14 +29,29 @@ public class DateTimeCtl implements DateTimeService, Runnable {
 
     public static void init() {
         instance = new DateTimeCtl();
-        // run on a new thread
+
         try {
+            DateTime lastRecordedDate = DateTime.getLastDateRecord();
+            if (lastRecordedDate == null) {
+                DateTime dateCtl = new DateTime(System.currentTimeMillis(), instance.getTimeRatio());
+                DateTime.dao.create(dateCtl);
+                Logger.info("DateCtl first-time initialized, latest date is " + dateCtl.getDate());
+            } else {
+                // TODO: ROLLBACK ALL TRANSACTIONS THAT HAPPEND TILL THAT HOUR
+                Logger.info(String.format("DateCtl re-initialized with date %d hour %d",
+                        lastRecordedDate.getDate(), lastRecordedDate.getCurrentHour()));
+            }
+
+            // run on a new thread
             Thread t = new Thread(instance);
             t.start();
             Logger.info("Timer started at time " + System.currentTimeMillis());
+
         } catch (Exception e) {
+            e.printStackTrace();
             Logger.fatal(e.getMessage());
         }
+
         instance.addTimerObserver("generateSaveInterest", SavingAccount::generateInterestCallback, 24);
         instance.addTimerObserver("generateLoanInterest", LoanAccount::generateLoanInterestCallback, 24);
     }
@@ -57,7 +72,6 @@ public class DateTimeCtl implements DateTimeService, Runnable {
 
     private DateTimeCtl() {
         observers = new HashMap<>();
-        DateTime.init();
     }
 
     public static DateTimeCtl getInstance() {
@@ -68,7 +82,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
     }
 
     private int createNewDate() {
-        DateTime dt = new DateTime(System.currentTimeMillis(), Constants.DEFAULT_TIMER_RATIO);
+        DateTime dt = new DateTime(System.currentTimeMillis(), getTimeRatio());
         try {
             DateTime.dao.create(dt);
         } catch (Exception e) {
@@ -94,15 +108,13 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         return epoch;
     }
 
-    private int incrEpoch() {
-        int currentEpoch = getCurrentEpoch();
-        if (currentEpoch == Constants.HOUR_PER_DAY - 1) {
-            int dt = createNewDate();
-            return Constants.HOUR_PER_DAY * dt;
+
+    private void incrEpoch() {
+        DateTime d = getCurrentDate();
+        if (d.getCurrentHour() == 23) {
+            createNewDate();
         } else {
-            DateTime d = getCurrentDate();
             d.setCurrentHour(d.getCurrentHour() + 1);
-            return d.getCurrentHour();
         }
     }
 
@@ -123,23 +135,38 @@ public class DateTimeCtl implements DateTimeService, Runnable {
     // WARNING: SCHEDULE PERIOD lower bound is 1 hour
     @Override
     public void run() {
+        // zh-cn:
         // 做成WAL，首先更新小时，再做相应操作
         // 假设查到的date=3, hour=2, epoch=74
         // 则：
         // 1. 首先回滚所有epoch==74的事务
         // 2. 从epoch=74开始重新进入事件循环
+
+        // en:
+        // each epoch is one hour.
+        // WAL-Like datetime manager, everytime time changes,
+        // the hour is first incremented before callbacks are invoked
+        // Assuming backend re-boots with date=3, hour=2, then epoch=74 (3*24+2)
+        // two things are done:
+        // 1: rollback every transaction after and including epoch=74
+        // 2: re-start the sleep loop from epoch=74
+
         int bootEpoch = getCurrentEpoch();
         long sleepMsPerHour = (long) ((60 * 60 * 1000) / (float) getTimeRatio());
         Logger.info("DateTimeService: booting from epoch=" + bootEpoch + " , defaultSleepS=" + sleepMsPerHour / 1000);
         try {
+            boolean didRollbacks = false;
             while (true) {
-                // 如果bootepoch == currentepoch,则不用更新小时
-                int currentEpoch = getCurrentEpoch();
-                if (bootEpoch != currentEpoch) {
-                    currentEpoch = incrEpoch();
+                if (didRollbacks) {
+                    incrEpoch();
                 } else {
                     // TODO: rollback everything at and after currentEpoch
+                    didRollbacks = true;
+                    Logger.info("Timer: rolling back tx after epoch=" + getCurrentEpoch());
+                    // TODO: ...
                 }
+                int currentEpoch = getCurrentEpoch();
+                Logger.info("Epoch: " + currentEpoch);
 
                 // calculate virtualhourinrealms
                 if (currentEpoch % Constants.HOUR_PER_DAY == 0) {
