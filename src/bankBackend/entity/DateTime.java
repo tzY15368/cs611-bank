@@ -41,32 +41,12 @@ public class DateTime {
         return date;
     }
 
-    // init MUST run before everything else
-    public static void init() {
-        try {
-            DateTime lastRecordedDate = getLastDateRecord();
-            if (lastRecordedDate == null) {
-                DateTime dateCtl = new DateTime();
-                dateCtl.date = 0;
-                dateCtl.startTimestamp = System.currentTimeMillis();
-                dateCtl.timeRatio = Constants.TIMER_RATIO;
-                dao.create(dateCtl);
-                Logger.info("DateCtl first-time initialized, latest date is " + dateCtl.date);
-            } else {
-                // TODO: ROLLBACK ALL TRANSACTIONS THAT HAPPEND TILL THAT HOUR
-                Logger.info(String.format("DateCtl re-initialized with date %d hour %d", lastRecordedDate.date, lastRecordedDate.elapsedHours));
-            }
-        } catch (Exception e) {
-            Logger.fatal(e.getMessage());
-        }
-    }
-
     // WARNING: NULLABLE
     public static DateTime getLastDateRecord() {
         try {
             return dao.queryBuilder().orderBy("date", false).limit(1L).query().get(0);
         } catch (Exception e) {
-            Logger.error(e.getMessage());
+            Logger.error("DateTime: getLastRecord: " + e.getMessage());
             return null;
         }
     }

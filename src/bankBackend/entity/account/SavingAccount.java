@@ -35,7 +35,13 @@ public class SavingAccount extends Account {
         // get manager's saving account's USD balance
         Balance managerUSDBalance = Balance.getBalanceWithCurrency(managerAccount, CurrencyType.USD).unwrap();
         // create transaction
-        return Transaction.makeTransaction(managerUSDBalance.getId(), toAccount, TransactionType.TRANSFER, value);
+        return Transaction.makeTransaction(
+                managerUSDBalance.getId(),
+                toAccount,
+                TransactionType.TRANSFER,
+                value,
+                "Saving Interest"
+        );
     }
 
     public static void generateInterestCallback(int date, int hour) {
@@ -48,7 +54,7 @@ public class SavingAccount extends Account {
             for (Balance balance : account.listBalances()) {
                 if (balance.getType() == CurrencyType.USD && balance.getValue() > Constants.SAVING_ACC_INTEREST_THRESHOLD) {
                     float rat = ir.getRate() / 100;
-                    int deltaValue = (int) (balance.getValue() * rat) - balance.getValue();
+                    int deltaValue = (int) (balance.getValue() * rat);
                     Result<Transaction> txRes = createTransaction(account.getId(), deltaValue);
                     if (!txRes.success) {
                         Logger.error("Failed to create transaction for interest on user account" + account.getId());
