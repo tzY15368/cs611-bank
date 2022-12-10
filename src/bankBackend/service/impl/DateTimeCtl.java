@@ -38,7 +38,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         } catch (Exception e) {
             Logger.fatal(e.getMessage());
         }
-        instance.addTimerObserver("generateInterest", SavingAccount::generateInterestCallback, 24);
+        instance.addTimerObserver("generateSaveInterest", SavingAccount::generateInterestCallback, 24);
         instance.addTimerObserver("generateLoanInterest", LoanAccount::generateLoanInterestCallback, 24);
     }
 
@@ -89,6 +89,13 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         return currentDate;
     }
 
+    @Override
+    public int getCurrentEpoch() {
+        DateTime currentDate = this.getCurrentDate();
+        int epoch = currentDate.getDate() * Constants.HOUR_PER_DAY + currentDate.getCurrentHour();
+        return epoch;
+    }
+
     // WARNING: SCHEDULE PERIOD lower bound is 1 hour
     @Override
     public void run() {
@@ -105,14 +112,15 @@ public class DateTimeCtl implements DateTimeService, Runnable {
             try {
                 float secPerHour = virtualHourInRealMs / 1000;
                 Logger.info("Timer: starting from hour " + currentDate.getCurrentHour());
-                for (int i = currentDate.getCurrentHour() + 1; i < 24; i++) {
+                int h = currentDate.getCurrentHour();
+                for (int i = h == 0 ? 0 : (h + 1); i < Constants.HOUR_PER_DAY; i++) {
                     if (secPerHour <= 1) {
                         Logger.info("Hour = " + i);
                     }
                     // SCHEDULE TIMED JOBS
                     for (String name : observers.keySet()) {
                         ConsumerInfo consumerInfo = observers.get(name);
-                        if (i % consumerInfo.interval == 0) {
+                        if ((i + 1) % consumerInfo.interval == 0) {
                             Logger.info(String.format("Running task %s", name));
                             consumerInfo.consumer.accept(currentDate.getDate(), i);
                         }

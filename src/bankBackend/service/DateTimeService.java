@@ -9,5 +9,7 @@ public interface DateTimeService {
 
     DateTime getCurrentDate();
 
+    int getCurrentEpoch();
+
     boolean addTimerObserver(String name, BiConsumer<Integer, Integer> timerObserver, int scheduleInterval);
 }

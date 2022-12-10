@@ -62,7 +62,8 @@ public abstract class Account {
                     thisUSDBalance.getId(),
                     0,
                     TransactionType.CHARGE_FEE,
-                    Constants.TX_CHARGE_FEE_VALUE
+                    Constants.TX_CHARGE_FEE_VALUE,
+                    "Account state change fee"
             );
             if (!txRes.success) {
                 return new Result(false, "Failed to charge fee:" + txRes.msg, null);
@@ -77,6 +78,7 @@ public abstract class Account {
     // only do the transcation in the sending side (fromBalance)
     // IMPORTANT: Only call this once from the sending side
     public Result<Void> handleTransaction(Transaction tx) {
+        Logger.info(String.format("Account: handling tx %s", tx.toString()));
         Balance srcBalance = Balance.getBalanceById(tx.fromBalanceId);
         Balance dstBalance = Balance.getBalanceById(Balance.getBalanceWithCurrency(this, srcBalance.getType()).data.getId());
         Result r = srcBalance.deltaValue(-tx.value);

@@ -6,7 +6,6 @@ import bankBackend.dao.DaoManager;
 import bankBackend.entity.account.Account;
 import bankBackend.service.SvcMgr;
 import bankBackend.entity.enums.TransactionType;
-import bankBackend.service.impl.UserCtl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -28,27 +27,30 @@ public class Transaction {
     @DatabaseField
     public int value;
     @DatabaseField
-    public int date;
+    public int epoch;
+    @DatabaseField
+    public String description;
 
 
     public Transaction() {
         // ORMLite needs a no-arg constructor
     }
 
-    public int getDate() {
-        return date;
-    }
 
     private Transaction(int fromBalanceId, int toAccountId, TransactionType type, int value) {
         this.fromBalanceId = fromBalanceId;
         this.toAccountId = toAccountId;
         this.type = type;
         this.value = value;
-        this.date = SvcMgr.getDateTimeService().getCurrentDate().getDate();
+        this.epoch = SvcMgr.getDateTimeService().getCurrentEpoch();
+    }
+
+    public String toString() {
+        return String.format("Tx[from=%d to=%d, type=%s, value=%s, epoch=%d, description=%s]", fromBalanceId, toAccountId, type, value, epoch, description);
     }
 
     // if type==CHARGE_FEE, toAccountId is ignored
-    public static Result<Transaction> makeTransaction(int fromBalanceId, int toAccountId, TransactionType type, int value) {
+    public static Result<Transaction> makeTransaction(int fromBalanceId, int toAccountId, TransactionType type, int value, String description) {
         Transaction tx = new Transaction(fromBalanceId, toAccountId, type, value);
 
         int TX_TRANSFER_FEE_VALUE = 5;
@@ -68,7 +70,13 @@ public class Transaction {
             if (value < chargeFee) {
                 return new Result<>(false, "Transaction value is too small", null);
             }
-            Transaction chargeFeeTx = makeTransaction(fromBalanceId, Constants.BANK_MANAGER_USER_ID, TransactionType.CHARGE_FEE, chargeFee).data;
+            Transaction chargeFeeTx = makeTransaction(
+                    fromBalanceId,
+                    Constants.BANK_MANAGER_USER_ID,
+                    TransactionType.CHARGE_FEE,
+                    chargeFee,
+                    "Operation fee"
+            ).unwrap();
             int srcAccountId = Balance.getBalanceById(fromBalanceId).getAccountId();
             Result r = Account.getAccountById(srcAccountId).handleTransaction(chargeFeeTx);
             if (!r.success) {
