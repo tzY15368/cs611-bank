@@ -1,15 +1,25 @@
 package bankBackend.service.impl;
 
 import Utils.Result;
+import bankBackend.Constants;
 import bankBackend.entity.InterestRate;
 import bankBackend.entity.enums.RateType;
 import bankBackend.service.InterestRateService;
 
 public class InterestRateCtl implements InterestRateService {
     private static InterestRateCtl instance;
+    private int globalInterestRate;
 
     private InterestRateCtl() {
+        this.globalInterestRate = Constants.DEFAULT_SAVE_INTEREST_RATE;
+    }
 
+    public int getGlobalInterestRate() {
+        return this.globalInterestRate;
+    }
+
+    public void setGlobalInterestRate(int rate) {
+        this.globalInterestRate = rate;
     }
 
     public static InterestRateCtl getInstance() {
