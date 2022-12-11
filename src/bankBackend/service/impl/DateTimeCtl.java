@@ -177,13 +177,15 @@ public class DateTimeCtl implements DateTimeService, Runnable {
                 }
 
                 // run scheduled jobs
-                for (String name : observers.keySet()) {
-                    ConsumerInfo ci = observers.get(name);
-                    if (currentEpoch % ci.interval == 0) {
-                        Logger.info(String.format("Running task %s", name));
-                        int date = currentEpoch % Constants.HOUR_PER_DAY;
-                        int hour = currentEpoch - (Constants.HOUR_PER_DAY * date);
-                        ci.consumer.accept(date, hour);
+                if (currentEpoch != bootEpoch) {
+                    for (String name : observers.keySet()) {
+                        ConsumerInfo ci = observers.get(name);
+                        if (currentEpoch % ci.interval == 0) {
+                            Logger.info(String.format("Running task %s", name));
+                            int date = currentEpoch % Constants.HOUR_PER_DAY;
+                            int hour = currentEpoch - (Constants.HOUR_PER_DAY * date);
+                            ci.consumer.accept(date, hour);
+                        }
                     }
                 }
                 Thread.sleep(sleepMsPerHour);

@@ -30,7 +30,7 @@ public class UserCtl implements UserService {
         }
         // create if not exists the bank manager
         Result r = new ManagerFactory().createUser("", "");
-        if (!r.success) Logger.fatal("Failed to create bank manager");
+        if (!r.success) Logger.fatal("Failed to create bank manager:" + r.msg);
         //re-fetch the bank manager
         Constants.BANK_MANAGER_USER_ID = instance.getManager().getId();
     }
