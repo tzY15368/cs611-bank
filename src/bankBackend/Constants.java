@@ -17,4 +17,7 @@ public class Constants {
     public static int TX_CHARGE_FEE_VALUE = 50;
 
     public static int HOUR_PER_DAY = 24;
+
+    public static int DEFAULT_SAVE_INTEREST_RATE = 5;
+    public static int DEFAULT_LOAN_INTEREST_RATE = 10;
 }

@@ -10,9 +10,7 @@ import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.RateType;
 import bankBackend.entity.enums.TransactionType;
-import bankBackend.service.InterestRateService;
 import bankBackend.service.SvcMgr;
-import bankBackend.service.impl.InterestRateCtl;
 import bankBackend.service.impl.UserCtl;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public class SavingAccount extends Account {
 
     private static Result<Transaction> createTransaction(int toAccount, int value) {
         // get manager's saving account
-        Account managerAccount = UserCtl.getInstance().getManager().getAccount(AccountType.SAVINGS).unwrap();
+        Account managerAccount = UserCtl.getInstance().getManager().getAccount(AccountType.CHECKING).unwrap();
         // get manager's saving account's USD balance
         Balance managerUSDBalance = Balance.getBalanceWithCurrency(managerAccount, CurrencyType.USD).unwrap();
         // create transaction
@@ -46,8 +44,8 @@ public class SavingAccount extends Account {
 
     public static void generateInterestCallback(int date, int hour) {
         Logger.info("Generating interest...");
-        List<SavingAccount> accounts = (List<SavingAccount>) Account.listAccountByType(AccountType.SAVINGS);
-        for (SavingAccount account : accounts) {
+        List<Account> accounts = Account.listAccountByType(AccountType.SAVINGS);
+        for (Account account : accounts) {
             Result<InterestRate> irRes = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Save);
             if (!irRes.success) continue;
             InterestRate ir = irRes.data;

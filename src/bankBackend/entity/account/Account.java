@@ -120,7 +120,7 @@ public abstract class Account {
         return null;
     }
 
-    public static List<?> listAccountByType(AccountType type) {
+    public static List<Account> listAccountByType(AccountType type) {
         try {
             return dao.queryBuilder()
                     .where().eq("type", type).query();
