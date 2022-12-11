@@ -3,6 +3,7 @@ package bankBackend.service.impl;
 import Utils.*;
 import bankBackend.Constants;
 import bankBackend.factory.AbstractUserFactory;
+import bankBackend.factory.ManagerFactory;
 import bankBackend.factory.MemorySession;
 import bankBackend.factory.DefaultUserFactory;
 import bankBackend.entity.User;
@@ -28,20 +29,10 @@ public class UserCtl implements UserService {
             instance = new UserCtl();
         }
         // create if not exists the bank manager
-        User bankManager = new User(Constants.BANK_MANAGER_USERNAME, "");
-        try {
-            User.dao.createIfNotExists(bankManager);
-        } catch (SQLException e) {
-            Logger.error("Failed to create bank manager:" + e.getMessage());
-        }
+        Result r = new ManagerFactory().createUser("", "");
+        if (!r.success) Logger.fatal("Failed to create bank manager");
         //re-fetch the bank manager
-        try {
-            bankManager = User.dao.queryBuilder().where()
-                    .eq("name", Constants.BANK_MANAGER_USERNAME).queryForFirst();
-        } catch (SQLException e) {
-            Logger.fatal("Failed to fetch bank manager:" + e.getMessage());
-        }
-        Constants.BANK_MANAGER_USER_ID = bankManager.getId();
+        Constants.BANK_MANAGER_USER_ID = instance.getManager().getId();
     }
 
     public User getManager() {

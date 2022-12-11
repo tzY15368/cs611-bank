@@ -27,6 +27,8 @@ public class User {
     private String name;
     @DatabaseField
     private String password;
+    @DatabaseField
+    private boolean isManager;
 
     public User() {
         // ORMLite needs a no-arg constructor
@@ -49,6 +51,19 @@ public class User {
         } catch (SQLException e) {
             return new Result<>(false, e.getMessage(), null);
         }
+    }
+
+    public void setIsManager(boolean isManager) {
+        this.isManager = isManager;
+        try {
+            dao.update(this);
+        } catch (SQLException e) {
+            Logger.fatal("Failed to update user:" + e.getMessage());
+        }
+    }
+
+    public boolean isManager() {
+        return isManager;
     }
 
     public String getName() {
