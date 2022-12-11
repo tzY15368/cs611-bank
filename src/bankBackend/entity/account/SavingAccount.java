@@ -49,7 +49,7 @@ public class SavingAccount extends Account {
             Result<InterestRate> irRes = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Save);
             if (!irRes.success) continue;
             InterestRate ir = irRes.data;
-            for (Balance balance : account.listBalances()) {
+            for (Balance balance : account.listBalance()) {
                 if (balance.getType() == CurrencyType.USD && balance.getValue() > Constants.SAVING_ACC_INTEREST_THRESHOLD) {
                     float rat = ir.getRate() / 100;
                     int deltaValue = (int) (balance.getValue() * rat);

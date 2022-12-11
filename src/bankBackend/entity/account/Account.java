@@ -20,11 +20,11 @@ import java.util.List;
 
 
 @DatabaseTable(tableName = "Accounts")
-public abstract class Account {
+public class Account {
 
     public static Dao<Account, Integer> dao = DaoManager.getDao(Account.class);
 
-    @DatabaseField
+    @DatabaseField(generatedId = true)
     protected int id;
     @DatabaseField
     protected int userId;
@@ -126,16 +126,6 @@ public abstract class Account {
                     .where().eq("type", type).query();
         } catch (Exception e) {
             Logger.error("listAccountByType:" + e.getMessage());
-        }
-        return new ArrayList<>();
-    }
-
-    public List<Balance> listBalances() {
-        try {
-            return Balance.dao.queryBuilder()
-                    .where().eq("accountId", this.id).query();
-        } catch (Exception e) {
-            Logger.error("listBalances:" + e.getMessage());
         }
         return new ArrayList<>();
     }

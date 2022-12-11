@@ -46,7 +46,7 @@ public class DateTime {
         try {
             return dao.queryBuilder().orderBy("date", false).limit(1L).query().get(0);
         } catch (Exception e) {
-            Logger.error("DateTime: getLastRecord: " + e.getMessage());
+            Logger.warn("DateTime: getLastRecord: " + e.getMessage());
             return null;
         }
     }
