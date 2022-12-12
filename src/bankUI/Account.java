@@ -273,8 +273,9 @@ public class Account extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    Authentication authentication = new Authentication();
-    authentication.setVisible(true);        // TODO add your handling code here:
+        setVisible(false);
+        Authentication auth = new Authentication();
+        auth.setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
