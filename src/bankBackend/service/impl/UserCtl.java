@@ -2,6 +2,9 @@ package bankBackend.service.impl;
 
 import Utils.*;
 import bankBackend.Constants;
+import bankBackend.entity.account.Account;
+import bankBackend.entity.enums.AccountState;
+import bankBackend.entity.enums.AccountType;
 import bankBackend.factory.AbstractUserFactory;
 import bankBackend.factory.ManagerFactory;
 import bankBackend.factory.MemorySession;
@@ -30,7 +33,7 @@ public class UserCtl implements UserService {
         }
         // create if not exists the bank manager
         Result r = new ManagerFactory().createUser("", "");
-        if (!r.success) Logger.fatal("Failed to create bank manager:" + r.msg);
+        if (!r.success) Logger.error("Failed to create bank manager:" + r.msg);
         //re-fetch the bank manager
         Constants.BANK_MANAGER_USER_ID = instance.getManager().getId();
     }
@@ -82,5 +85,36 @@ public class UserCtl implements UserService {
             Logger.error("listUsers:" + e.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<Account> listAccount(User user) {
+        List<Account> accs = new ArrayList<>();
+        List.of(AccountType.values()).forEach(t -> {
+            try {
+                accs.addAll(Account.dao.queryBuilder().where()
+                        .eq("userId", user.getId())
+                        .and().eq("type", t)
+                        .query());
+            } catch (SQLException e) {
+                Logger.error("listAccount:" + e.getMessage());
+            }
+        });
+        return accs;
+    }
+
+    @Override
+    public List<Account> listAccount(User user, AccountState state) {
+        List<Account> accs = new ArrayList<>();
+        Result r = user.getCheckingAccount();
+
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
+        r = user.getSavingAccount();
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
+        r = user.getLoanAccount();
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
+        r = user.getSecurityAccount();
+        if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
+        return accs;
     }
 }

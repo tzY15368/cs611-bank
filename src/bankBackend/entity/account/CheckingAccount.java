@@ -1,5 +1,6 @@
 package bankBackend.entity.account;
 
+import bankBackend.entity.enums.AccountState;
 import bankBackend.entity.enums.AccountType;
 
 public class CheckingAccount extends Account {
@@ -10,6 +11,7 @@ public class CheckingAccount extends Account {
 
     public CheckingAccount(int userId) {
         super(userId, AccountType.CHECKING);
+        this.state = AccountState.OPEN;
     }
 
 }
