@@ -129,6 +129,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
             Logger.warn("invalid op: 360 < ratio < 86400");
         } else {
             this.timeRatio = ratio;
+            Logger.info("Time ratio set to " + ratio + ", changes will take place in the next virtual day");
         }
     }
 
