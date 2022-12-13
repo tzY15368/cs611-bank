@@ -119,7 +119,7 @@ public class StockCtl implements StockService {
             // assume we can only use USD to buy stock, reset user's money
             int needMoney = amount * stock.getCurrentPrice();
             Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security)
-                    .unwrap(), CurrencyType.USD).unwrap();
+                    .unwrap().getId(), CurrencyType.USD).unwrap();
             if (balance.getValue() < needMoney) {
                 return new Result<>(false, "Don't have enough money to buy stock", null);
             } else {
@@ -167,7 +167,7 @@ public class StockCtl implements StockService {
                     .eq("userId", -1).queryForFirst();
             int sellMoney = s.getCurrentPrice() * amount;
             Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security)
-                    .unwrap(), CurrencyType.USD).unwrap();
+                    .unwrap().getId(), CurrencyType.USD).unwrap();
             balance.deltaValue(sellMoney);
             Balance.dao.update(balance);
 
