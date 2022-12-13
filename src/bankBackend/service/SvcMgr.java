@@ -37,4 +37,8 @@ public class SvcMgr {
     public static InterestRateService getInterestRateService() {
         return InterestRateCtl.getInstance();
     }
+
+    public static AccountService getAccountService() {
+        return AccountCtl.getInstance();
+    }
 }

@@ -8,6 +8,7 @@ import bankBackend.dao.DaoManager;
 import bankBackend.entity.account.*;
 import bankBackend.entity.enums.AccountState;
 import bankBackend.entity.enums.AccountType;
+import bankBackend.service.SvcMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -139,7 +140,7 @@ public class User {
         }
         SavingAccount saving = res.data;
 
-        for (Balance b : saving.listBalance()) {
+        for (Balance b : SvcMgr.getAccountService().listBalance(saving.getId())) {
             if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
                 return true;
             }

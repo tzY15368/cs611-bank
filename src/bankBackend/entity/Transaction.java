@@ -77,8 +77,7 @@ public class Transaction {
                     chargeFee,
                     "Operation fee"
             ).unwrap();
-            int srcAccountId = Balance.getBalanceById(fromBalanceId).getAccountId();
-            Result r = Account.getAccountById(srcAccountId).handleTransaction(chargeFeeTx);
+            Result r = SvcMgr.getAccountService().handleTxn(chargeFeeTx);
             if (!r.success) {
                 return new Result<>(false, "Failed to handle charge-fee transaction:" + r.msg, null);
             }
