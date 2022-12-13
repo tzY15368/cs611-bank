@@ -1,4 +1,4 @@
-package bankUI;
+package bankUI.components.account;
 
 import bankUI.components.home.HomeUI;
 

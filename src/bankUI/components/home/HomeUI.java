@@ -2,9 +2,9 @@ package bankUI.components.home;
 
 import bankBackend.entity.User;
 import bankUI.components.account.AccountStateUI;
-import bankUI.loan_Account_Ui;
-import bankUI.money_IOUI;
-import bankUI.transation_builder_UI;
+import bankUI.components.account.loan_Account_Ui;
+import bankUI.components.account.money_IOUI;
+import bankUI.components.account.transation_builder_UI;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
