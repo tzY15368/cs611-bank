@@ -32,16 +32,16 @@ public class LoanAccount extends Account {
     private static Result<Transaction> createTransaction(int fromBalanceId, int value) {
         Account managerAccount = UserCtl.getInstance().getManager().getAccount(AccountType.SAVINGS).unwrap();
         // get manager's saving account
-        return Transaction.makeTransaction(fromBalanceId, managerAccount.getId(), TransactionType.TRANSFER, value);
+        return Transaction.makeTransaction(fromBalanceId, managerAccount.getId(), TransactionType.TRANSFER, value,"Loan Interest");
     }
     public static void generateLoanInterestCallback(int date, int hour) {
         Logger.info("Generating loan interest...");
-        List<LoanAccount> accounts = (List<LoanAccount>) Account.listAccountByType(AccountType.Loan);
-        for (LoanAccount account : accounts) {
+        List<Account> accounts = SvcMgr.getAccountService().listAccountByType(AccountType.Loan);
+        for (Account account : accounts) {
             Result<InterestRate> irRes = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Loan);
             if (!irRes.success) continue;
             InterestRate ir = irRes.data;
-            for (Balance balance : account.listBalances()) {
+            for (Balance balance : SvcMgr.getAccountService().listBalance(account.getId())) {
                 if (balance.getType() == CurrencyType.USD) {
                     float rat = ir.getRate() / 100;
                     int deltaValue = (int) (balance.getValue() * rat);
@@ -49,7 +49,7 @@ public class LoanAccount extends Account {
                     if (!txRes.success) {
                         Logger.error("Failed to create transaction for interest on user loan account" + account.getId());
                     }
-                    Result r = account.handleTransaction(txRes.data);
+                    Result r = SvcMgr.getAccountService().handleTxn(txRes.data);
                     if (!r.success) {
                         Logger.error("Failed to charge interest for loan account " + account.getId() + ": " + r.msg);
                     }
