@@ -3,8 +3,10 @@ import bankUI.BankGUI;
 import bankBackend.BankBackend;
 import bankUI.components.login.Authentication;
 
+import java.sql.SQLException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         BankBackend bnk = new BankBackend();
         Logger.info("Starting bank " + bnk.name);
         //BankGUI.initGUI(args);

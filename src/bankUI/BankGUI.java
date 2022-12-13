@@ -16,6 +16,7 @@ public class BankGUI extends JFrame {
     private JTextField textField2;
     private JLabel label1;
     private JLabel label2;
+    private JButton button1;
     private int cnt = 0;
 
     public BankGUI(String title) {

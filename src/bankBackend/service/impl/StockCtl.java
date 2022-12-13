@@ -4,10 +4,14 @@ import bankBackend.Constants;
 import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Balance;
+import bankBackend.entity.Transaction;
 import bankBackend.entity.User;
 import bankBackend.entity.Stock;
+import bankBackend.entity.account.Account;
+import bankBackend.entity.account.SecurityAccount;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
+import bankBackend.entity.enums.TransactionType;
 import bankBackend.service.StockService;
 
 import java.sql.SQLException;
@@ -117,14 +121,15 @@ public class StockCtl implements StockService {
             }
 
             // assume we can only use USD to buy stock, reset user's money
-            int needMoney = amount * stock.getCurrentPrice();
-            Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security)
-                    .unwrap().getId(), CurrencyType.USD).unwrap();
-            if (balance.getValue() < needMoney) {
-                return new Result<>(false, "Don't have enough money to buy stock", null);
-            } else {
-                balance.deltaValue(0 - needMoney);
-                Balance.dao.update(balance);
+
+            int fromBalanceId = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).unwrap().getId(), CurrencyType.USD).unwrap().getId();
+            Account account = Account.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
+                    .and().eq("type", AccountType.Security).queryForFirst();
+            int toAccountID = account.getId();
+            int value = amount * stock.getCurrentPrice();
+            Result res = Transaction.makeTransaction(fromBalanceId, toAccountID, TransactionType.TRANSFER, value, "buy stock");
+            if (!res.success) {
+                return new Result<>(false, "buyStock: unsuccessful", null);
             }
 
             // reset the amount of stock in the market
@@ -164,12 +169,16 @@ public class StockCtl implements StockService {
 
             //give user sell stock money
             Stock s = Stock.dao.queryBuilder().where().eq("name", name).and()
-                    .eq("userId", -1).queryForFirst();
-            int sellMoney = s.getCurrentPrice() * amount;
-            Balance balance = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security)
-                    .unwrap().getId(), CurrencyType.USD).unwrap();
-            balance.deltaValue(sellMoney);
-            Balance.dao.update(balance);
+
+                    .eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
+            int fromBalanceId = Balance.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
+                    .and().eq("type", CurrencyType.USD).queryForFirst().getId();
+            int toAccountID = user.getAccount(AccountType.Security).unwrap().getId();
+            int value = s.getCurrentPrice() * amount;
+            Result res = Transaction.makeTransaction(fromBalanceId, toAccountID, TransactionType.TRANSFER, value, "sell stock");
+            if (!res.success) {
+                return new Result<>(false, "sellStock: unsuccessful", null);
+            }
 
             int currentPrice = s.getCurrentPrice();
             //reduce user's stock amount, and add realized profit
