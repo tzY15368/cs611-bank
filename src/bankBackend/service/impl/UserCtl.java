@@ -52,7 +52,7 @@ public class UserCtl implements UserService {
         return instance;
     }
 
-    public Result<Void> userLogin(String username, String password) {
+    public Result<User> userLogin(String username, String password) {
         try {
             User user = User.dao.queryBuilder().where().eq("name", username).queryForFirst();
             if (user == null) {
@@ -62,7 +62,7 @@ public class UserCtl implements UserService {
                 // set session
                 SvcMgr.getSessionService().setSession(new MemorySession(user));
 
-                return new Result<>(true, null, null);
+                return new Result<>(true, null, user);
             } else {
                 return new Result<>(false, "Wrong password", null);
             }

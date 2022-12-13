@@ -1,5 +1,5 @@
 
-package bankUI;
+package bankUI.components.home;
 
 import Utils.Logger;
 import bankBackend.service.SvcMgr;
@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class HomeGUI extends JPanel {
+public class DeprecatedHomeGUI extends JPanel {
     private int userID;
     private JFrame jFrame;
     private JPanel checkingPanel;
@@ -26,7 +26,7 @@ public class HomeGUI extends JPanel {
     private DefaultListModel securityListModel;
     private JCheckBox checkBox1;
 
-    public HomeGUI(int userID) {
+    public DeprecatedHomeGUI(int userID) {
         // TODO: User user=User.findUserById(int userID);
         User user = SvcMgr.getSessionService().getSession().data.getUser();
         JLabel title = new JLabel("User Name： " + user.getName());
@@ -205,7 +205,7 @@ public class HomeGUI extends JPanel {
 
     //test page
     public static void main(String[] args) {
-        new HomeGUI(1234);
+        new DeprecatedHomeGUI(1234);
     }
 
     private void createUIComponents() {

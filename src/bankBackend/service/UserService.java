@@ -6,7 +6,7 @@ import bankBackend.entity.User;
 import java.util.List;
 
 public interface UserService {
-    Result<Void> userLogin(String username, String password);
+    Result<User> userLogin(String username, String password);
 
     Result<Void> userRegister(String username, String password);
 

@@ -1,4 +1,8 @@
-package bankUI;/*
+package bankUI;
+
+import bankUI.components.home.HomeUI;
+
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
@@ -114,7 +118,7 @@ public class money_IOUI extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         setVisible(false);
-        homeUI home = new homeUI();
+        HomeUI home = new HomeUI();
         home.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 

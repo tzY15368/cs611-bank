@@ -25,3 +25,6 @@ out/production
 hs_err_pid*
 replay_pid*
 .idea
+/build/
+/test/
+nbproject/private
