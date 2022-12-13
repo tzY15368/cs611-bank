@@ -121,14 +121,15 @@ public class StockCtl implements StockService {
             }
 
             // assume we can only use USD to buy stock, reset user's money
-            int fromBalanceId=Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).unwrap().getId(),CurrencyType.USD).unwrap().getId();
-            Account account= Account.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
+
+            int fromBalanceId = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).unwrap().getId(), CurrencyType.USD).unwrap().getId();
+            Account account = Account.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
                     .and().eq("type", AccountType.Security).queryForFirst();
-            int toAccountID= account.getId();
-            int value=amount * stock.getCurrentPrice();
-            Result res=Transaction.makeTransaction(fromBalanceId,toAccountID, TransactionType.TRANSFER,value, "buy stock");
-            if(!res.success){
-                return new Result<>(false, "buyStock: unsuccessful" , null);
+            int toAccountID = account.getId();
+            int value = amount * stock.getCurrentPrice();
+            Result res = Transaction.makeTransaction(fromBalanceId, toAccountID, TransactionType.TRANSFER, value, "buy stock");
+            if (!res.success) {
+                return new Result<>(false, "buyStock: unsuccessful", null);
             }
 
             // reset the amount of stock in the market
@@ -168,14 +169,15 @@ public class StockCtl implements StockService {
 
             //give user sell stock money
             Stock s = Stock.dao.queryBuilder().where().eq("name", name).and()
+
                     .eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
-            int fromBalanceId= Balance.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
+            int fromBalanceId = Balance.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
                     .and().eq("type", CurrencyType.USD).queryForFirst().getId();
-            int toAccountID=user.getAccount(AccountType.Security).unwrap().getId();
-            int value=s.getCurrentPrice() * amount;
-            Result res=Transaction.makeTransaction(fromBalanceId,toAccountID,TransactionType.TRANSFER,value, "sell stock");
-            if(!res.success){
-                return new Result<>(false, "sellStock: unsuccessful" , null);
+            int toAccountID = user.getAccount(AccountType.Security).unwrap().getId();
+            int value = s.getCurrentPrice() * amount;
+            Result res = Transaction.makeTransaction(fromBalanceId, toAccountID, TransactionType.TRANSFER, value, "sell stock");
+            if (!res.success) {
+                return new Result<>(false, "sellStock: unsuccessful", null);
             }
 
             int currentPrice = s.getCurrentPrice();
