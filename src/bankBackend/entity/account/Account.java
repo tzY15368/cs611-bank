@@ -10,13 +10,12 @@ import bankBackend.entity.Transaction;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.TransactionType;
+import bankBackend.service.SvcMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @DatabaseTable(tableName = "Accounts")
@@ -57,7 +56,7 @@ public class Account {
         this.state = state;
         try {
             dao.update(this);
-            Balance thisUSDBalance = Balance.getBalanceWithCurrency(this, CurrencyType.USD).data;
+            Balance thisUSDBalance = Balance.getBalanceWithCurrency(this.getId(), CurrencyType.USD).data;
             Result<Transaction> txRes = Transaction.makeTransaction(
                     thisUSDBalance.getId(),
                     0,
@@ -68,65 +67,11 @@ public class Account {
             if (!txRes.success) {
                 return new Result(false, "Failed to charge fee:" + txRes.msg, null);
             }
-            Result r = this.handleTransaction(txRes.data);
+            Result r = SvcMgr.getAccountService().handleTxn(txRes.data);
             return r;
         } catch (SQLException e) {
             return new Result<>(false, "SQL Exception in setState:" + e + ": " + e.getMessage(), null);
         }
     }
 
-    // only do the transcation in the sending side (fromBalance)
-    // IMPORTANT: Only call this once from the sending side
-    public Result<Void> handleTransaction(Transaction tx) {
-        Logger.info(String.format("Account: handling tx %s", tx.toString()));
-        Balance srcBalance = Balance.getBalanceById(tx.fromBalanceId);
-        Balance dstBalance = Balance.getBalanceById(Balance.getBalanceWithCurrency(this, srcBalance.getType()).data.getId());
-        Result r = srcBalance.deltaValue(-tx.value);
-        if (!r.success) {
-            return r;
-        }
-        r = dstBalance.deltaValue(tx.value);
-        if (!r.success) {
-            return r;
-        }
-        // write to disk
-        try {
-            Balance.dao.update(srcBalance);
-            Balance.dao.update(dstBalance);
-            Transaction.dao.create(tx);
-        } catch (SQLException e) {
-            return new Result<>(false, "SQL Exception in handleTransaction:" + e + ": " + e.getMessage(), null);
-        }
-        return new Result<>(true, "Transaction successful", null);
-    }
-
-    public List<Balance> listBalance() {
-        try {
-            List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
-                    .where().eq("accountId", this.id).query();
-            return balances;
-        } catch (Exception e) {
-            Logger.error("listBalances:" + e.getMessage());
-        }
-        return new ArrayList<>();
-    }
-
-    public static Account getAccountById(int id) {
-        try {
-            return dao.queryForId(id);
-        } catch (SQLException e) {
-            Logger.error("getAccountById:" + e.getMessage());
-        }
-        return null;
-    }
-
-    public static List<Account> listAccountByType(AccountType type) {
-        try {
-            return dao.queryBuilder()
-                    .where().eq("type", type).query();
-        } catch (Exception e) {
-            Logger.error("listAccountByType:" + e.getMessage());
-        }
-        return new ArrayList<>();
-    }
 }

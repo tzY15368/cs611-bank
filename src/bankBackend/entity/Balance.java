@@ -65,10 +65,10 @@ public class Balance {
         return new Result<>(true, "", null);
     }
 
-    public static Result<Balance> getBalanceWithCurrency(Account account, CurrencyType kind) {
+    public static Result<Balance> getBalanceWithCurrency(int accountId, CurrencyType kind) {
         try {
             List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
-                    .where().eq("accountId", account.getId()).and().eq("type", kind).query();
+                    .where().eq("accountId", accountId).and().eq("type", kind).query();
             if (balances.size() == 0) {
                 return new Result<>(true, "no balance with this currency", null);
             }

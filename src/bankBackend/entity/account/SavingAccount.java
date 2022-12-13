@@ -31,7 +31,7 @@ public class SavingAccount extends Account {
         // get manager's saving account
         Account managerAccount = UserCtl.getInstance().getManager().getAccount(AccountType.CHECKING).unwrap();
         // get manager's saving account's USD balance
-        Balance managerUSDBalance = Balance.getBalanceWithCurrency(managerAccount, CurrencyType.USD).unwrap();
+        Balance managerUSDBalance = Balance.getBalanceWithCurrency(managerAccount.getId(), CurrencyType.USD).unwrap();
         // create transaction
         return Transaction.makeTransaction(
                 managerUSDBalance.getId(),
@@ -44,12 +44,12 @@ public class SavingAccount extends Account {
 
     public static void generateInterestCallback(int date, int hour) {
         Logger.info("Generating interest...");
-        List<Account> accounts = Account.listAccountByType(AccountType.SAVINGS);
+        List<Account> accounts = SvcMgr.getAccountService().listAccountByType(AccountType.SAVINGS);
         for (Account account : accounts) {
             Result<InterestRate> irRes = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Save);
             if (!irRes.success) continue;
             InterestRate ir = irRes.data;
-            for (Balance balance : account.listBalance()) {
+            for (Balance balance : SvcMgr.getAccountService().listBalance(account.getId())) {
                 if (balance.getType() == CurrencyType.USD && balance.getValue() > Constants.SAVING_ACC_INTEREST_THRESHOLD) {
                     float rat = ir.getRate() / 100;
                     int deltaValue = (int) (balance.getValue() * rat);
@@ -57,7 +57,7 @@ public class SavingAccount extends Account {
                     if (!txRes.success) {
                         Logger.error("Failed to create transaction for interest on user account" + account.getId());
                     }
-                    Result r = account.handleTransaction(txRes.data);
+                    Result r = SvcMgr.getAccountService().handleTxn(txRes.data);
                     if (!r.success) {
                         Logger.error("Failed to generate interest for account " + account.getId() + ": " + r.msg);
                     }
