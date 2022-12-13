@@ -1,7 +1,7 @@
 import Utils.Logger;
-import bankUI.BankGUI;
 import bankBackend.BankBackend;
 import bankUI.components.login.Authentication;
+import bankUI.utils.SystemMgr;
 
 import java.sql.SQLException;
 
@@ -11,6 +11,8 @@ public class Main {
         Logger.info("Starting bank " + bnk.name);
         //BankGUI.initGUI(args);
         //HomeGUI.main(args);
+        SystemMgr.main(args);
         Authentication.main(args);
+        //DeprecatedHomeGUI.main(args);
     }
 }
