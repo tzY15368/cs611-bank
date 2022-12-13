@@ -9,8 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class DeprecatedHomeGUI extends JPanel {
-    private int userID;
+public class OldHomeUI extends JPanel {
+    private User user;
     private JFrame jFrame;
     private JPanel checkingPanel;
     private JPanel savingPanel;
@@ -26,10 +26,10 @@ public class DeprecatedHomeGUI extends JPanel {
     private DefaultListModel securityListModel;
     private JCheckBox checkBox1;
 
-    public DeprecatedHomeGUI(int userID) {
+    public OldHomeUI(User user) {
+        this.user = user;
         // TODO: User user=User.findUserById(int userID);
-        User user = SvcMgr.getSessionService().getSession().data.getUser();
-        JLabel title = new JLabel("User Name： " + user.getName());
+        JLabel title = new JLabel("User Name: " + user.getName());
         title.setBounds(350, 20, 300, 100);
         title.setFont(new Font("Arial", Font.PLAIN, 30));
 
@@ -201,11 +201,6 @@ public class DeprecatedHomeGUI extends JPanel {
         jFrame.getContentPane().add(loanPanel);
         jFrame.setVisible(true);
 
-    }
-
-    //test page
-    public static void main(String[] args) {
-        new DeprecatedHomeGUI(1234);
     }
 
     private void createUIComponents() {

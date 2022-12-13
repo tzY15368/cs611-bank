@@ -20,4 +20,6 @@ public class Constants {
 
     public static int DEFAULT_SAVE_INTEREST_RATE = 5;
     public static int DEFAULT_LOAN_INTEREST_RATE = 10;
+
+    public static int TXN_MONEY_IO_NULL = -555;
 }

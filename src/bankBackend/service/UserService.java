@@ -2,6 +2,8 @@ package bankBackend.service;
 
 import Utils.Result;
 import bankBackend.entity.User;
+import bankBackend.entity.account.Account;
+import bankBackend.entity.enums.AccountState;
 
 import java.util.List;
 
@@ -11,4 +13,8 @@ public interface UserService {
     Result<Void> userRegister(String username, String password);
 
     List<User> listUsers();
+
+    List<Account> listAccount(User user);
+
+    List<Account> listAccount(User user, AccountState state);
 }
