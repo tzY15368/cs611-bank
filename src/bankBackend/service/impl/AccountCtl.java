@@ -118,53 +118,44 @@ public class AccountCtl implements AccountService {
         Result r;
         // do the transaction itself
         if (txn.fromBalanceId != Constants.TXN_NULL_SENDER) {
-            try {
-                //Balance b = Balance.dao.queryForId(txn.fromBalanceId);
-                //int newVal = b.getValue() - txn.value;
-                // update the field value with the dao
-                String sql = String.format("UPDATE balance SET value = value-%d WHERE id = %d", txn.value, txn.fromBalanceId);
-                Logger.info("sql:" + sql);
-                Balance.dao.updateRaw(sql);
-            } catch (SQLException e) {
-                return new Result<>(false, "SQL Exception in createAndHandleTxn:" + e + ": " + e.getMessage(), null);
+            Balance b = Balance.getBalanceById(txn.fromBalanceId);
+            r = b.deltaValue(-txn.value);
+            if (!r.success) {
+                return r;
             }
-//            r = b.deltaValue(-txn.value);
-//            if (!r.success) {
-//                return r;
-//            }
         }
         if (txn.toAccountId != Constants.TXN_NULL_RECEIVER) {
-//            Balance b = Balance.getBalanceWithCurrency(txn.toAccountId, txn.currencyType).unwrap();
-//            r = b.deltaValue(txn.value);
-//            if (!r.success) {
-//                return r;
-//            }
-//            if (txn.fromBalanceId == Constants.TXN_NULL_SENDER) {
-//                feeChargeBalanceId = b.getId();
-//            }
+            Balance b = Balance.getBalanceWithCurrency(txn.toAccountId, txn.currencyType).unwrap();
+            r = b.deltaValue(txn.value);
+            if (!r.success) {
+                return r;
+            }
+            if (txn.fromBalanceId == Constants.TXN_NULL_SENDER) {
+                feeChargeBalanceId = b.getId();
+            }
         }
-//        try {
-//            Transaction.dao.create(txn);
-//        } catch (SQLException e) {
-//            return new Result<>(false, "SQL Exception in createAndHandleTxn:" + e + ": " + e.getMessage(), null);
-//        }
+        try {
+            Transaction.dao.create(txn);
+        } catch (SQLException e) {
+            return new Result<>(false, "SQL Exception in createAndHandleTxn:" + e + ": " + e.getMessage(), null);
+        }
 
         // if necessary, do the charge fee transaction
-//        if (chargeFee > 0) {
-//            // get the bank manager
-//            User mgr = UserCtl.getInstance().getManager();
-//            // get mgr's checking account
-//            Account checking = mgr.getCheckingAccount().unwrap();
-//            r = createAndHandleTxn(
-//                    feeChargeBalanceId,
-//                    checking.getId(),
-//                    TransactionType.CHARGE_FEE,
-//                    chargeFee,
-//                    "Charge fee for transaction " + txn.getId(),
-//                    txn.currencyType
-//            );
-//            return r;
-//        }
+        if (chargeFee > 0) {
+            // get the bank manager
+            User mgr = UserCtl.getInstance().getManager();
+            // get mgr's checking account
+            Account checking = mgr.getCheckingAccount().unwrap();
+            r = createAndHandleTxn(
+                    feeChargeBalanceId,
+                    checking.getId(),
+                    TransactionType.CHARGE_FEE,
+                    chargeFee,
+                    "Charge fee for transaction " + txn.getId(),
+                    txn.currencyType
+            );
+            return r;
+        }
         return new Result<>(true, "Transaction successful", null);
     }
 

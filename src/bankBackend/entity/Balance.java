@@ -29,6 +29,10 @@ public class Balance {
     @DatabaseField
     private CurrencyType type;
 
+    public String toString() {
+        return String.format("Balance[id=%d, accountId=%d, value=%d, type=%s]", id, accountId, value, type);
+    }
+
     public Balance() {
         // ORMLite needs a no-arg constructor
     }
@@ -70,7 +74,7 @@ public class Balance {
 
     public static Result<Balance> getBalanceWithCurrency(int accountId, CurrencyType kind) {
         try {
-            List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
+            List<Balance> balances = Balance.dao.queryBuilder()
                     .where().eq("accountId", accountId).and().eq("type", kind).query();
             if (balances.size() == 0) {
                 return new Result<>(true, "no balance with this currency", null);
@@ -96,7 +100,9 @@ public class Balance {
 
     public static Balance getBalanceById(int id) {
         try {
-            return Balance.dao.queryForId(id);
+            Balance b = Balance.dao.queryForId(id);
+            Logger.warn(b.toString());
+            return b;
         } catch (Exception e) {
             Logger.fatal("getBalanceById:" + e.getMessage());
         }
