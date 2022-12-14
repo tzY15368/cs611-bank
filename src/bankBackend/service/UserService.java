@@ -17,4 +17,8 @@ public interface UserService {
     List<Account> listAccount(User user);
 
     List<Account> listAccount(User user, AccountState state);
+
+    Result<User> getUserByName(String username);
+
+    String getUsernameByAccountId(int accountId);
 }

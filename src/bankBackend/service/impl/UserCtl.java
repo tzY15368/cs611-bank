@@ -117,4 +117,28 @@ public class UserCtl implements UserService {
         if (r.success && ((Account) r.data).getState().equals(state)) accs.add((Account) r.data);
         return accs;
     }
+
+    @Override
+    public Result<User> getUserByName(String username) {
+        try {
+            User user = User.dao.queryBuilder().where().eq("name", username).queryForFirst();
+            if (user == null) {
+                return new Result<>(false, "User not found", null);
+            }
+            return new Result<>(true, null, user);
+        } catch (SQLException e) {
+            return new Result<>(false, "SQL Exception in getUserByName:" + e + ": " + e.getMessage(), null);
+        }
+    }
+
+    @Override
+    public String getUsernameByAccountId(int accountId) {
+        try {
+            int uid = SvcMgr.getAccountService().getAccountById(accountId).getUserId();
+            return User.dao.queryBuilder().where().eq("id", uid).queryForFirst().getName();
+        } catch (SQLException e) {
+            Logger.error("getUsernameByAccountId:" + e.getMessage());
+            return "unknown";
+        }
+    }
 }
