@@ -22,15 +22,16 @@ public class Balance {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
-    private int userId;
-
     // note that Money has a 100x ratio: 1$ is 100 in int value
     @DatabaseField
     private int value;
 
     @DatabaseField
     private CurrencyType type;
+
+    public String toString() {
+        return String.format("Balance[id=%d, accountId=%d, value=%d, type=%s]", id, accountId, value, type);
+    }
 
     public Balance() {
         // ORMLite needs a no-arg constructor
@@ -61,13 +62,19 @@ public class Balance {
         if (this.value + value < 0) {
             return new Result<>(false, "Cannot set negative balance", null);
         }
-        this.value += value;
-        return new Result<>(true, "", null);
+        try {
+            this.value += value;
+            System.out.println("this.accountid:" + this.accountId);
+            dao.update(this);
+            return new Result<>(true, "Balance updated", null);
+        } catch (Exception e) {
+            return new Result<>(false, "Error updating balance", null);
+        }
     }
 
     public static Result<Balance> getBalanceWithCurrency(int accountId, CurrencyType kind) {
         try {
-            List<Balance> balances = Balance.dao.queryBuilder().selectColumns("id")
+            List<Balance> balances = Balance.dao.queryBuilder()
                     .where().eq("accountId", accountId).and().eq("type", kind).query();
             if (balances.size() == 0) {
                 return new Result<>(true, "no balance with this currency", null);
@@ -93,7 +100,9 @@ public class Balance {
 
     public static Balance getBalanceById(int id) {
         try {
-            return Balance.dao.queryForId(id);
+            Balance b = Balance.dao.queryForId(id);
+            Logger.warn(b.toString());
+            return b;
         } catch (Exception e) {
             Logger.fatal("getBalanceById:" + e.getMessage());
         }

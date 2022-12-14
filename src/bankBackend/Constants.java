@@ -1,6 +1,9 @@
 package bankBackend;
 
+import bankBackend.entity.enums.TransactionType;
+
 import java.util.HashMap;
+import java.util.Map;
 
 public class Constants {
 
@@ -22,4 +25,19 @@ public class Constants {
     public static int DEFAULT_LOAN_INTEREST_RATE = 10;
 
     public static int TXN_MONEY_IO_NULL = -555;
+
+    public static int TXN_NULL_SENDER = -666;
+    public static int TXN_NULL_RECEIVER = -777;
+
+    public static int TX_TRANSFER_FEE_VALUE = 5;
+    public static int DEPOSIT_FEE_VALUE = 5;
+    public static int WITHDRAW_FEE_VALUE = 5;
+
+    public static Map<TransactionType, Integer> ALL_CHARGE_FEE_VALUES = new HashMap<>() {
+        {
+            put(TransactionType.TRANSFER, TX_TRANSFER_FEE_VALUE);
+            put(TransactionType.DEPOSIT, DEPOSIT_FEE_VALUE);
+            put(TransactionType.WITHDRAW, WITHDRAW_FEE_VALUE);
+        }
+    };
 }
