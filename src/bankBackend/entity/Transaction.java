@@ -58,36 +58,4 @@ public class Transaction {
         return String.format("Tx[from=%d to=%d, type=%s, value=%s, epoch=%d, description=%s currencyType=%s]", fromBalanceId, toAccountId, type, value, epoch, description, currencyType);
     }
 
-    public static Result<Transaction> makeTransaction(int fromBalanceId, int toAccountId, TransactionType type, int value, String description, CurrencyType ct) {
-        Result<Transaction> rtx = makeTransaction(fromBalanceId, toAccountId, type, value, description);
-        rtx.unwrap().currencyType = ct;
-        return rtx;
-    }
-
-    // if type==CHARGE_FEE, toAccountId is ignored
-    public static Result<Transaction> makeTransaction(int fromBalanceId, int toAccountId, TransactionType type, int value, String description) {
-        Transaction tx = new Transaction(fromBalanceId, toAccountId, type, value);
-        tx.description = description;
-
-
-        if (type != TransactionType.CHARGE_FEE && type != TransactionType.INTEREST && type != TransactionType.DEPOSIT) {
-            // make the charge-fee transaction first
-            int chargeFee = Constants.ALL_CHARGE_FEE_VALUES.get(type);
-            if (value < chargeFee) {
-                return new Result<>(false, "Transaction value is too small", null);
-            }
-            Transaction chargeFeeTx = makeTransaction(
-                    fromBalanceId,
-                    Constants.BANK_MANAGER_USER_ID,
-                    TransactionType.CHARGE_FEE,
-                    chargeFee,
-                    "Operation fee"
-            ).unwrap();
-            Result r = SvcMgr.getAccountService().handleTxn(chargeFeeTx);
-            if (!r.success) {
-                return new Result<>(false, "Failed to handle charge-fee transaction:" + r.msg, null);
-            }
-        }
-        return new Result<>(tx);
-    }
 }

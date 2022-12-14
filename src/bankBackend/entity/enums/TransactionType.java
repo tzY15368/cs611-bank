@@ -6,4 +6,5 @@ public enum TransactionType {
     TRANSFER,
     CHARGE_FEE,
     INTEREST,
+    STOCK,
 }

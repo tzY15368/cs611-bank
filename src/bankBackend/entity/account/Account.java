@@ -11,6 +11,7 @@ import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.TransactionType;
 import bankBackend.service.SvcMgr;
+import bankBackend.service.impl.UserCtl;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -61,17 +62,15 @@ public class Account {
         try {
             dao.update(this);
             Balance thisUSDBalance = Balance.getBalanceWithCurrency(this.getId(), CurrencyType.USD).data;
-            Result<Transaction> txRes = Transaction.makeTransaction(
+            // get bank manager's checking account
+            Result r = SvcMgr.getAccountService().createAndHandleTxn(
                     thisUSDBalance.getId(),
-                    0,
+                    UserCtl.getInstance().getManager().getCheckingAccount().unwrap().getId(),
                     TransactionType.CHARGE_FEE,
                     Constants.TX_CHARGE_FEE_VALUE,
-                    "Account state change fee"
+                    "Account state change fee",
+                    CurrencyType.USD
             );
-            if (!txRes.success) {
-                return new Result(false, "Failed to charge fee:" + txRes.msg, null);
-            }
-            Result r = SvcMgr.getAccountService().handleTxn(txRes.data);
             return r;
         } catch (SQLException e) {
             return new Result<>(false, "SQL Exception in setState:" + e + ": " + e.getMessage(), null);
