@@ -8,11 +8,11 @@ import bankBackend.entity.Transaction;
 import bankBackend.entity.User;
 import bankBackend.entity.Stock;
 import bankBackend.entity.account.Account;
-import bankBackend.entity.account.SecurityAccount;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.TransactionType;
 import bankBackend.service.StockService;
+import bankBackend.service.SvcMgr;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -127,9 +127,16 @@ public class StockCtl implements StockService {
                     .and().eq("type", AccountType.Security).queryForFirst();
             int toAccountID = account.getId();
             int value = amount * stock.getCurrentPrice();
-            Result res = Transaction.makeTransaction(fromBalanceId, toAccountID, TransactionType.TRANSFER, value, "buy stock");
-            if (!res.success) {
-                return new Result<>(false, "buyStock: unsuccessful", null);
+            Result r = SvcMgr.getAccountService().createAndHandleTxn(
+                    fromBalanceId,
+                    toAccountID,
+                    TransactionType.STOCK,
+                    value,
+                    "stockbuy=" + name,
+                    CurrencyType.USD
+            );
+            if (!r.success) {
+                return r;
             }
 
             // reset the amount of stock in the market
@@ -175,9 +182,16 @@ public class StockCtl implements StockService {
                     .and().eq("type", CurrencyType.USD).queryForFirst().getId();
             int toAccountID = user.getAccount(AccountType.Security).unwrap().getId();
             int value = s.getCurrentPrice() * amount;
-            Result res = Transaction.makeTransaction(fromBalanceId, toAccountID, TransactionType.TRANSFER, value, "sell stock");
-            if (!res.success) {
-                return new Result<>(false, "sellStock: unsuccessful", null);
+            Result r = SvcMgr.getAccountService().createAndHandleTxn(
+                    fromBalanceId,
+                    toAccountID,
+                    TransactionType.STOCK,
+                    value,
+                    "stocksell=" + name,
+                    CurrencyType.USD
+            );
+            if (!r.success) {
+                return r;
             }
 
             int currentPrice = s.getCurrentPrice();

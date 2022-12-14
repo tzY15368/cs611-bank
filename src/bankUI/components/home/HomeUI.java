@@ -6,6 +6,7 @@ import bankBackend.service.SvcMgr;
 import bankUI.components.account.*;
 import bankUI.components.interest.LoanUI;
 import bankUI.components.interest.SavingUI;
+import bankUI.components.stock.StockNewUI;
 import bankUI.utils.UIContextMgr;
 
 import javax.swing.*;
@@ -58,6 +59,7 @@ public class HomeUI extends javax.swing.JFrame {
         loanBtn = new javax.swing.JButton();
         txBtn = new javax.swing.JButton();
         stateBtn = new javax.swing.JButton();
+        stockBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -112,6 +114,13 @@ public class HomeUI extends javax.swing.JFrame {
             }
         });
 
+        stockBtn.setText("goto stock");
+        stockBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stockBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -143,7 +152,8 @@ public class HomeUI extends javax.swing.JFrame {
                                                                         .addComponent(loanBtn)
                                                                         .addComponent(savingBtn)
                                                                         .addComponent(txBtn)
-                                                                        .addComponent(stateBtn))))
+                                                                        .addComponent(stateBtn)
+                                                                        .addComponent(stockBtn))))
                                                 .addGap(74, 74, 74))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -155,7 +165,9 @@ public class HomeUI extends javax.swing.JFrame {
                                         .addComponent(jLabel2))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(179, 179, 179)
+                                                .addGap(138, 138, 138)
+                                                .addComponent(stockBtn)
+                                                .addGap(18, 18, 18)
                                                 .addComponent(stateBtn)
                                                 .addGap(30, 30, 30)
                                                 .addComponent(txBtn)
@@ -238,6 +250,13 @@ public class HomeUI extends javax.swing.JFrame {
         state.setVisible(true);
     }//GEN-LAST:event_stateBtnActionPerformed
 
+    private void stockBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stockBtnActionPerformed
+        // TODO add your handling code here:
+        StockNewUI stock = new StockNewUI();
+        UIContextMgr.setUser(stock, SvcMgr.getSessionService().getSession().unwrap().getUser());
+        stock.setVisible(true);
+    }//GEN-LAST:event_stockBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -287,6 +306,7 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JButton reportBtn;
     private javax.swing.JButton savingBtn;
     private javax.swing.JButton stateBtn;
+    private javax.swing.JButton stockBtn;
     private javax.swing.JButton txBtn;
     // End of variables declaration//GEN-END:variables
 }
