@@ -9,7 +9,7 @@ import bankBackend.entity.enums.RateType;
 import java.util.List;
 
 public interface InterestRateService {
-    Result<Void> createInterestRate(int accountId, int rate, RateType type,
+    Result<Void> createInterestRate(int accountId, RateType type,
                                     int startEpoch, int endEpoch, String description,
                                     int collat_user_id, int initValue, IRCalcMethod method, CurrencyType currencyType);
 

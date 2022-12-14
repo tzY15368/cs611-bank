@@ -52,6 +52,10 @@ public class Account {
         return state;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
     public Result<Void> setState(AccountState state) {
         this.state = state;
         try {
