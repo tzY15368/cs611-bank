@@ -219,6 +219,7 @@ public class HomeUI extends javax.swing.JFrame {
     private void txBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txBtnActionPerformed
         // TODO add your handling code here:
         TxnBuilderUI txn = new TxnBuilderUI();
+        UIContextMgr.setUser(txn, SvcMgr.getSessionService().getSession().unwrap().getUser());
         txn.setVisible(true);
     }//GEN-LAST:event_txBtnActionPerformed
 
