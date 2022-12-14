@@ -4,6 +4,9 @@ import bankBackend.entity.User;
 import bankBackend.entity.account.Account;
 import bankBackend.service.SvcMgr;
 import bankUI.components.account.*;
+import bankUI.components.interest.LoanUI;
+import bankUI.components.interest.SavingUI;
+import bankUI.utils.UIContextMgr;
 
 import javax.swing.*;
 import java.util.List;
@@ -43,27 +46,21 @@ public class HomeUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         moneyIOButton = new javax.swing.JButton();
         reportBtn = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         accountSummary1 = new bankUI.components.account.AccountSummary();
         accountSummary2 = new bankUI.components.account.AccountSummary();
         accountSummary3 = new bankUI.components.account.AccountSummary();
         accountSummary4 = new bankUI.components.account.AccountSummary();
+        savingBtn = new javax.swing.JButton();
+        loanBtn = new javax.swing.JButton();
+        txBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        jButton1.setText("Transfer Money");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel1.setText(this.user.getName());
@@ -85,10 +82,24 @@ public class HomeUI extends javax.swing.JFrame {
             }
         });
 
-        jButton5.setText("Loan");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        savingBtn.setText("goto saving");
+        savingBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                savingBtnMousePressed(evt);
+            }
+        });
+
+        loanBtn.setText("goto loan");
+        loanBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                loanBtnActionPerformed(evt);
+            }
+        });
+
+        txBtn.setText("goto txbuilder");
+        txBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txBtnActionPerformed(evt);
             }
         });
 
@@ -97,35 +108,33 @@ public class HomeUI extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap(46, Short.MAX_VALUE)
+                                .addContainerGap(74, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(664, 664, 664))
-                                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                                        .addGap(266, 266, 266)
-                                                        .addComponent(jLabel2)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(jLabel1)
-                                                        .addGap(44, 44, 44)))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGap(224, 224, 224)
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel1)
+                                                .addGap(44, 44, 44))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(jButton5)
                                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                                .addGap(42, 42, 42)
                                                                 .addComponent(moneyIOButton)
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                .addComponent(reportBtn)))
+                                                                .addComponent(reportBtn))
+                                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                                .addGap(110, 110, 110)
+                                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                        .addComponent(accountSummary4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(accountSummary3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(accountSummary2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addComponent(accountSummary1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(loanBtn)
+                                                                        .addComponent(savingBtn)
+                                                                        .addComponent(txBtn))))
                                                 .addGap(74, 74, 74))))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(198, 198, 198)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(accountSummary4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(accountSummary3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(accountSummary2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(accountSummary1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,15 +145,18 @@ public class HomeUI extends javax.swing.JFrame {
                                         .addComponent(jLabel2))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(524, 524, 524)
+                                                .addGap(232, 232, 232)
+                                                .addComponent(txBtn)
+                                                .addGap(44, 44, 44)
+                                                .addComponent(savingBtn)
+                                                .addGap(38, 38, 38)
+                                                .addComponent(loanBtn)
+                                                .addGap(141, 141, 141)
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                         .addComponent(reportBtn)
                                                         .addComponent(moneyIOButton)))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jButton5))
-                                                .addGap(18, 18, 18)
+                                                .addGap(52, 52, 52)
                                                 .addComponent(accountSummary1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(34, 34, 34)
                                                 .addComponent(accountSummary2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -178,21 +190,6 @@ public class HomeUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_moneyIOButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        transation_builder_UI transation = new transation_builder_UI();
-        transation.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        loan_Account_Ui loan = new loan_Account_Ui();
-        loan.setVisible(true);
-
-    }//GEN-LAST:event_jButton5ActionPerformed
-
     private void reportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportBtnActionPerformed
         // TODO add your handling code here:
 //        setVisible(false);
@@ -202,6 +199,28 @@ public class HomeUI extends javax.swing.JFrame {
         TxnReport report = new TxnReport();
         report.setVisible(true);
     }//GEN-LAST:event_reportBtnActionPerformed
+
+    private void loanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loanBtnActionPerformed
+        // TODO add your handling code here:
+        LoanUI loan = new LoanUI();
+        UIContextMgr.setAccount(loan, SvcMgr.getSessionService().getSession().unwrap().getUser().getLoanAccount().unwrap());
+        loan.loadCtx();
+        loan.setVisible(true);
+    }//GEN-LAST:event_loanBtnActionPerformed
+
+    private void savingBtnMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_savingBtnMousePressed
+        // TODO add your handling code here:
+        SavingUI saving = new SavingUI();
+        UIContextMgr.setAccount(saving, SvcMgr.getSessionService().getSession().unwrap().getUser().getLoanAccount().unwrap());
+        saving.loadCtx();
+        saving.setVisible(true);
+    }//GEN-LAST:event_savingBtnMousePressed
+
+    private void txBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txBtnActionPerformed
+        // TODO add your handling code here:
+        TxnBuilderUI txn = new TxnBuilderUI();
+        txn.setVisible(true);
+    }//GEN-LAST:event_txBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -244,12 +263,13 @@ public class HomeUI extends javax.swing.JFrame {
     private bankUI.components.account.AccountSummary accountSummary2;
     private bankUI.components.account.AccountSummary accountSummary3;
     private bankUI.components.account.AccountSummary accountSummary4;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton loanBtn;
     private javax.swing.JButton moneyIOButton;
     private javax.swing.JButton reportBtn;
+    private javax.swing.JButton savingBtn;
+    private javax.swing.JButton txBtn;
     // End of variables declaration//GEN-END:variables
 }
