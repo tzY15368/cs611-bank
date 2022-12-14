@@ -57,6 +57,7 @@ public class HomeUI extends javax.swing.JFrame {
         savingBtn = new javax.swing.JButton();
         loanBtn = new javax.swing.JButton();
         txBtn = new javax.swing.JButton();
+        stateBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -103,6 +104,14 @@ public class HomeUI extends javax.swing.JFrame {
             }
         });
 
+        stateBtn.setText("goto state");
+        stateBtn.setActionCommand("");
+        stateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stateBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -133,7 +142,8 @@ public class HomeUI extends javax.swing.JFrame {
                                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                                         .addComponent(loanBtn)
                                                                         .addComponent(savingBtn)
-                                                                        .addComponent(txBtn))))
+                                                                        .addComponent(txBtn)
+                                                                        .addComponent(stateBtn))))
                                                 .addGap(74, 74, 74))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -145,7 +155,9 @@ public class HomeUI extends javax.swing.JFrame {
                                         .addComponent(jLabel2))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(232, 232, 232)
+                                                .addGap(179, 179, 179)
+                                                .addComponent(stateBtn)
+                                                .addGap(30, 30, 30)
                                                 .addComponent(txBtn)
                                                 .addGap(44, 44, 44)
                                                 .addComponent(savingBtn)
@@ -192,10 +204,6 @@ public class HomeUI extends javax.swing.JFrame {
 
     private void reportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportBtnActionPerformed
         // TODO add your handling code here:
-//        setVisible(false);
-//        MoneyIOUI money = new MoneyIOUI();
-//        money.setVisible(true);
-        //SvcMgr.getSessionService().getSession().unwrap().getUser()
         TxnReport report = new TxnReport();
         report.setVisible(true);
     }//GEN-LAST:event_reportBtnActionPerformed
@@ -222,6 +230,13 @@ public class HomeUI extends javax.swing.JFrame {
         UIContextMgr.setUser(txn, SvcMgr.getSessionService().getSession().unwrap().getUser());
         txn.setVisible(true);
     }//GEN-LAST:event_txBtnActionPerformed
+
+    private void stateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stateBtnActionPerformed
+        // TODO add your handling code here:
+        AccountStateUI state = new AccountStateUI();
+        UIContextMgr.setUser(state, SvcMgr.getSessionService().getSession().unwrap().getUser());
+        state.setVisible(true);
+    }//GEN-LAST:event_stateBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -271,6 +286,7 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JButton moneyIOButton;
     private javax.swing.JButton reportBtn;
     private javax.swing.JButton savingBtn;
+    private javax.swing.JButton stateBtn;
     private javax.swing.JButton txBtn;
     // End of variables declaration//GEN-END:variables
 }
