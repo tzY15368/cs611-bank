@@ -22,9 +22,6 @@ public class Balance {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
-    private int userId;
-
     // note that Money has a 100x ratio: 1$ is 100 in int value
     @DatabaseField
     private int value;
@@ -61,8 +58,14 @@ public class Balance {
         if (this.value + value < 0) {
             return new Result<>(false, "Cannot set negative balance", null);
         }
-        this.value += value;
-        return new Result<>(true, "", null);
+        try {
+            this.value += value;
+            System.out.println("this.accountid:" + this.accountId);
+            dao.update(this);
+            return new Result<>(true, "Balance updated", null);
+        } catch (Exception e) {
+            return new Result<>(false, "Error updating balance", null);
+        }
     }
 
     public static Result<Balance> getBalanceWithCurrency(int accountId, CurrencyType kind) {
