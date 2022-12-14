@@ -29,32 +29,26 @@ public class LoanAccount extends Account {
         super(userId, AccountType.Loan);
     }
 
-    private static Result<Transaction> createTransaction(int fromBalanceId, int value) {
-        Account managerAccount = UserCtl.getInstance().getManager().getAccount(AccountType.SAVINGS).unwrap();
-        // get manager's saving account
-        return Transaction.makeTransaction(fromBalanceId, managerAccount.getId(), TransactionType.TRANSFER, value,"Loan Interest");
-    }
     public static void generateLoanInterestCallback(int date, int hour) {
         Logger.info("Generating loan interest...");
         List<Account> accounts = SvcMgr.getAccountService().listAccountByType(AccountType.Loan);
+        int currentEpoch = SvcMgr.getDateTimeService().getCurrentEpoch();
         for (Account account : accounts) {
-            Result<InterestRate> irRes = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Loan);
-            if (!irRes.success) continue;
-            InterestRate ir = irRes.data;
-            for (Balance balance : SvcMgr.getAccountService().listBalance(account.getId())) {
-                if (balance.getType() == CurrencyType.USD) {
-                    float rat = ir.getRate() / 100;
-                    int deltaValue = (int) (balance.getValue() * rat);
-                    Result<Transaction> txRes = createTransaction(account.getId(), deltaValue);
-                    if (!txRes.success) {
-                        Logger.error("Failed to create transaction for interest on user loan account" + account.getId());
-                    }
-                    Result r = SvcMgr.getAccountService().handleTxn(txRes.data);
-                    if (!r.success) {
-                        Logger.error("Failed to charge interest for loan account " + account.getId() + ": " + r.msg);
-                    }
+            List<InterestRate> rates = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Loan);
+            rates.forEach(rate -> {
+                int delta = rate.getDeltaForEpoch(currentEpoch);
+                Result r = SvcMgr.getAccountService().createAndHandleTxn(
+                        Constants.TXN_NULL_SENDER,
+                        account.getId(),
+                        TransactionType.INTEREST,
+                        delta,
+                        "Loan Interest of loan" + rate.getId(),
+                        rate.getCurrency()
+                );
+                if (!r.success) {
+                    Logger.error("Failed to generate loan interest for loan " + rate.getId());
                 }
-            }
+            });
         }
     }
 }

@@ -52,8 +52,16 @@ public class DateTimeCtl implements DateTimeService, Runnable {
             Logger.fatal(e.getMessage());
         }
 
-        instance.addTimerObserver("generateSaveInterest", SavingAccount::generateInterestCallback, 24);
-        instance.addTimerObserver("generateLoanInterest", LoanAccount::generateLoanInterestCallback, 24);
+        instance.addTimerObserver(
+                "generateSaveInterest",
+                SavingAccount::generateInterestCallback,
+                Constants.SAVE_INTEREST_CYCLE_LENGTH
+        );
+        instance.addTimerObserver(
+                "generateLoanInterest",
+                LoanAccount::generateLoanInterestCallback,
+                Constants.LOAN_INTEREST_CYCLE_LENGTH
+        );
     }
 
     // epochs: task A runs once every [epochs] hours

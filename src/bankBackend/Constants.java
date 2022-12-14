@@ -1,5 +1,6 @@
 package bankBackend;
 
+import bankBackend.entity.enums.RateType;
 import bankBackend.entity.enums.TransactionType;
 
 import java.util.HashMap;
@@ -33,11 +34,28 @@ public class Constants {
     public static int DEPOSIT_FEE_VALUE = 5;
     public static int WITHDRAW_FEE_VALUE = 5;
 
+    public static int SAVE_INTEREST_CYCLE_LENGTH = 48;
+    public static int LOAN_INTEREST_CYCLE_LENGTH = 48;
+
     public static Map<TransactionType, Integer> ALL_CHARGE_FEE_VALUES = new HashMap<>() {
         {
             put(TransactionType.TRANSFER, TX_TRANSFER_FEE_VALUE);
             put(TransactionType.DEPOSIT, DEPOSIT_FEE_VALUE);
             put(TransactionType.WITHDRAW, WITHDRAW_FEE_VALUE);
+        }
+    };
+
+    public static Map<RateType, Integer> DEFAULT_INTEREST_RATE = new HashMap<>() {
+        {
+            put(RateType.Save, DEFAULT_SAVE_INTEREST_RATE);
+            put(RateType.Loan, DEFAULT_LOAN_INTEREST_RATE);
+        }
+    };
+
+    public static Map<RateType, Integer> DEFAULT_INTEREST_CYCLE_LENGTH = new HashMap<>() {
+        {
+            put(RateType.Save, SAVE_INTEREST_CYCLE_LENGTH);
+            put(RateType.Loan, LOAN_INTEREST_CYCLE_LENGTH);
         }
     };
 }
