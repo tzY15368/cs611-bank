@@ -37,11 +37,6 @@ public class DefaultUserFactory extends AbstractUserFactory {
                     }
                 }
             }
-            // set default interest rates
-            InterestRate saveir = new InterestRate(accs[1].getId(), RateType.Save);
-            InterestRate loanir = new InterestRate(accs[2].getId(), RateType.Loan);
-            InterestRate.dao.create(saveir);
-            InterestRate.dao.create(loanir);
 
             return new Result<>();
         } catch (SQLException e) {
