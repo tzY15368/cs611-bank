@@ -54,6 +54,10 @@ public class Stock {
         return userId;
     }
 
+    public void setCurrentPrice(int currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
     public void setUserId(int userId) {
         this.userId = userId;
     }

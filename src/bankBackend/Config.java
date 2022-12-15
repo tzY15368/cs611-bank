@@ -6,7 +6,7 @@ import bankBackend.entity.enums.TransactionType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Constants {
+public class Config {
 
     public static final String DB_URL = "jdbc:sqlite:bank.db";
     public static int SECURITY_ACC_OPEN_THRESHOLD = 1000;

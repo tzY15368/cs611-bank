@@ -8,6 +8,7 @@ import bankUI.components.home.HomeUI;
 import Utils.Result;
 import bankBackend.service.SvcMgr;
 import bankUI.components.home.OldHomeUI;
+import bankUI.components.manager.MgmtPage;
 import bankUI.utils.AlertUI;
 
 /**
@@ -164,6 +165,8 @@ public class Authentication extends javax.swing.JFrame {
             }
             HomeUI home = new HomeUI(r.unwrap());
             home.setVisible(true);
+            MgmtPage mgmt = new MgmtPage();
+            mgmt.setVisible(true);
         } else {
             AlertUI.error(r.msg);
         }

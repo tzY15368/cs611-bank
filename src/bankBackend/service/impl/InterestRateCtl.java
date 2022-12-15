@@ -2,7 +2,7 @@ package bankBackend.service.impl;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.Balance;
 import bankBackend.entity.InterestRate;
 import bankBackend.entity.enums.CurrencyType;
@@ -21,7 +21,7 @@ public class InterestRateCtl implements InterestRateService {
     private Map<RateType, Integer> globalInterestRate;
 
     private InterestRateCtl() {
-        this.globalInterestRate = Constants.DEFAULT_INTEREST_RATE;
+        this.globalInterestRate = Config.DEFAULT_INTEREST_RATE;
         Logger.info("InterestRateCtl initialized with default interest rate:" + globalInterestRate);
     }
 

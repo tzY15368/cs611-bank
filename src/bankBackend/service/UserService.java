@@ -21,4 +21,6 @@ public interface UserService {
     Result<User> getUserByName(String username);
 
     String getUsernameByAccountId(int accountId);
+
+    Result<Void> updateUser(int id, String name, String password);
 }

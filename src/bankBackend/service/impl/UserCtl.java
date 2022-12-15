@@ -1,7 +1,7 @@
 package bankBackend.service.impl;
 
 import Utils.*;
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.AccountState;
 import bankBackend.entity.enums.AccountType;
@@ -10,7 +10,6 @@ import bankBackend.factory.ManagerFactory;
 import bankBackend.factory.MemorySession;
 import bankBackend.factory.DefaultUserFactory;
 import bankBackend.entity.User;
-import bankBackend.entity.Report;
 import bankBackend.service.SvcMgr;
 import bankBackend.service.UserService;
 
@@ -35,13 +34,13 @@ public class UserCtl implements UserService {
         Result r = new ManagerFactory().createUser("", "");
         if (!r.success) Logger.error("Failed to create bank manager:" + r.msg);
         //re-fetch the bank manager
-        Constants.BANK_MANAGER_USER_ID = instance.getManager().getId();
+        Config.BANK_MANAGER_USER_ID = instance.getManager().getId();
     }
 
     public User getManager() {
         try {
             return User.dao.queryBuilder().where()
-                    .eq("name", Constants.BANK_MANAGER_USERNAME).queryForFirst();
+                    .eq("name", Config.BANK_MANAGER_USERNAME).queryForFirst();
         } catch (SQLException e) {
             Logger.fatal("Failed to fetch bank manager:" + e.getMessage());
             return null;
@@ -53,6 +52,21 @@ public class UserCtl implements UserService {
             instance = new UserCtl();
         }
         return instance;
+    }
+
+    public Result<Void> updateUser(int id, String name, String password) {
+        try {
+            User user = User.dao.queryForId(id);
+            if (user == null) {
+                return new Result<>(false, "User not found", null);
+            }
+            user.setName(name);
+            user.setPassword(password);
+            User.dao.update(user);
+            return new Result<>();
+        } catch (SQLException e) {
+            return new Result(false, e.getMessage(), null);
+        }
     }
 
     public Result<User> userLogin(String username, String password) {

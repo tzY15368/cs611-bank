@@ -1,7 +1,5 @@
 package bankBackend.entity;
 
-import Utils.Result;
-import bankBackend.Constants;
 import bankBackend.dao.DaoManager;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.service.SvcMgr;

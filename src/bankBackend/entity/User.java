@@ -1,9 +1,7 @@
 package bankBackend.entity;
 
 import Utils.*;
-import bankBackend.Constants;
-import bankBackend.factory.AbstractUserFactory;
-import bankBackend.factory.DefaultUserFactory;
+import bankBackend.Config;
 import bankBackend.dao.DaoManager;
 import bankBackend.entity.account.*;
 import bankBackend.entity.enums.AccountState;
@@ -136,7 +134,7 @@ public class User {
         Account saving = res.data;
 
         for (Balance b : SvcMgr.getAccountService().listBalance(saving.getId())) {
-            if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
+            if (b.getValue() > Config.SECURITY_ACC_OPEN_THRESHOLD) {
                 return true;
             }
         }

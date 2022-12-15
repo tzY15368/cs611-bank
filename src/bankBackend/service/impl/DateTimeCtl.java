@@ -1,7 +1,7 @@
 package bankBackend.service.impl;
 
 import Utils.Logger;
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.DateTime;
 import bankBackend.entity.account.LoanAccount;
 import bankBackend.entity.account.SavingAccount;
@@ -24,7 +24,7 @@ class ConsumerInfo {
 public class DateTimeCtl implements DateTimeService, Runnable {
 
     private static DateTimeCtl instance = null;
-    private int timeRatio = Constants.DEFAULT_TIMER_RATIO;
+    private int timeRatio = Config.DEFAULT_TIMER_RATIO;
     private Map<String, ConsumerInfo> observers;
 
     public static void init() {
@@ -40,6 +40,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
                 // TODO: ROLLBACK ALL TRANSACTIONS THAT HAPPEND TILL THAT HOUR
                 Logger.info(String.format("DateCtl re-initialized with date %d hour %d",
                         lastRecordedDate.getDate(), lastRecordedDate.getCurrentHour()));
+                instance.timeRatio = lastRecordedDate.getTimeRatio();
             }
 
             // run on a new thread
@@ -55,12 +56,12 @@ public class DateTimeCtl implements DateTimeService, Runnable {
         instance.addTimerObserver(
                 "generateSaveInterest",
                 SavingAccount::generateInterestCallback,
-                Constants.SAVE_INTEREST_CYCLE_LENGTH
+                Config.SAVE_INTEREST_CYCLE_LENGTH
         );
         instance.addTimerObserver(
                 "generateLoanInterest",
                 LoanAccount::generateLoanInterestCallback,
-                Constants.LOAN_INTEREST_CYCLE_LENGTH
+                Config.LOAN_INTEREST_CYCLE_LENGTH
         );
     }
 
@@ -112,7 +113,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
     @Override
     public int getCurrentEpoch() {
         DateTime currentDate = this.getCurrentDate();
-        int epoch = currentDate.getDate() * Constants.HOUR_PER_DAY + currentDate.getCurrentHour();
+        int epoch = currentDate.getDate() * Config.HOUR_PER_DAY + currentDate.getCurrentHour();
         return epoch;
     }
 
@@ -178,7 +179,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
                 Logger.info("Epoch: " + currentEpoch);
 
                 // calculate virtualhourinrealms
-                if (currentEpoch % Constants.HOUR_PER_DAY == 0) {
+                if (currentEpoch % Config.HOUR_PER_DAY == 0) {
                     int currentTimeRatio = getTimeRatio();
                     float virtualHourInRealMs = (60 * 60 * 1000) / (float) currentTimeRatio;
                     sleepMsPerHour = (long) virtualHourInRealMs;
@@ -191,8 +192,8 @@ public class DateTimeCtl implements DateTimeService, Runnable {
                         ConsumerInfo ci = observers.get(name);
                         if (currentEpoch % ci.interval == 0) {
                             Logger.info(String.format("Running task %s", name));
-                            int date = currentEpoch % Constants.HOUR_PER_DAY;
-                            int hour = currentEpoch - (Constants.HOUR_PER_DAY * date);
+                            int date = currentEpoch % Config.HOUR_PER_DAY;
+                            int hour = currentEpoch - (Config.HOUR_PER_DAY * date);
                             ci.consumer.accept(date, hour);
                         }
                     }
