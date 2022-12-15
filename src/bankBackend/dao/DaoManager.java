@@ -1,9 +1,8 @@
 package bankBackend.dao;
 
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.DateTime;
 import Utils.Logger;
-import Utils.Result;
 import bankBackend.entity.*;
 import bankBackend.entity.account.Account;
 import com.j256.ormlite.dao.Dao;
@@ -23,7 +22,7 @@ public class DaoManager {
     public static void init() {
         try {
 
-            conn = new JdbcConnectionSource(Constants.DB_URL);
+            conn = new JdbcConnectionSource(Config.DB_URL);
             didInit = true;
             daoMap = new HashMap<>();
 

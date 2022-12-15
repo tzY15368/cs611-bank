@@ -2,9 +2,8 @@ package bankUI.components.account;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.Balance;
-import bankBackend.entity.Transaction;
 import bankBackend.entity.User;
 import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.AccountState;
@@ -180,7 +179,7 @@ public class MoneyIOUI extends javax.swing.JFrame {
         Result r;
         if (tt == TransactionType.DEPOSIT) {
             r = SvcMgr.getAccountService().createAndHandleTxn(
-                    Constants.TXN_NULL_SENDER, accRes.unwrap().getId(), tt, amount, "money io: deposit", ct
+                    Config.TXN_NULL_SENDER, accRes.unwrap().getId(), tt, amount, "money io: deposit", ct
             );
         } else {
             Result<Balance> balanceRes = Balance.getBalanceWithCurrency(accRes.unwrap().getId(), ct);
@@ -189,7 +188,7 @@ public class MoneyIOUI extends javax.swing.JFrame {
                 return;
             }
             r = SvcMgr.getAccountService().createAndHandleTxn(
-                    balanceRes.unwrap().getId(), Constants.TXN_NULL_RECEIVER, tt, amount, "money io: withdraw", ct
+                    balanceRes.unwrap().getId(), Config.TXN_NULL_RECEIVER, tt, amount, "money io: withdraw", ct
             );
         }
         if (!r.success) {

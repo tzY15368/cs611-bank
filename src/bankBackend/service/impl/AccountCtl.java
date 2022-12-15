@@ -2,7 +2,7 @@ package bankBackend.service.impl;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.Balance;
 import bankBackend.entity.Transaction;
 import bankBackend.entity.User;
@@ -62,14 +62,14 @@ public class AccountCtl implements AccountService {
         Balance srcBalance = null;
         Result r = null;
         System.out.println(tx);
-        if (tx.fromBalanceId != Constants.TXN_MONEY_IO_NULL) {
+        if (tx.fromBalanceId != Config.TXN_MONEY_IO_NULL) {
             srcBalance = Balance.getBalanceById(tx.fromBalanceId);
             r = srcBalance.deltaValue(-tx.value);
             if (!r.success) {
                 return r;
             }
         }
-        if (tx.toAccountId != Constants.TXN_MONEY_IO_NULL) {
+        if (tx.toAccountId != Config.TXN_MONEY_IO_NULL) {
             System.out.println(String.format("%s, %s, %s", srcBalance, tx.fromBalanceId, tx.currencyType));
             CurrencyType ct = srcBalance != null ? srcBalance.getType() : tx.currencyType;
             dstBalance = Balance.getBalanceById(Balance.getBalanceWithCurrency(
@@ -102,8 +102,8 @@ public class AccountCtl implements AccountService {
         Logger.info("Created transaction: " + txn.toString());
         int chargeFee = 0;
         int feeChargeBalanceId = fromBalanceId;
-        if (Constants.ALL_CHARGE_FEE_VALUES.containsKey(type)) {
-            chargeFee = Constants.ALL_CHARGE_FEE_VALUES.get(type);
+        if (Config.ALL_CHARGE_FEE_VALUES.containsKey(type)) {
+            chargeFee = Config.ALL_CHARGE_FEE_VALUES.get(type);
             if (value < chargeFee) {
                 return new Result<>(false, "Transaction value is too small to cover the charge fee", null);
             }
@@ -117,20 +117,20 @@ public class AccountCtl implements AccountService {
         }
         Result r;
         // do the transaction itself
-        if (txn.fromBalanceId != Constants.TXN_NULL_SENDER) {
+        if (txn.fromBalanceId != Config.TXN_NULL_SENDER) {
             Balance b = Balance.getBalanceById(txn.fromBalanceId);
             r = b.deltaValue(-txn.value);
             if (!r.success) {
                 return r;
             }
         }
-        if (txn.toAccountId != Constants.TXN_NULL_RECEIVER) {
+        if (txn.toAccountId != Config.TXN_NULL_RECEIVER) {
             Balance b = Balance.getBalanceWithCurrency(txn.toAccountId, txn.currencyType).unwrap();
             r = b.deltaValue(txn.value);
             if (!r.success) {
                 return r;
             }
-            if (txn.fromBalanceId == Constants.TXN_NULL_SENDER) {
+            if (txn.fromBalanceId == Config.TXN_NULL_SENDER) {
                 feeChargeBalanceId = b.getId();
             }
         }

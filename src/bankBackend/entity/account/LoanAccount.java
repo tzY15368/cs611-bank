@@ -2,17 +2,12 @@ package bankBackend.entity.account;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Constants;
-import bankBackend.entity.Balance;
+import bankBackend.Config;
 import bankBackend.entity.InterestRate;
-import bankBackend.entity.Transaction;
-import bankBackend.entity.User;
 import bankBackend.entity.enums.AccountType;
-import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.RateType;
 import bankBackend.entity.enums.TransactionType;
 import bankBackend.service.SvcMgr;
-import bankBackend.service.impl.UserCtl;
 
 import java.util.List;
 
@@ -38,7 +33,7 @@ public class LoanAccount extends Account {
             rates.forEach(rate -> {
                 int delta = rate.getDeltaForEpoch(currentEpoch);
                 Result r = SvcMgr.getAccountService().createAndHandleTxn(
-                        Constants.TXN_NULL_SENDER,
+                        Config.TXN_NULL_SENDER,
                         account.getId(),
                         TransactionType.INTEREST,
                         delta,

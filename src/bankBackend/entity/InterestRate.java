@@ -2,7 +2,7 @@ package bankBackend.entity;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.dao.DaoManager;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.IRCalcMethod;
@@ -92,7 +92,7 @@ public class InterestRate {
             case Compound:
                 result = (int) ((initValue - coveredAmount) * Math.pow(
                         (double) (100 + rate) / 100,
-                        (epoch - startEpoch) / Constants.DEFAULT_INTEREST_CYCLE_LENGTH.get(this.type))
+                        (epoch - startEpoch) / Config.DEFAULT_INTEREST_CYCLE_LENGTH.get(this.type))
                 );
         }
         Logger.info(String.format("InterestRate: getDeltaForEpoch%d: %d", epoch, result));

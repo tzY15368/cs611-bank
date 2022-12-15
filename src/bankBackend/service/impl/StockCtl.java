@@ -1,10 +1,9 @@
 package bankBackend.service.impl;
 
-import bankBackend.Constants;
+import bankBackend.Config;
 import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Balance;
-import bankBackend.entity.Transaction;
 import bankBackend.entity.User;
 import bankBackend.entity.Stock;
 import bankBackend.entity.account.Account;
@@ -18,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bankBackend.Constants.STOCK_MANAGER_USER_ID;
+import static bankBackend.Config.STOCK_MANAGER_USER_ID;
 
 public class StockCtl implements StockService {
 
@@ -36,7 +35,7 @@ public class StockCtl implements StockService {
 
     public static void init() {
         // if there's no stock manager, create one
-        User mgr = new User(Constants.STOCK_MARKET_NAME, "");
+        User mgr = new User(Config.STOCK_MARKET_NAME, "");
         try {
             User.dao.createIfNotExists(mgr);
         } catch (SQLException s) {
@@ -45,11 +44,11 @@ public class StockCtl implements StockService {
 
         // get the mgr again
         try {
-            mgr = User.dao.queryBuilder().where().eq("name", Constants.STOCK_MARKET_NAME).queryForFirst();
+            mgr = User.dao.queryBuilder().where().eq("name", Config.STOCK_MARKET_NAME).queryForFirst();
         } catch (SQLException s) {
             Logger.fatal("stockctl: init2:" + s.getMessage());
         }
-        Constants.STOCK_MANAGER_USER_ID = mgr.getId();
+        Config.STOCK_MANAGER_USER_ID = mgr.getId();
         Logger.info("Stock manager initialized, mgr id = " + mgr.getId());
     }
 
@@ -80,7 +79,7 @@ public class StockCtl implements StockService {
     public Result<Void> removeStock(String stockName) {
         try {
             Stock stock = Stock.dao.queryBuilder().where().eq("name", stockName).and()
-                    .eq("userId", Constants.STOCK_MANAGER_USER_ID).queryForFirst();
+                    .eq("userId", Config.STOCK_MANAGER_USER_ID).queryForFirst();
             if (stock == null) {
                 return new Result<>(false, "Stock doesn't exist", null);
             }

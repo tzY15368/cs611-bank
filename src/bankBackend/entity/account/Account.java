@@ -1,12 +1,10 @@
 package bankBackend.entity.account;
 
-import bankBackend.Constants;
+import bankBackend.Config;
 import bankBackend.entity.enums.AccountState;
 import bankBackend.entity.Balance;
 import bankBackend.dao.DaoManager;
-import Utils.Logger;
 import Utils.Result;
-import bankBackend.entity.Transaction;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.TransactionType;
@@ -67,7 +65,7 @@ public class Account {
                     thisUSDBalance.getId(),
                     UserCtl.getInstance().getManager().getCheckingAccount().unwrap().getId(),
                     TransactionType.CHARGE_FEE,
-                    Constants.TX_CHARGE_FEE_VALUE,
+                    Config.TX_CHARGE_FEE_VALUE,
                     "Account state change fee",
                     CurrencyType.USD
             );

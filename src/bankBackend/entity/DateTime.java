@@ -1,6 +1,5 @@
 package bankBackend.entity;
 
-import bankBackend.Constants;
 import Utils.Logger;
 import bankBackend.dao.DaoManager;
 import com.j256.ormlite.dao.Dao;
