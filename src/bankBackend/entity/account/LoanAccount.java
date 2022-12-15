@@ -24,11 +24,13 @@ public class LoanAccount extends Account {
         super(userId, AccountType.Loan);
     }
 
+
     public static void generateLoanInterestCallback(int date, int hour) {
         Logger.info("Generating loan interest...");
         List<Account> accounts = SvcMgr.getAccountService().listAccountByType(AccountType.Loan);
         int currentEpoch = SvcMgr.getDateTimeService().getCurrentEpoch();
         for (Account account : accounts) {
+
             List<InterestRate> rates = SvcMgr.getInterestRateService().getInterestRate(account.getId(), RateType.Loan);
             rates.forEach(rate -> {
                 int delta = rate.getDeltaForEpoch(currentEpoch);

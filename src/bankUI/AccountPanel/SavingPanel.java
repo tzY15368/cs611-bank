@@ -3,6 +3,7 @@ package bankUI.AccountPanel;
 import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Balance;
+import bankBackend.entity.account.SavingAccount;
 import bankBackend.entity.account.Account;
 import bankBackend.service.SvcMgr;
 
@@ -12,9 +13,8 @@ import java.util.List;
 
 public class SavingPanel extends AccountPanel {
 
-    public SavingPanel() {
-        iniSavingPanel();
-    }
+    /*
+    public SavingPanel(){iniSavingPanel();}
 
     public void iniSavingPanel() {
         JLabel jLabel = getjLabel();
@@ -23,9 +23,9 @@ public class SavingPanel extends AccountPanel {
 
         DefaultListModel ListModel = getListModel();
 
-        Result<Account> res = user.getSavingAccount();
-        if (res.success) {
-            List<Balance> savingBalanceList = SvcMgr.getAccountService().listBalance(res.unwrap().getId());
+        Result res=user.getAccount();
+        if(res.success) {
+            List<Balance> savingBalanceList = user.getSavingAccount().getData().listBalance();
             for (Balance balance : savingBalanceList
             ) {
                 ListModel.addElement(balance.getType() + ":   " + balance.getValue());
@@ -66,4 +66,6 @@ public class SavingPanel extends AccountPanel {
         });
 
     }
+
+     */
 }
