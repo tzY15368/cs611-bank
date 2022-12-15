@@ -54,6 +54,21 @@ public class UserCtl implements UserService {
         return instance;
     }
 
+    public Result<Void> updateUser(int id, String name, String password) {
+        try {
+            User user = User.dao.queryForId(id);
+            if (user == null) {
+                return new Result<>(false, "User not found", null);
+            }
+            user.setName(name);
+            user.setPassword(password);
+            User.dao.update(user);
+            return new Result<>();
+        } catch (SQLException e) {
+            return new Result(false, e.getMessage(), null);
+        }
+    }
+
     public Result<User> userLogin(String username, String password) {
         try {
             User user = User.dao.queryBuilder().where().eq("name", username).queryForFirst();
