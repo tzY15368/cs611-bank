@@ -9,7 +9,7 @@ import bankBackend.entity.Balance;
 import bankBackend.entity.User;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.service.SvcMgr;
-import bankUI.components.home.HomeUI;
+import bankUI.components.home.HomeUI3;
 import bankUI.utils.AlertUI;
 import bankUI.utils.UIContextMgr;
 
@@ -151,8 +151,8 @@ public class MgmtUserItem extends javax.swing.JPanel {
 
     private void detailsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailsBtnActionPerformed
         // TODO add your handling code here:
-        HomeUI h = new HomeUI(this.user);
-        h.setVisible(true);
+        HomeUI3 home = new HomeUI3(this.user);
+        home.setVisible(true);
     }//GEN-LAST:event_detailsBtnActionPerformed
 
 
