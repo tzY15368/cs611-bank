@@ -1,19 +1,22 @@
 package bankUI.components.home;
 
 import bankBackend.entity.User;
+import bankBackend.service.SvcMgr;
 import bankUI.components.account.AccountStateUI;
 import bankUI.components.account.loan_Account_Ui;
 import bankUI.components.account.money_IOUI;
 import bankUI.components.account.transation_builder_UI;
+import bankUI.components.account.saving_Account_Ui;
+import bankUI.StockUI.StockHomeUI;
+import bankUI.components.account.loan_Account_Ui;
+import bankBackend.entity.Balance;
+import bankBackend.entity.enums.CurrencyType;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-/**
- * @author Srinivas
- */
 public class HomeUI extends javax.swing.JFrame {
 
     /**
@@ -22,12 +25,13 @@ public class HomeUI extends javax.swing.JFrame {
     private User user;
 
     public HomeUI() {
+        this.user =SvcMgr.getSessionService().getSession().data.getUser();;
         initComponents();
     }
 
     public HomeUI(User user) {
         initComponents();
-        this.user = user;
+        this.user =SvcMgr.getSessionService().getSession().data.getUser();;
     }
 
     /**
@@ -40,127 +44,416 @@ public class HomeUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        accountSummary1 = new bankUI.components.account.AccountSummary();
-        accountSummary2 = new bankUI.components.account.AccountSummary();
-        accountSummary3 = new bankUI.components.account.AccountSummary();
-        accountSummary4 = new bankUI.components.account.AccountSummary();
+        UserLabel = new javax.swing.JLabel();
+        WelcomeLabel = new javax.swing.JLabel();
+        CheckingPanel = new javax.swing.JPanel();
+        CheckingLabel = new javax.swing.JLabel();
+        CheckingButton = new javax.swing.JButton();
+        CheckingUSD = new javax.swing.JLabel();
+        CheckingEUR = new javax.swing.JLabel();
+        CheckingGBP = new javax.swing.JLabel();
+        CheckingUSDValue = new javax.swing.JLabel();
+        CheckingEURValue = new javax.swing.JLabel();
+        CheckingGBPValue = new javax.swing.JLabel();
+        CheckingState = new javax.swing.JLabel();
+        SavingPanel = new javax.swing.JPanel();
+        SavingLabel = new javax.swing.JLabel();
+        SavingButton = new javax.swing.JButton();
+        SavingUSDLabel = new javax.swing.JLabel();
+        SavingEURLabel = new javax.swing.JLabel();
+        SavingGBPLabel = new javax.swing.JLabel();
+        SavingUSDValue = new javax.swing.JLabel();
+        SavingEURValue = new javax.swing.JLabel();
+        SavingGBPValue = new javax.swing.JLabel();
+        SavingState = new javax.swing.JLabel();
+        SecurityPanel = new javax.swing.JPanel();
+        SecurityLabel = new javax.swing.JLabel();
+        SecurityButton = new javax.swing.JButton();
+        SecurityUSDLabel = new javax.swing.JLabel();
+        SecurityEURLabel = new javax.swing.JLabel();
+        SecurityGBPLabel = new javax.swing.JLabel();
+        SecurityUSDValue = new javax.swing.JLabel();
+        SecurityEURValue = new javax.swing.JLabel();
+        SecurityGBPValue = new javax.swing.JLabel();
+        SecurityState = new javax.swing.JLabel();
+        LoanPanel = new javax.swing.JPanel();
+        LoanLabel = new javax.swing.JLabel();
+        LoanButton = new javax.swing.JButton();
+        LoanUSDLabel = new javax.swing.JLabel();
+        LoanEURLabel = new javax.swing.JLabel();
+        LoanGBPLabel = new javax.swing.JLabel();
+        LoanUSDValue = new javax.swing.JLabel();
+        LoanEURValue = new javax.swing.JLabel();
+        LoanGBPValue = new javax.swing.JLabel();
+        LoanState = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jButton1.setText("Transfer Money");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        UserLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        UserLabel.setText(this.user.getName());
+
+        WelcomeLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        WelcomeLabel.setText("Welcome, ");
+
+        CheckingLabel.setText("Checking Account");
+
+        CheckingButton.setText("Enter");
+        CheckingButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                CheckingButtonActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel1.setText(this.user.getName());
+        CheckingUSD.setText("USD");
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel2.setText("Welcome, ");
+        CheckingEUR.setText("EUR");
 
-        jButton2.setText("Modify ");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        CheckingGBP.setText("GBP");
+
+        CheckingUSDValue.setText(Balance.getBalanceWithCurrency(user.getCheckingAccount().data.getId(),CurrencyType.USD).toString());
+
+        CheckingEURValue.setText(Balance.getBalanceWithCurrency(user.getCheckingAccount().data.getId(),CurrencyType.EUR).toString());
+
+        CheckingGBPValue.setText(Balance.getBalanceWithCurrency(user.getCheckingAccount().data.getId(),CurrencyType.GBP).toString());
+
+        CheckingState.setText(user.getCheckingAccount().data.getState().toString());
+
+        javax.swing.GroupLayout CheckingPanelLayout = new javax.swing.GroupLayout(CheckingPanel);
+        CheckingPanel.setLayout(CheckingPanelLayout);
+        CheckingPanelLayout.setHorizontalGroup(
+            CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CheckingPanelLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(CheckingLabel)
+                    .addGroup(CheckingPanelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(CheckingState)))
+                .addGap(89, 89, 89)
+                .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(CheckingPanelLayout.createSequentialGroup()
+                        .addComponent(CheckingUSD)
+                        .addGap(73, 73, 73)
+                        .addComponent(CheckingUSDValue))
+                    .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(CheckingPanelLayout.createSequentialGroup()
+                            .addComponent(CheckingEUR)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(CheckingEURValue))
+                        .addGroup(CheckingPanelLayout.createSequentialGroup()
+                            .addComponent(CheckingGBP)
+                            .addGap(73, 73, 73)
+                            .addComponent(CheckingGBPValue))))
+                .addGap(71, 71, 71)
+                .addComponent(CheckingButton)
+                .addGap(53, 53, 53))
+        );
+        CheckingPanelLayout.setVerticalGroup(
+            CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CheckingPanelLayout.createSequentialGroup()
+                .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CheckingPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CheckingUSD)
+                            .addComponent(CheckingUSDValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CheckingEUR)
+                            .addComponent(CheckingEURValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CheckingGBP)
+                            .addComponent(CheckingGBPValue)))
+                    .addGroup(CheckingPanelLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addGroup(CheckingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(CheckingButton)
+                            .addComponent(CheckingLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(CheckingState)))
+                .addGap(0, 6, Short.MAX_VALUE))
+        );
+
+        SavingLabel.setText("Saving Account");
+
+        SavingButton.setText("Enter");
+        SavingButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                SavingButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Deposit");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        SavingUSDLabel.setText("USD");
+
+        SavingEURLabel.setText("EUR");
+
+        SavingGBPLabel.setText("GBP");
+
+        SavingUSDValue.setText(Balance.getBalanceWithCurrency(user.getSavingAccount().data.getId(),CurrencyType.USD).toString());
+
+        SavingEURValue.setText(Balance.getBalanceWithCurrency(user.getSavingAccount().data.getId(),CurrencyType.EUR).toString());
+
+        SavingGBPValue.setText(Balance.getBalanceWithCurrency(user.getSavingAccount().data.getId(),CurrencyType.GBP).toString());
+
+        SavingState.setText(user.getSavingAccount().data.getState().toString());
+
+        javax.swing.GroupLayout SavingPanelLayout = new javax.swing.GroupLayout(SavingPanel);
+        SavingPanel.setLayout(SavingPanelLayout);
+        SavingPanelLayout.setHorizontalGroup(
+            SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SavingPanelLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(SavingLabel)
+                    .addComponent(SavingState))
+                .addGap(104, 104, 104)
+                .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(SavingUSDLabel)
+                        .addComponent(SavingEURLabel))
+                    .addComponent(SavingGBPLabel, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(71, 71, 71)
+                .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(SavingUSDValue)
+                    .addComponent(SavingEURValue)
+                    .addComponent(SavingGBPValue))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(SavingButton)
+                .addGap(54, 54, 54))
+        );
+        SavingPanelLayout.setVerticalGroup(
+            SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SavingPanelLayout.createSequentialGroup()
+                .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SavingPanelLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(SavingButton))
+                    .addGroup(SavingPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(SavingUSDLabel)
+                            .addComponent(SavingUSDValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(SavingEURLabel)
+                            .addComponent(SavingEURValue))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(SavingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SavingPanelLayout.createSequentialGroup()
+                        .addGap(0, 6, Short.MAX_VALUE)
+                        .addComponent(SavingGBPLabel))
+                    .addGroup(SavingPanelLayout.createSequentialGroup()
+                        .addComponent(SavingGBPValue)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(SavingPanelLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addComponent(SavingLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(SavingState)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        SecurityLabel.setText("Secutity Account");
+
+        SecurityButton.setText("Enter");
+        SecurityButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                SecurityButtonActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Withdraw");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        SecurityUSDLabel.setText("USD");
+
+        SecurityEURLabel.setText("EUR");
+
+        SecurityGBPLabel.setText("GBP");
+
+        SecurityUSDValue.setText(Balance.getBalanceWithCurrency(user.getSecurityAccount().data.getId(),CurrencyType.USD).toString());
+
+        SecurityEURValue.setText(Balance.getBalanceWithCurrency(user.getSecurityAccount().data.getId(),CurrencyType.EUR).toString());
+
+        SecurityGBPValue.setText(Balance.getBalanceWithCurrency(user.getSecurityAccount().data.getId(),CurrencyType.GBP).toString());
+
+        SecurityState.setText(user.getSecurityAccount().data.getState().toString());
+
+        javax.swing.GroupLayout SecurityPanelLayout = new javax.swing.GroupLayout(SecurityPanel);
+        SecurityPanel.setLayout(SecurityPanelLayout);
+        SecurityPanelLayout.setHorizontalGroup(
+            SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SecurityPanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SecurityLabel)
+                    .addGroup(SecurityPanelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(SecurityState)))
+                .addGap(101, 101, 101)
+                .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(SecurityPanelLayout.createSequentialGroup()
+                        .addComponent(SecurityGBPLabel)
+                        .addGap(72, 72, 72)
+                        .addComponent(SecurityGBPValue))
+                    .addGroup(SecurityPanelLayout.createSequentialGroup()
+                        .addComponent(SecurityEURLabel)
+                        .addGap(73, 73, 73)
+                        .addComponent(SecurityEURValue))
+                    .addGroup(SecurityPanelLayout.createSequentialGroup()
+                        .addComponent(SecurityUSDLabel)
+                        .addGap(73, 73, 73)
+                        .addComponent(SecurityUSDValue)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(SecurityButton)
+                .addGap(52, 52, 52))
+        );
+        SecurityPanelLayout.setVerticalGroup(
+            SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SecurityPanelLayout.createSequentialGroup()
+                .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SecurityPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(SecurityUSDLabel)
+                            .addComponent(SecurityUSDValue))
+                        .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(SecurityPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(SecurityEURLabel)
+                                    .addComponent(SecurityEURValue)))
+                            .addGroup(SecurityPanelLayout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(SecurityLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(SecurityState))))
+                    .addGroup(SecurityPanelLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(SecurityButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(SecurityPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(SecurityGBPLabel)
+                    .addComponent(SecurityGBPValue)))
+        );
+
+        LoanLabel.setText("Loan Account");
+
+        LoanButton.setText("Enter");
+        LoanButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                LoanButtonActionPerformed(evt);
             }
         });
 
-        jButton5.setText("Loan");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
-            }
-        });
+        LoanUSDLabel.setText("USD");
+
+        LoanEURLabel.setText("EUR");
+
+        LoanGBPLabel.setText("GBP");
+
+        LoanUSDValue.setText(Balance.getBalanceWithCurrency(user.getLoanAccount().data.getId(),CurrencyType.USD).toString());
+
+        LoanEURValue.setText(Balance.getBalanceWithCurrency(user.getLoanAccount().data.getId(),CurrencyType.EUR).toString());
+
+        LoanGBPValue.setText(Balance.getBalanceWithCurrency(user.getLoanAccount().data.getId(),CurrencyType.GBP).toString());
+
+        LoanState.setText(user.getLoanAccount().data.getState().toString());
+
+        javax.swing.GroupLayout LoanPanelLayout = new javax.swing.GroupLayout(LoanPanel);
+        LoanPanel.setLayout(LoanPanelLayout);
+        LoanPanelLayout.setHorizontalGroup(
+            LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LoanPanelLayout.createSequentialGroup()
+                .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LoanPanelLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LoanLabel)
+                            .addGroup(LoanPanelLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(LoanState)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(LoanGBPLabel))))
+                    .addGroup(LoanPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(LoanEURLabel)
+                            .addComponent(LoanUSDLabel))))
+                .addGap(73, 73, 73)
+                .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(LoanUSDValue)
+                    .addComponent(LoanEURValue)
+                    .addComponent(LoanGBPValue))
+                .addGap(74, 74, 74)
+                .addComponent(LoanButton)
+                .addGap(48, 48, 48))
+        );
+        LoanPanelLayout.setVerticalGroup(
+            LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LoanPanelLayout.createSequentialGroup()
+                .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LoanPanelLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LoanLabel)
+                            .addComponent(LoanButton)))
+                    .addGroup(LoanPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LoanUSDLabel)
+                            .addComponent(LoanUSDValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LoanEURLabel)
+                            .addComponent(LoanEURValue))))
+                .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LoanPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                        .addGroup(LoanPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(LoanGBPValue)
+                            .addComponent(LoanGBPLabel))
+                        .addContainerGap())
+                    .addGroup(LoanPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(LoanState)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(46, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap(83, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(LoanPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(SecurityPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(CheckingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(SavingPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(266, 266, 266)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel1))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(545, 545, 545)
-                                .addComponent(jButton2)))
-                        .addGap(44, 44, 44))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(jButton3)
-                        .addGap(207, 207, 207)
-                        .addComponent(jButton5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton4)
-                        .addGap(74, 74, 74))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(159, 159, 159)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(accountSummary4, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(accountSummary3, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(accountSummary2, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(accountSummary1, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(WelcomeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(UserLabel)
+                        .addGap(171, 171, 171)))
+                .addGap(115, 115, 115))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(UserLabel)
+                    .addComponent(WelcomeLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addGap(29, 29, 29)
-                        .addComponent(accountSummary1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(accountSummary2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(accountSummary3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(accountSummary4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton5)
-                            .addComponent(jButton4)
-                            .addComponent(jButton3))
-                        .addContainerGap(68, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))))
+                .addComponent(CheckingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(SavingPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(SecurityPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(LoanPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -172,49 +465,36 @@ public class HomeUI extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        money_IOUI money = new money_IOUI();
-        money.setVisible(true);
+    private void SavingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SavingButtonActionPerformed
+        if(user.getSavingAccount().success){
+            saving_Account_Ui savingAccount=new saving_Account_Ui();
+            savingAccount.setVisible(true);
+        }// TODO add your handling code here:
+    }//GEN-LAST:event_SavingButtonActionPerformed
 
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void CheckingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckingButtonActionPerformed
+       
+            // TODO add your handling code here:
+    }//GEN-LAST:event_CheckingButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        transation_builder_UI transation = new transation_builder_UI();
-        transation.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void SecurityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SecurityButtonActionPerformed
+        if(user.getSecurityAccount().success){
+        }//TODO:
+    }//GEN-LAST:event_SecurityButtonActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        loan_Account_Ui loan = new loan_Account_Ui();
-        loan.setVisible(true);
-
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        money_IOUI money = new money_IOUI();
-        money.setVisible(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        setVisible(false);
-        AccountStateUI account_State = new AccountStateUI(null);
-        account_State.setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void LoanButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoanButtonActionPerformed
+        if(user.getLoanAccount().success){
+            loan_Account_Ui loanAccount = new loan_Account_Ui();
+            loanAccount.setVisible(true);
+        }// TODO add your handling code here:
+    }//GEN-LAST:event_LoanButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -243,7 +523,7 @@ public class HomeUI extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-
+        User user = SvcMgr.getSessionService().getSession().data.getUser();
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -253,17 +533,48 @@ public class HomeUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private bankUI.components.account.AccountSummary accountSummary1;
-    private bankUI.components.account.AccountSummary accountSummary2;
-    private bankUI.components.account.AccountSummary accountSummary3;
-    private bankUI.components.account.AccountSummary accountSummary4;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton CheckingButton;
+    private javax.swing.JLabel CheckingEUR;
+    private javax.swing.JLabel CheckingEURValue;
+    private javax.swing.JLabel CheckingGBP;
+    private javax.swing.JLabel CheckingGBPValue;
+    private javax.swing.JLabel CheckingLabel;
+    private javax.swing.JPanel CheckingPanel;
+    private javax.swing.JLabel CheckingState;
+    private javax.swing.JLabel CheckingUSD;
+    private javax.swing.JLabel CheckingUSDValue;
+    private javax.swing.JButton LoanButton;
+    private javax.swing.JLabel LoanEURLabel;
+    private javax.swing.JLabel LoanEURValue;
+    private javax.swing.JLabel LoanGBPLabel;
+    private javax.swing.JLabel LoanGBPValue;
+    private javax.swing.JLabel LoanLabel;
+    private javax.swing.JPanel LoanPanel;
+    private javax.swing.JLabel LoanState;
+    private javax.swing.JLabel LoanUSDLabel;
+    private javax.swing.JLabel LoanUSDValue;
+    private javax.swing.JButton SavingButton;
+    private javax.swing.JLabel SavingEURLabel;
+    private javax.swing.JLabel SavingEURValue;
+    private javax.swing.JLabel SavingGBPLabel;
+    private javax.swing.JLabel SavingGBPValue;
+    private javax.swing.JLabel SavingLabel;
+    private javax.swing.JPanel SavingPanel;
+    private javax.swing.JLabel SavingState;
+    private javax.swing.JLabel SavingUSDLabel;
+    private javax.swing.JLabel SavingUSDValue;
+    private javax.swing.JButton SecurityButton;
+    private javax.swing.JLabel SecurityEURLabel;
+    private javax.swing.JLabel SecurityEURValue;
+    private javax.swing.JLabel SecurityGBPLabel;
+    private javax.swing.JLabel SecurityGBPValue;
+    private javax.swing.JLabel SecurityLabel;
+    private javax.swing.JPanel SecurityPanel;
+    private javax.swing.JLabel SecurityState;
+    private javax.swing.JLabel SecurityUSDLabel;
+    private javax.swing.JLabel SecurityUSDValue;
+    private javax.swing.JLabel UserLabel;
+    private javax.swing.JLabel WelcomeLabel;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

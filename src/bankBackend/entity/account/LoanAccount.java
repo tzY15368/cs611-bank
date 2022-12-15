@@ -31,8 +31,8 @@ public class LoanAccount extends Account {
 
     private static Result<Transaction> createTransaction(int fromBalanceId, int value) {
         Account managerAccount = UserCtl.getInstance().getManager().getAccount(AccountType.SAVINGS).unwrap();
-        // get manager's saving account
-        return Transaction.makeTransaction(fromBalanceId, managerAccount.getId(), TransactionType.TRANSFER, value,"Loan Interest");
+        Balance managerUSDBalance = Balance.getBalanceWithCurrency(managerAccount.getId(), CurrencyType.USD).unwrap();
+        return Transaction.makeTransaction(fromBalanceId, managerAccount.getId(), TransactionType.INTEREST, value,"Loan Interest");
     }
     public static void generateLoanInterestCallback(int date, int hour) {
         Logger.info("Generating loan interest...");
@@ -46,6 +46,7 @@ public class LoanAccount extends Account {
                     float rat = ir.getRate() / 100;
                     int deltaValue = (int) (balance.getValue() * rat);
                     Result<Transaction> txRes = createTransaction(account.getId(), deltaValue);
+                    System.out.println("txRes message" + txRes.msg);
                     if (!txRes.success) {
                         Logger.error("Failed to create transaction for interest on user loan account" + account.getId());
                     }

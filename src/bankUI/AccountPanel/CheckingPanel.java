@@ -2,20 +2,21 @@ package bankUI.AccountPanel;
 
 import Utils.Logger;
 import Utils.Result;
-import Utils.SessionMgr;
-import bankBackend.Balance;
-import bankBackend.CheckingAccount;
-import bankBackend.User;
+//import Utils.SessionMgr;
+import bankBackend.entity.Balance;
+import bankBackend.entity.account.CheckingAccount;
+import bankBackend.entity.User;
 import java.util.List;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class CheckingPanel extends AccountPanel {
-
+/*
     public CheckingPanel(){
         iniCheckingPanel();
     }
+
 
     public void iniCheckingPanel(){
 
@@ -76,7 +77,11 @@ public class CheckingPanel extends AccountPanel {
         });
 
 
+
+
     }
+
+ */
 
 
 

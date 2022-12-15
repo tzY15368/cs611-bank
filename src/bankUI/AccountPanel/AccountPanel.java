@@ -1,7 +1,7 @@
 package bankUI.AccountPanel;
 
-import Utils.SessionMgr;
-import bankBackend.User;
+//import Utils.SessionMgr;
+import bankBackend.entity.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ public class AccountPanel extends JPanel {
     private JLabel jLabel;
     private DefaultListModel ListModel;
     private JButton jButton;
-    User user = SessionMgr.getSession().data.getUser();
+    //User user = SessionMgr.getSession().data.getUser();
 
     public AccountPanel(){
         this.jButton=new JButton();

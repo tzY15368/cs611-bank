@@ -56,7 +56,7 @@ public class Transaction {
         int TX_TRANSFER_FEE_VALUE = 5;
         int DEPOSIT_FEE_VALUE = 5;
         int WITHDRAW_FEE_VALUE = 5;
-        Map<TransactionType, Integer> chargeFeeValues = new HashMap<>() {
+        Map<TransactionType, Integer> chargeFeeValues = new HashMap() {
             {
                 put(TransactionType.TRANSFER, TX_TRANSFER_FEE_VALUE);
                 put(TransactionType.DEPOSIT, DEPOSIT_FEE_VALUE);

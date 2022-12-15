@@ -2,8 +2,8 @@ package bankUI.AccountPanel;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.Balance;
-import bankBackend.SavingAccount;
+import bankBackend.entity.Balance;
+import bankBackend.entity.account.SavingAccount;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +11,7 @@ import java.util.List;
 
 public class SavingPanel extends AccountPanel{
 
+    /*
     public SavingPanel(){iniSavingPanel();}
 
     public void iniSavingPanel(){
@@ -20,7 +21,7 @@ public class SavingPanel extends AccountPanel{
 
         DefaultListModel ListModel=getListModel();
 
-        Result res=user.getSavingAccount();
+        Result res=user.getAccount();
         if(res.success) {
             List<Balance> savingBalanceList = user.getSavingAccount().getData().listBalance();
             for (Balance balance : savingBalanceList
@@ -65,4 +66,6 @@ public class SavingPanel extends AccountPanel{
         });
 
     }
+
+     */
 }

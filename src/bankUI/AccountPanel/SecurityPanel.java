@@ -2,7 +2,7 @@ package bankUI.AccountPanel;
 
 import Utils.Logger;
 import Utils.Result;
-import bankBackend.SecurityAccount;
+import bankBackend.entity.account.SecurityAccount;
 
 import javax.swing.*;
 import java.awt.*;
