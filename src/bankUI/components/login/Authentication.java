@@ -4,10 +4,9 @@ package bankUI.components.login;/*
  */
 
 import bankBackend.entity.User;
-import bankUI.components.home.HomeUI;
+import bankUI.components.home.HomeUI3;
 import Utils.Result;
 import bankBackend.service.SvcMgr;
-import bankUI.components.home.OldHomeUI;
 import bankUI.components.manager.MgmtPage;
 import bankUI.utils.AlertUI;
 
@@ -163,7 +162,7 @@ public class Authentication extends javax.swing.JFrame {
                 //OldHomeUI home = new OldHomeUI(r.unwrap());
 
             }
-            HomeUI home = new HomeUI(r.unwrap());
+            HomeUI3 home = new HomeUI3(r.unwrap());
             home.setVisible(true);
             MgmtPage mgmt = new MgmtPage();
             mgmt.setVisible(true);

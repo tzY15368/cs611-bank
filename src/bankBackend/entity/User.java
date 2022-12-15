@@ -102,9 +102,10 @@ public class User {
     }
 
     public Result<Account> getSecurityAccount() {
-        if (!isSecurityAccountEnabled()) {
-            return new Result(false, "Security account is not enabled", null);
-        }
+        Logger.warn("Security account is not enabled");
+//        if (!isSecurityAccountEnabled()) {
+//            return new Result(false, , null);
+//        }
 
         Result r = getAccount(AccountType.Security);
         return r;

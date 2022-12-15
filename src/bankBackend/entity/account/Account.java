@@ -1,6 +1,7 @@
 package bankBackend.entity.account;
 
 import bankBackend.Config;
+import bankBackend.entity.User;
 import bankBackend.entity.enums.AccountState;
 import bankBackend.entity.Balance;
 import bankBackend.dao.DaoManager;
@@ -59,7 +60,11 @@ public class Account {
         this.state = state;
         try {
             dao.update(this);
-            Balance thisUSDBalance = Balance.getBalanceWithCurrency(this.getId(), CurrencyType.USD).data;
+            // get user's checking account
+            String uname = SvcMgr.getUserService().getUsernameByAccountId(this.id);
+            User u = SvcMgr.getUserService().getUserByName(uname).unwrap();
+            Account checking = u.getCheckingAccount().unwrap();
+            Balance thisUSDBalance = Balance.getBalanceWithCurrency(checking.getId(), CurrencyType.USD).data;
             // get bank manager's checking account
             Result r = SvcMgr.getAccountService().createAndHandleTxn(
                     thisUSDBalance.getId(),
