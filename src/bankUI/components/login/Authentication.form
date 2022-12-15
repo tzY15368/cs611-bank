@@ -74,7 +74,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="usernameField">
       <Properties>
-        <Property name="text" type="java.lang.String" value=" "/>
+        <Property name="text" type="java.lang.String" value="hello"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="usernameFieldActionPerformed"/>
@@ -112,7 +112,7 @@
                           <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                           <Component id="loginButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                          <Component id="regButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="133" max="-2" attributes="0"/>
@@ -131,7 +131,7 @@
                   <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="loginButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="regButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
               </Group>
@@ -140,6 +140,12 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JPasswordField" name="passwordField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="123"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="passwordFieldActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="loginButton">
           <Properties>
@@ -149,12 +155,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loginButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="regButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="New Account"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="regButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

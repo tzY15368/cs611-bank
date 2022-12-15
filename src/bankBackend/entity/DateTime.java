@@ -1,6 +1,5 @@
 package bankBackend.entity;
 
-import bankBackend.Constants;
 import Utils.Logger;
 import bankBackend.dao.DaoManager;
 import com.j256.ormlite.dao.Dao;
@@ -31,6 +30,10 @@ public class DateTime {
         this();
         this.startTimestamp = startTimestamp;
         this.timeRatio = timeRatio;
+    }
+
+    public int getTimeRatio() {
+        return (int) timeRatio;
     }
 
     public void setHour(int hour) {

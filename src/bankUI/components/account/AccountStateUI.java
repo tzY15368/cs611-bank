@@ -3,9 +3,15 @@ package bankUI.components.account;/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
+import Utils.Result;
+import bankBackend.entity.User;
 import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.AccountState;
+import bankBackend.entity.enums.AccountType;
+import bankBackend.service.SvcMgr;
 import bankUI.components.home.HomeUI;
+import bankUI.utils.AlertUI;
+import bankUI.utils.UIContextMgr;
 
 import javax.swing.*;
 
@@ -17,10 +23,10 @@ public class AccountStateUI extends javax.swing.JFrame {
     /**
      * Creates new form account_State_UI
      */
-    private Account account;
+    private DefaultComboBoxModel accountStateModel = new DefaultComboBoxModel(AccountState.values());
+    private DefaultComboBoxModel accountTypeModel = new DefaultComboBoxModel(AccountType.values());
 
-    public AccountStateUI(Account account) {
-        this.account = account;
+    public AccountStateUI() {
         initComponents();
     }
 
@@ -35,10 +41,10 @@ public class AccountStateUI extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        state = new javax.swing.JComboBox<>();
+        okBtn = new javax.swing.JButton();
+        accountTypeField = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -51,19 +57,21 @@ public class AccountStateUI extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Desired State");
 
-        jComboBox1.setModel(AccountStateData.model);
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        state.setModel(accountStateModel);
+        state.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                stateActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Ok");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        okBtn.setText("Ok");
+        okBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                okBtnActionPerformed(evt);
             }
         });
+
+        accountTypeField.setModel(accountTypeModel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -72,7 +80,7 @@ public class AccountStateUI extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(42, 42, 42)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jButton1)
+                                        .addComponent(okBtn)
                                         .addComponent(jLabel1)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -80,8 +88,8 @@ public class AccountStateUI extends javax.swing.JFrame {
                                                         .addComponent(jLabel3))
                                                 .addGap(35, 35, 35)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addComponent(jTextField1)
-                                                        .addComponent(jComboBox1, 0, 154, Short.MAX_VALUE))))
+                                                        .addComponent(state, 0, 154, Short.MAX_VALUE)
+                                                        .addComponent(accountTypeField, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                                 .addContainerGap(91, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -89,32 +97,45 @@ public class AccountStateUI extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
                                 .addComponent(jLabel1)
-                                .addGap(38, 38, 38)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addGap(35, 35, 35)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(jLabel2)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(31, 31, 31)
+                                        .addComponent(accountTypeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(34, 34, 34)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel3)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(state, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                                .addComponent(jButton1)
+                                .addComponent(okBtn)
                                 .addGap(46, 46, 46))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void stateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_stateActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void okBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okBtnActionPerformed
         // TODO add your handling code here:
-        setVisible(false);
-        HomeUI home = new HomeUI();
-        home.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        AccountType accountType = (AccountType) accountTypeField.getSelectedItem();
+        AccountState accountState = (AccountState) state.getSelectedItem();
+        User thisUser = UIContextMgr.getUser(this);
+        Account targetAcc = thisUser.getAccount(accountType).unwrap();
+        if (targetAcc.getState() == accountState) {
+            AlertUI.success("Account is already in the desired state");
+            this.dispose();
+        } else {
+            Result r = targetAcc.setState(accountState);
+            if (r.success) {
+                AlertUI.success("Account state changed successfully");
+                this.dispose();
+            } else {
+                AlertUI.error("Account state change failed:" + r.msg);
+            }
+        }
+    }//GEN-LAST:event_okBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -147,17 +168,17 @@ public class AccountStateUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AccountStateUI(null).setVisible(true);
+                new AccountStateUI().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> accountTypeField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton okBtn;
+    private javax.swing.JComboBox<String> state;
     // End of variables declaration//GEN-END:variables
 }

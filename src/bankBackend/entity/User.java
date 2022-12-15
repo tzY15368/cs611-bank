@@ -1,9 +1,7 @@
 package bankBackend.entity;
 
 import Utils.*;
-import bankBackend.Constants;
-import bankBackend.factory.AbstractUserFactory;
-import bankBackend.factory.DefaultUserFactory;
+import bankBackend.Config;
 import bankBackend.dao.DaoManager;
 import bankBackend.entity.account.*;
 import bankBackend.entity.enums.AccountState;
@@ -103,45 +101,40 @@ public class User {
         return new Result<>(false, "Account not found", null);
     }
 
-    public Result<SecurityAccount> getSecurityAccount() {
+    public Result<Account> getSecurityAccount() {
         if (!isSecurityAccountEnabled()) {
             return new Result(false, "Security account is not enabled", null);
         }
 
         Result r = getAccount(AccountType.Security);
-        r.data = (SecurityAccount) r.data;
         return r;
     }
 
-    public Result<LoanAccount> getLoanAccount() {
+    public Result<Account> getLoanAccount() {
         // ugly hack
         Result r = getAccount(AccountType.Loan);
-        r.data = (LoanAccount) r.data;
         return r;
     }
 
-    public Result<SavingAccount> getSavingAccount() {
+    public Result<Account> getSavingAccount() {
         Result r = this.getAccount(AccountType.SAVINGS);
-        r.data = (SavingAccount) r.data;
         return r;
     }
 
-    public Result<CheckingAccount> getCheckingAccount() {
-        Result r = this.getAccount(AccountType.CHECKING);
-        r.data = (CheckingAccount) r.data;
-        return r;
+    public Result<Account> getCheckingAccount() {
+        return this.getAccount(AccountType.CHECKING);
     }
 
     public boolean isSecurityAccountEnabled() {
-        Result<SavingAccount> res = getSavingAccount();
+        Result<Account> res = getSavingAccount();
 
         if (!res.success) {
             return false;
         }
-        SavingAccount saving = res.data;
+        Account saving = res.data;
 
         for (Balance b : SvcMgr.getAccountService().listBalance(saving.getId())) {
-            if (b.getValue() > Constants.SECURITY_ACC_OPEN_THRESHOLD) {
+            if (b.getValue() > Config.SECURITY_ACC_OPEN_THRESHOLD) {
                 return true;
             }
         }

@@ -343,6 +343,7 @@ public class HomeUI extends javax.swing.JFrame {
         LoanButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 LoanButtonActionPerformed(evt);
+
             }
         });
 
@@ -454,19 +455,21 @@ public class HomeUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(LoanPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, Short.MAX_VALUE))
+
         );
 
         pack();
@@ -495,6 +498,7 @@ public class HomeUI extends javax.swing.JFrame {
             loanAccount.setVisible(true);
         }// TODO add your handling code here:
     }//GEN-LAST:event_LoanButtonActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -527,7 +531,7 @@ public class HomeUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new HomeUI().setVisible(true);
+                new HomeUI(null).setVisible(true);
             }
         });
     }
@@ -576,5 +580,12 @@ public class HomeUI extends javax.swing.JFrame {
     private javax.swing.JLabel UserLabel;
     private javax.swing.JLabel WelcomeLabel;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton loanBtn;
+    private javax.swing.JButton moneyIOButton;
+    private javax.swing.JButton reportBtn;
+    private javax.swing.JButton savingBtn;
+    private javax.swing.JButton stateBtn;
+    private javax.swing.JButton stockBtn;
+    private javax.swing.JButton txBtn;
     // End of variables declaration//GEN-END:variables
 }

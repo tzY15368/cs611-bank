@@ -1,14 +1,12 @@
 package bankBackend.service.impl;
 
-import bankBackend.Constants;
+import bankBackend.Config;
 import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Balance;
-import bankBackend.entity.Transaction;
 import bankBackend.entity.User;
 import bankBackend.entity.Stock;
 import bankBackend.entity.account.Account;
-import bankBackend.entity.account.SecurityAccount;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.TransactionType;
@@ -20,7 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static bankBackend.Constants.STOCK_MANAGER_USER_ID;
+import static bankBackend.Config.STOCK_MANAGER_USER_ID;
 
 public class StockCtl implements StockService {
 
@@ -38,7 +36,7 @@ public class StockCtl implements StockService {
 
     public static void init() {
         // if there's no stock manager, create one
-        User mgr = new User(Constants.STOCK_MARKET_NAME, "");
+        User mgr = new User(Config.STOCK_MARKET_NAME, "");
         try {
             User.dao.createIfNotExists(mgr);
         } catch (SQLException s) {
@@ -47,11 +45,11 @@ public class StockCtl implements StockService {
 
         // get the mgr again
         try {
-            mgr = User.dao.queryBuilder().where().eq("name", Constants.STOCK_MARKET_NAME).queryForFirst();
+            mgr = User.dao.queryBuilder().where().eq("name", Config.STOCK_MARKET_NAME).queryForFirst();
         } catch (SQLException s) {
             Logger.fatal("stockctl: init2:" + s.getMessage());
         }
-        Constants.STOCK_MANAGER_USER_ID = mgr.getId();
+        Config.STOCK_MANAGER_USER_ID = mgr.getId();
         Logger.info("Stock manager initialized, mgr id = " + mgr.getId());
     }
 
@@ -82,7 +80,7 @@ public class StockCtl implements StockService {
     public Result<Void> removeStock(String stockName) {
         try {
             Stock stock = Stock.dao.queryBuilder().where().eq("name", stockName).and()
-                    .eq("userId", Constants.STOCK_MANAGER_USER_ID).queryForFirst();
+                    .eq("userId", Config.STOCK_MANAGER_USER_ID).queryForFirst();
             if (stock == null) {
                 return new Result<>(false, "Stock doesn't exist", null);
             }
@@ -94,15 +92,9 @@ public class StockCtl implements StockService {
         return new Result<>(true, "removeStock: success ", null);
     }
 
-    public Result<Void> updateStock(Stock stock) {
+    public Result<Void> updatePrice(String name, int value) {
         try {
-            Stock s = Stock.dao.queryBuilder().where().eq("name", stock.getName())
-                    .and().eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
-            if (s == null) {
-                return new Result<>(false, "Stock doesn't exist", null);
-            }
-            Stock.dao.delete(s);
-            Stock.dao.create(stock);
+            Stock.dao.updateRaw("update stock set price = ? where name = ?", "" + value, name);
         } catch (SQLException e) {
             Logger.error("SQL Exception in updateStock:" + e + e.getMessage());
             return new Result<>(false, "addStock: " + e.getMessage(), null);
@@ -123,14 +115,22 @@ public class StockCtl implements StockService {
             }
 
             // assume we can only use USD to buy stock, reset user's money
-            int fromBalanceId=Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).unwrap().getId(),CurrencyType.USD).unwrap().getId();
-            Account account= Account.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
+
+            int fromBalanceId = Balance.getBalanceWithCurrency(user.getAccount(AccountType.Security).unwrap().getId(), CurrencyType.USD).unwrap().getId();
+            Account account = Account.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
                     .and().eq("type", AccountType.Security).queryForFirst();
-            int toAccountID= account.getId();
-            int value=amount * stock.getCurrentPrice();
-            Result res=Transaction.makeTransaction(fromBalanceId,toAccountID, TransactionType.TRANSFER,value, "buy stock");
-            if(!res.success){
-                return new Result<>(false, "buyStock: unsuccessful" , null);
+            int toAccountID = account.getId();
+            int value = amount * stock.getCurrentPrice();
+            Result r = SvcMgr.getAccountService().createAndHandleTxn(
+                    fromBalanceId,
+                    toAccountID,
+                    TransactionType.STOCK,
+                    value,
+                    "stockbuy=" + name,
+                    CurrencyType.USD
+            );
+            if (!r.success) {
+                return r;
             }
 
             // reset the amount of stock in the market
@@ -170,14 +170,22 @@ public class StockCtl implements StockService {
 
             //give user sell stock money
             Stock s = Stock.dao.queryBuilder().where().eq("name", name).and()
+
                     .eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
-            int fromBalanceId= Balance.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
+            int fromBalanceId = Balance.dao.queryBuilder().where().eq("userId", STOCK_MANAGER_USER_ID)
                     .and().eq("type", CurrencyType.USD).queryForFirst().getId();
-            int toAccountID=user.getAccount(AccountType.Security).unwrap().getId();
-            int value=s.getCurrentPrice() * amount;
-            Result res=Transaction.makeTransaction(fromBalanceId,toAccountID,TransactionType.TRANSFER,value, "sell stock");
-            if(!res.success){
-                return new Result<>(false, "sellStock: unsuccessful" , null);
+            int toAccountID = user.getAccount(AccountType.Security).unwrap().getId();
+            int value = s.getCurrentPrice() * amount;
+            Result r = SvcMgr.getAccountService().createAndHandleTxn(
+                    fromBalanceId,
+                    toAccountID,
+                    TransactionType.STOCK,
+                    value,
+                    "stocksell=" + name,
+                    CurrencyType.USD
+            );
+            if (!r.success) {
+                return r;
             }
 
             int currentPrice = s.getCurrentPrice();

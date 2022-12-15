@@ -18,6 +18,10 @@ public class SvcMgr {
         UserCtl.init();
     }
 
+    public static SQLService getSqlService() {
+        return new SqlCtl();
+    }
+
     public static DateTimeService getDateTimeService() {
         return DateTimeCtl.getInstance();
     }

@@ -1,7 +1,9 @@
 package bankUI.AccountPanel;
 
-//import Utils.SessionMgr;
+
 import bankBackend.entity.User;
+import bankBackend.service.SvcMgr;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,15 +14,16 @@ public class AccountPanel extends JPanel {
     private JButton jButton;
     //User user = SessionMgr.getSession().data.getUser();
 
-    public AccountPanel(){
-        this.jButton=new JButton();
-        this.jLabel=new JLabel();
-        this.ListModel=new DefaultListModel();
+    public AccountPanel() {
+        this.jButton = new JButton();
+        this.jLabel = new JLabel();
+        this.ListModel = new DefaultListModel();
     }
 
-    public void iniAccountPanel(){
+    public void iniAccountPanel() {
 
     }
+
     public JLabel getjLabel() {
         return jLabel;
     }
@@ -45,12 +48,14 @@ public class AccountPanel extends JPanel {
         ListModel = listModel;
     }
 
-    public void inijLabel(){}
-
-    public void inijButton(){
+    public void inijLabel() {
     }
 
-    public void iniListModel(){}
+    public void inijButton() {
+    }
+
+    public void iniListModel() {
+    }
 
 
 }
