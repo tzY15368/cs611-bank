@@ -40,6 +40,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
                 // TODO: ROLLBACK ALL TRANSACTIONS THAT HAPPEND TILL THAT HOUR
                 Logger.info(String.format("DateCtl re-initialized with date %d hour %d",
                         lastRecordedDate.getDate(), lastRecordedDate.getCurrentHour()));
+                instance.timeRatio = lastRecordedDate.getTimeRatio();
             }
 
             // run on a new thread

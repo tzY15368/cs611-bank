@@ -32,6 +32,10 @@ public class DateTime {
         this.timeRatio = timeRatio;
     }
 
+    public int getTimeRatio() {
+        return (int) timeRatio;
+    }
+
     public void setHour(int hour) {
         this.elapsedHours = hour;
     }

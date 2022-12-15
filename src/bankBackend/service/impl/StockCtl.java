@@ -91,15 +91,9 @@ public class StockCtl implements StockService {
         return new Result<>(true, "removeStock: success ", null);
     }
 
-    public Result<Void> updateStock(Stock stock) {
+    public Result<Void> updatePrice(String name, int value) {
         try {
-            Stock s = Stock.dao.queryBuilder().where().eq("name", stock.getName())
-                    .and().eq("userId", STOCK_MANAGER_USER_ID).queryForFirst();
-            if (s == null) {
-                return new Result<>(false, "Stock doesn't exist", null);
-            }
-            Stock.dao.delete(s);
-            Stock.dao.create(stock);
+            Stock.dao.updateRaw("update stock set price = ? where name = ?", "" + value, name);
         } catch (SQLException e) {
             Logger.error("SQL Exception in updateStock:" + e + e.getMessage());
             return new Result<>(false, "addStock: " + e.getMessage(), null);

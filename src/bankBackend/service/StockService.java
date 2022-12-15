@@ -13,7 +13,7 @@ public interface StockService {
 
     public Result<Void> removeStock(String stockName);
 
-    public Result<Void> updateStock(Stock stock);
+    public Result<Void> updatePrice(String name, int value);
 
     public Result<Void> buyStock(String name, User user, int amount);
 
