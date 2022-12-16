@@ -538,6 +538,7 @@ public class HomeUI3 extends javax.swing.JFrame {
     private void reportBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportBtnActionPerformed
         // TODO add your handling code here:
         TxnReport report = new TxnReport();
+        UIContextMgr.setUser(report, this.user);
         report.setVisible(true);
         refreshBtnActionPerformed(null);
     }//GEN-LAST:event_reportBtnActionPerformed

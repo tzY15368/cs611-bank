@@ -94,7 +94,7 @@ public class UserCtl implements UserService {
 
     public List<User> listUsers() {
         try {
-            return User.dao.queryForAll();
+            return User.dao.queryBuilder().where().gt("id", 1).query();
         } catch (Exception e) {
             Logger.error("listUsers:" + e.getMessage());
         }

@@ -4,6 +4,7 @@
  */
 package bankUI.components.manager;
 
+import Utils.Logger;
 import Utils.Result;
 import bankBackend.entity.Balance;
 import bankBackend.entity.User;
@@ -32,7 +33,9 @@ public class MgmtUserItem extends javax.swing.JPanel {
 
     public void loadCtx() {
         User u = UIContextMgr.getUser(this);
-        this.user = user;
+        this.user = u;
+        Logger.info("Loading user " + u.getId());
+        assert u != null;
         if (u != null) {
             uname = u.getName();
             upass = u.getPassword();
