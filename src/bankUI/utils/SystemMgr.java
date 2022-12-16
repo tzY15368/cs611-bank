@@ -6,6 +6,7 @@ package bankUI.utils;
 
 import Utils.Logger;
 import bankBackend.service.SvcMgr;
+import bankUI.components.login.Authentication;
 
 import javax.swing.*;
 
@@ -61,6 +62,7 @@ public class SystemMgr extends javax.swing.JFrame {
         logList = new javax.swing.JList<>();
         jLabel6 = new javax.swing.JLabel();
         pauseButton = new javax.swing.JButton();
+        loginBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -101,6 +103,13 @@ public class SystemMgr extends javax.swing.JFrame {
             }
         });
 
+        loginBtn.setText("open login");
+        loginBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,11 +137,13 @@ public class SystemMgr extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jScrollPane1))
-                        .addGroup(layout.createSequentialGroup()
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(pauseButton)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(loginBtn)
+                                        .addComponent(pauseButton))
                                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -148,14 +159,15 @@ public class SystemMgr extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel4)
                                         .addComponent(timeRatioValue)
-                                        .addComponent(jLabel5))
+                                        .addComponent(jLabel5)
+                                        .addComponent(loginBtn))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel6)
                                         .addComponent(pauseButton))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(8, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -180,6 +192,12 @@ public class SystemMgr extends javax.swing.JFrame {
         Logger.info("time ratio changed" + this.timerRatio);
         SvcMgr.getDateTimeService().setTimeRatio(this.timerRatio);
     }//GEN-LAST:event_timeRatioSliderMouseReleased
+
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        // TODO add your handling code here:
+        Authentication auth = new Authentication();
+        auth.setVisible(true);
+    }//GEN-LAST:event_loginBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -225,6 +243,7 @@ public class SystemMgr extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<String> logList;
+    private javax.swing.JButton loginBtn;
     private javax.swing.JButton pauseButton;
     private javax.swing.JSlider timeRatioSlider;
     private javax.swing.JLabel timeRatioValue;
