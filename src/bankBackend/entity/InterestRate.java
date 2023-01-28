@@ -7,6 +7,7 @@ import bankBackend.dao.DaoManager;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.IRCalcMethod;
 import bankBackend.entity.enums.RateType;
+import bankBackend.service.SvcMgr;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -71,6 +72,23 @@ public class InterestRate {
         this.currencyType = currencyType;
     }
 
+    public String toString() {
+        return "InterestRate{" +
+                "id=" + id +
+                ", accountId=" + accountId +
+                ", rate=" + rate +
+                ", type=" + type +
+                ", startEpoch=" + startEpoch +
+                ", endEpoch=" + endEpoch +
+                ", description='" + description + '\'' +
+                ", collat_user_id=" + collat_user_id +
+                ", initValue=" + initValue +
+                ", method=" + method +
+                ", currencyType=" + currencyType +
+                ", coveredAmount=" + coveredAmount +
+                '}';
+    }
+
     public int getRate() {
         return rate;
     }
@@ -92,11 +110,37 @@ public class InterestRate {
             case Compound:
                 result = (int) ((initValue - coveredAmount) * Math.pow(
                         (double) (100 + rate) / 100,
-                        (epoch - startEpoch) / Config.DEFAULT_INTEREST_CYCLE_LENGTH.get(this.type))
+                        (epoch - startEpoch) / (Config.DEFAULT_INTEREST_CYCLE_LENGTH.get(this.type) * Config.HOUR_PER_DAY))
                 );
         }
         Logger.info(String.format("InterestRate: getDeltaForEpoch%d: %d", epoch, result));
         return result;
+    }
+
+    public int getLoanPay() {
+        int currentEpoch = SvcMgr.getDateTimeService().getCurrentEpoch();
+        int value = initValue * (Config.LOAN_INTEREST_CYCLE_LENGTH / (endEpoch - startEpoch));
+        return value;
+    }
+
+    public int getCollat_user_id() {
+        return collat_user_id;
+    }
+
+    public int getPaybackValue() {
+        return this.coveredAmount;
+    }
+
+    public int getInitValue() {
+        return initValue;
+    }
+
+    public IRCalcMethod getMethod() {
+        return method;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public CurrencyType getCurrency() {

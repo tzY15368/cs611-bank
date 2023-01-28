@@ -300,10 +300,10 @@ public class StockNewUI extends javax.swing.JFrame {
         for (Stock s : stockMe) {
             this.userModel.addRow(new Object[]{
                     s.getName(),
-                    s.getCurrentPrice(),
+                    s.getBuyInPrice(),
                     s.getAmount(),
-                    SvcMgr.getStockService().getUnrealizedProfit(s.getName(), thisUser),
-                    SvcMgr.getStockService().getRealizedProfit(s.getName(), thisUser)
+                    SvcMgr.getStockService().getUnrealizedProfit(s.getName(), thisUser).unwrap(),
+                    SvcMgr.getStockService().getRealizedProfit(s.getName(), thisUser).unwrap()
             });
         }
         this.marketTable.setModel(this.marketModel);

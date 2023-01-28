@@ -4,10 +4,12 @@ import Utils.Logger;
 import Utils.Result;
 import bankBackend.Config;
 import bankBackend.entity.InterestRate;
+import bankBackend.entity.User;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.RateType;
 import bankBackend.entity.enums.TransactionType;
 import bankBackend.service.SvcMgr;
+import bankBackend.service.impl.UserCtl;
 
 import java.util.List;
 
@@ -42,9 +44,34 @@ public class LoanAccount extends Account {
                         "Loan Interest of loan" + rate.getId(),
                         rate.getCurrency()
                 );
+
                 if (!r.success) {
                     Logger.error("Failed to generate loan interest for loan " + rate.getId());
                 }
+                int deltaVal = rate.getLoanPay();
+                User u = SvcMgr.getUserService().getUserByName(SvcMgr.getUserService().getUsernameByAccountId(account.getId())).unwrap();
+//                Result r2 = SvcMgr.getAccountService().createAndHandleTxn(
+//                        u.getSavingAccount().unwrap().getId(),
+//                        ,
+//                        TransactionType.TRANSFER,
+//                        deltaVal,
+//                        "Loan pay of loan" + rate.getId(),
+//                        rate.getCurrency()
+//                );
+//                if(!r2.success){
+//                    Logger.error("Failed to generate loan pay for loan " + rate.getId());
+//                }
+//                Result r3 = SvcMgr.getAccountService().createAndHandleTxn(
+//                        loanAcc,
+//                        Config.TXN_NULL_RECEIVER,
+//                        TransactionType.TRANSFER,
+//                        deltaVal,
+//                        "loan pay of loan" + rate.getId(),
+//                        rate.getCurrency()
+//                );
+//                if(!r3.success){
+//                    Logger.error("Failed to generate loan pay for loan " + rate.getId());
+//                }
             });
         }
     }

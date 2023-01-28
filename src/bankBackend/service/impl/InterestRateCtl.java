@@ -5,6 +5,8 @@ import Utils.Result;
 import bankBackend.Config;
 import bankBackend.entity.Balance;
 import bankBackend.entity.InterestRate;
+import bankBackend.entity.User;
+import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.IRCalcMethod;
 import bankBackend.entity.enums.RateType;
@@ -38,18 +40,26 @@ public class InterestRateCtl implements InterestRateService {
                                            IRCalcMethod method, CurrencyType currencyType) {
         InterestRate ir = new InterestRate(accountId, getGlobalInterestRate(type), type, startEpoch,
                 endEpoch, description, collat_user_id, initValue, method, currencyType);
+        Logger.info("ir:" + ir);
         try {
             Result r = new Result();
             // get the bank manager's checking account
-            int managerCheckingId = UserCtl.getInstance().getManager().getCheckingAccount().unwrap().getId();
+            int managerCheckingId = UserCtl.getInstance().getManager(Config.BANK_MANAGER_USERNAME).getCheckingAccount().unwrap().getId();
             int managerCheckingBalance = Balance.getBalanceWithCurrency(managerCheckingId, currencyType).unwrap().getId();
             switch (type) {
                 case Save:
+                    User u = SvcMgr.getUserService().getUserByName(SvcMgr.getUserService().getUsernameByAccountId(accountId)).unwrap();
+                    Account checkingacc = u.getCheckingAccount().unwrap();
                     // get user's own checking account balance
-                    int userCheckingBalance = Balance.getBalanceWithCurrency(accountId, currencyType).unwrap().getId();
+                    int userCheckingBalance = Balance.getBalanceWithCurrency(checkingacc.getId(), currencyType).unwrap().getId();
+                    // get user saving balance
+                    // get user from accountid
+                    Account savingacc = u.getSavingAccount().unwrap();
+                    int userSavingBalance = Balance.getBalanceWithCurrency(accountId, currencyType).unwrap().getId();
+                    Logger.info("savingAcc:" + savingacc + " userSavingBalance:" + userSavingBalance);
                     r = SvcMgr.getAccountService().createAndHandleTxn(
                             userCheckingBalance,
-                            managerCheckingId,
+                            savingacc.getId(),
                             TransactionType.TRANSFER,
                             initValue,
                             "saving order " + ir.getId(),
@@ -84,7 +94,7 @@ public class InterestRateCtl implements InterestRateService {
             return InterestRate.dao.queryBuilder()
                     .where().eq("accountId", accountId)
                     .and().eq("type", type)
-                    .and().le("endEpoch", SvcMgr.getDateTimeService().getCurrentEpoch())
+                    .and().ge("endEpoch", SvcMgr.getDateTimeService().getCurrentEpoch())
                     .query();
         } catch (Exception e) {
             Logger.error("getInterestRate:" + e.getMessage());

@@ -4,6 +4,7 @@
  */
 package bankUI.components.interest;
 
+import bankBackend.Config;
 import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.RateType;
@@ -12,6 +13,7 @@ import bankBackend.service.SvcMgr;
 import bankUI.utils.UIContextMgr;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author NathanY
@@ -23,6 +25,8 @@ public class SavingUI extends javax.swing.JFrame {
      */
     private int rate = 0;
     private String uname = "";
+    private String[] header = {"id", "amount", "rate", "start date", "end date", "calculate type", "description"};
+    private DefaultTableModel savingModel = new DefaultTableModel();
 
     public SavingUI() {
         initComponents();
@@ -33,6 +37,14 @@ public class SavingUI extends javax.swing.JFrame {
         rate = SvcMgr.getInterestRateService().getGlobalInterestRate(RateType.Save);
         rateLabel.setText(rate + "%");
         unameLabel.setText(uname);
+        this.savingModel = new DefaultTableModel();
+        savingModel.setColumnIdentifiers(header);
+        SvcMgr.getInterestRateService().getInterestRate(UIContextMgr.getAccount(this).getId(), RateType.Save).forEach(ir -> {
+            savingModel.addRow(new Object[]{ir.getId(), ir.getInitValue(),
+                    ir.getRate() + "%", ir.getStartEpoch() / Config.HOUR_PER_DAY, ir.getEndEpoch() / Config.HOUR_PER_DAY,
+                    ir.getMethod(), ir.getDescription()});
+        });
+        this.historyTable.setModel(savingModel);
     }
 
     /**

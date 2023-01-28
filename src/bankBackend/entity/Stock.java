@@ -16,7 +16,7 @@ public class Stock {
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField(unique = true)
+    @DatabaseField
     private String name;
 
     @DatabaseField

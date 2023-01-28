@@ -6,6 +6,7 @@ import bankBackend.entity.DateTime;
 import bankBackend.entity.account.LoanAccount;
 import bankBackend.entity.account.SavingAccount;
 import bankBackend.service.DateTimeService;
+import bankBackend.service.SvcMgr;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -173,6 +174,7 @@ public class DateTimeCtl implements DateTimeService, Runnable {
                     // TODO: rollback everything at and after currentEpoch
                     didRollbacks = true;
                     Logger.info("Timer: rolling back tx after epoch=" + getCurrentEpoch());
+                    SvcMgr.getAccountService().rollbackTxn(bootEpoch);
                     // TODO: ...
                 }
                 int currentEpoch = getCurrentEpoch();

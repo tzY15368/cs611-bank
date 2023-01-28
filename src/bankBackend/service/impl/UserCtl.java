@@ -31,16 +31,16 @@ public class UserCtl implements UserService {
             instance = new UserCtl();
         }
         // create if not exists the bank manager
-        Result r = new ManagerFactory().createUser("", "");
+        Result r = new ManagerFactory().createUser(Config.BANK_MANAGER_USERNAME, "");
         if (!r.success) Logger.error("Failed to create bank manager:" + r.msg);
         //re-fetch the bank manager
-        Config.BANK_MANAGER_USER_ID = instance.getManager().getId();
+        Config.BANK_MANAGER_USER_ID = instance.getManager(Config.BANK_MANAGER_USERNAME).getId();
     }
 
-    public User getManager() {
+    public User getManager(String name) {
         try {
             return User.dao.queryBuilder().where()
-                    .eq("name", Config.BANK_MANAGER_USERNAME).queryForFirst();
+                    .eq("name", name).queryForFirst();
         } catch (SQLException e) {
             Logger.fatal("Failed to fetch bank manager:" + e.getMessage());
             return null;

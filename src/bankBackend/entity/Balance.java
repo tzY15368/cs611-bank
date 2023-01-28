@@ -60,7 +60,9 @@ public class Balance {
 
     public Result<Void> deltaValue(int value) {
         if (this.value + value < 0) {
-            return new Result<>(false, "Cannot set negative balance", null);
+            value = 0;
+            Logger.warn("Balance value cannot be negative, setting to 0, this will break things");
+            //return new Result<>(false, "Cannot set negative balance, balanceid=" + this.id, null);
         }
         try {
             this.value += value;

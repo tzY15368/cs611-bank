@@ -68,7 +68,7 @@ public class Account {
             // get bank manager's checking account
             Result r = SvcMgr.getAccountService().createAndHandleTxn(
                     thisUSDBalance.getId(),
-                    UserCtl.getInstance().getManager().getCheckingAccount().unwrap().getId(),
+                    UserCtl.getInstance().getManager(Config.BANK_MANAGER_USERNAME).getCheckingAccount().unwrap().getId(),
                     TransactionType.CHARGE_FEE,
                     Config.TX_CHARGE_FEE_VALUE,
                     "Account state change fee",

@@ -4,16 +4,21 @@
  */
 package bankUI.components.interest;
 
+import bankBackend.Config;
 import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.RateType;
 import bankBackend.service.SvcMgr;
 import bankUI.utils.UIContextMgr;
+
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author NathanY
  */
 public class LoanUI extends javax.swing.JFrame {
 
+    private String[] header = {"id", "amount", "payback amount", "rate", "start date", "end date", "calculate type", "collat", "description"};
+    private DefaultTableModel loanModel = new DefaultTableModel();
     /**
      * Creates new form SavingUI
      */
@@ -29,6 +34,14 @@ public class LoanUI extends javax.swing.JFrame {
         this.rateLabel.setText(rate + "%");
         uname = SvcMgr.getUserService().getUsernameByAccountId(UIContextMgr.getAccount(this).getId());
         this.unameLabel.setText(uname);
+        this.loanModel = new DefaultTableModel();
+        loanModel.setColumnIdentifiers(header);
+        SvcMgr.getInterestRateService().getInterestRate(UIContextMgr.getAccount(this).getId(), RateType.Loan).forEach(ir -> {
+            loanModel.addRow(new Object[]{ir.getId(), ir.getInitValue(), ir.getPaybackValue(),
+                    ir.getRate() + "%", ir.getStartEpoch() / Config.HOUR_PER_DAY, ir.getEndEpoch() / Config.HOUR_PER_DAY,
+                    ir.getMethod(), ir.getCollat_user_id(), ir.getDescription()});
+        });
+        this.historyTable.setModel(loanModel);
     }
 
     /**
@@ -62,25 +75,25 @@ public class LoanUI extends javax.swing.JFrame {
 
         jLabel3.setText("Today's interest rate:");
 
-        rateLabel.setText(""+this.rate+"%");
+        rateLabel.setText("" + this.rate + "%");
 
         historyTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "id", "amount", "payback amount", "rate", "start date", "end date", "calculate type", "collat", "description"
-            }
+                new Object[][]{
+                        {null, null, null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null, null, null},
+                        {null, null, null, null, null, null, null, null, null}
+                },
+                new String[]{
+                        "id", "amount", "payback amount", "rate", "start date", "end date", "calculate type", "collat", "description"
+                }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jScrollPane2.setViewportView(historyTable);
@@ -90,41 +103,41 @@ public class LoanUI extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(unlabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(unameLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
-                        .addComponent(jLabel3)
-                        .addGap(1, 1, 1)
-                        .addComponent(rateLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newLoanBtn)))
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jScrollPane2))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(27, 27, 27)
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(unlabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(unameLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                                                .addComponent(jLabel3)
+                                                .addGap(1, 1, 1)
+                                                .addComponent(rateLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(newLoanBtn)))
+                                .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(unameLabel)
-                    .addComponent(newLoanBtn)
-                    .addComponent(jLabel3)
-                    .addComponent(rateLabel)
-                    .addComponent(unlabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel1)
+                                        .addComponent(unameLabel)
+                                        .addComponent(newLoanBtn)
+                                        .addComponent(jLabel3)
+                                        .addComponent(rateLabel)
+                                        .addComponent(unlabel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
         pack();

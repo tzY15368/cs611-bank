@@ -10,6 +10,7 @@ import bankBackend.entity.account.Account;
 import bankBackend.entity.enums.AccountType;
 import bankBackend.entity.enums.CurrencyType;
 import bankBackend.entity.enums.TransactionType;
+import bankBackend.factory.ManagerFactory;
 import bankBackend.service.AccountService;
 import bankBackend.service.StockService;
 import bankBackend.service.SvcMgr;
@@ -36,18 +37,21 @@ public class StockCtl implements StockService {
 
     public static void init() {
         // if there's no stock manager, create one
-        User mgr = new User(Config.STOCK_MARKET_NAME, "");
-        try {
-            User.dao.createIfNotExists(mgr);
-        } catch (SQLException s) {
-            Logger.warn("stockctl: init1:" + s.getMessage());
+        ManagerFactory mf = new ManagerFactory();
+        Result r = mf.createUser(Config.STOCK_MARKET_NAME, "manager");
+        if (!r.success) {
+            Logger.warn("StockCtl.init: " + r.msg);
         }
-
-        // get the mgr again
+        User mgr;
         try {
+
             mgr = User.dao.queryBuilder().where().eq("name", Config.STOCK_MARKET_NAME).queryForFirst();
-        } catch (SQLException s) {
-            Logger.fatal("stockctl: init2:" + s.getMessage());
+        } catch (SQLException e) {
+            Logger.fatal("StockCtl.init: " + e.getMessage());
+            return;
+        }
+        if (mgr == null) {
+            Logger.fatal("StockCtl.init: cannot find stock manager");
         }
         Config.STOCK_MANAGER_USER_ID = mgr.getId();
         Logger.info("Stock manager initialized, mgr id = " + mgr.getId());

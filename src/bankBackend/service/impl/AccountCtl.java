@@ -53,49 +53,6 @@ public class AccountCtl implements AccountService {
         return new ArrayList<>();
     }
 
-
-    @Override
-    public Result<Void> handleTxn(Transaction tx) {
-        Logger.info(String.format("Account: handling tx %s", tx.toString()));
-
-        Balance dstBalance = null;
-        Balance srcBalance = null;
-        Result r = null;
-        System.out.println(tx);
-        if (tx.fromBalanceId != Config.TXN_MONEY_IO_NULL) {
-            srcBalance = Balance.getBalanceById(tx.fromBalanceId);
-            r = srcBalance.deltaValue(-tx.value);
-            if (!r.success) {
-                return r;
-            }
-        }
-        if (tx.toAccountId != Config.TXN_MONEY_IO_NULL) {
-            System.out.println(String.format("%s, %s, %s", srcBalance, tx.fromBalanceId, tx.currencyType));
-            CurrencyType ct = srcBalance != null ? srcBalance.getType() : tx.currencyType;
-            dstBalance = Balance.getBalanceById(Balance.getBalanceWithCurrency(
-                    tx.toAccountId,
-                    ct).data.getId()
-            );
-            r = dstBalance.deltaValue(tx.value);
-            if (!r.success) {
-                return r;
-            }
-        }
-        // write to disk
-        try {
-            if (srcBalance != null) {
-                Balance.dao.update(srcBalance);
-            }
-            if (dstBalance != null) {
-                Balance.dao.update(dstBalance);
-            }
-            Transaction.dao.create(tx);
-        } catch (SQLException e) {
-            return new Result<>(false, "SQL Exception in handleTransaction:" + e + ": " + e.getMessage(), null);
-        }
-        return new Result<>(true, "Transaction successful", null);
-    }
-
     @Override
     public Result<Void> createAndHandleTxn(int fromBalanceId, int toAccountId, TransactionType type, int value, String description, CurrencyType ct) {
         Transaction txn = new Transaction(fromBalanceId, toAccountId, type, value, description, ct);
@@ -143,7 +100,7 @@ public class AccountCtl implements AccountService {
         // if necessary, do the charge fee transaction
         if (chargeFee > 0) {
             // get the bank manager
-            User mgr = UserCtl.getInstance().getManager();
+            User mgr = UserCtl.getInstance().getManager(Config.BANK_MANAGER_USERNAME);
             // get mgr's checking account
             Account checking = mgr.getCheckingAccount().unwrap();
             r = createAndHandleTxn(
@@ -169,5 +126,11 @@ public class AccountCtl implements AccountService {
             Logger.error("listBalances:" + e.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public void rollbackTxn(int epoch) {
+        Logger.warn("Rolling back transactions from epoch " + epoch);
+        Logger.warn("not implemented yet");
     }
 }
